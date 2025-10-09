@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+// Permet d'étendre le type global Window pour y intégrer l'objet "puter"
+// Car puter.js est injecté côté navigateur comme une lib globale via un script l36 root.tsx
 declare global {
     interface Window {
         puter: {
@@ -42,10 +44,13 @@ declare global {
     }
 }
 
+//Interface
 interface PuterStore {
-    isLoading: boolean;
-    error: string | null;
-    puterReady: boolean;
+    isLoading: boolean; // Statut général pour loader UI
+    error: string | null; // Message d'erreur global
+    puterReady: boolean; // L'état prêt du SDK puter
+
+    // Bloc auth avec un user typé (PuterUser)
     auth: {
         user: PuterUser | null;
         isAuthenticated: boolean;
@@ -55,6 +60,7 @@ interface PuterStore {
         checkAuthStatus: () => Promise<boolean>;
         getUser: () => PuterUser | null;
     };
+    // File system : abstraction des méthodes fournies par puter.fs
     fs: {
         write: (
             path: string,
@@ -65,6 +71,7 @@ interface PuterStore {
         delete: (path: string) => Promise<void>;
         readDir: (path: string) => Promise<FSItem[] | undefined>;
     };
+    // Interface AI (chat, feedback, image to text)
     ai: {
         chat: (
             prompt: string | ChatMessage[],
@@ -81,6 +88,7 @@ interface PuterStore {
             testMode?: boolean
         ) => Promise<string | undefined>;
     };
+    // KV store (clé-valeur, type Redis)
     kv: {
         get: (key: string) => Promise<string | null | undefined>;
         set: (key: string, value: string) => Promise<boolean | undefined>;
@@ -92,14 +100,17 @@ interface PuterStore {
         flush: () => Promise<boolean | undefined>;
     };
 
-    init: () => void;
-    clearError: () => void;
+    init: () => void; // Initialisation du SDK et auth
+    clearError: () => void; // Réinitialisation propre de l'état d'erreur
 }
 
+// On accède à l'objet puter
 const getPuter = (): typeof window.puter | null =>
     typeof window !== "undefined" && window.puter ? window.puter : null;
 
+//  Creation du store Zustand typé
 export const usePuterStore = create<PuterStore>((set, get) => {
+    // Gestion erreur & reset auth
     const setError = (msg: string) => {
         set({
             error: msg,
@@ -241,6 +252,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         }
     };
 
+    // Init asynchrone
     const init = (): void => {
         const puter = getPuter();
         if (puter) {
@@ -265,6 +277,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         }, 10000);
     };
 
+    // Système de fichiers
     const write = async (path: string, data: string | File | Blob) => {
         const puter = getPuter();
         if (!puter) {
@@ -310,6 +323,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         return puter.fs.delete(path);
     };
 
+    // IA
     const chat = async (
         prompt: string | ChatMessage[],
         imageURL?: string | PuterChatOptions,
@@ -363,6 +377,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         return puter.ai.img2txt(image, testMode);
     };
 
+    // store clé-valeur
     const getKV = async (key: string) => {
         const puter = getPuter();
         if (!puter) {
@@ -411,6 +426,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         return puter.kv.flush();
     };
 
+    // Mis en place de la structure retournée & son typage
     return {
         isLoading: true,
         error: null,
