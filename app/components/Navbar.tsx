@@ -4,7 +4,7 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <Link to="/">
-                <p className="text-2xl font-bold tetx-gradient">CV Match AI</p>
+                <p className="text-2xl font-bold tetx-gradient">CV Matchr AI</p>
             </Link>
             <Link to="/upload">
                 <p className="primary-button w-fit">Upload Resume</p>
