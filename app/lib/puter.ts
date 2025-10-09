@@ -1,3 +1,4 @@
+//Auth setup
 import { create } from "zustand";
 
 // Permet d'étendre le type global Window pour y intégrer l'objet "puter"
