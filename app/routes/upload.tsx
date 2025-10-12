@@ -1,10 +1,31 @@
 import React, {type FormEvent, useState} from 'react';
 import Navbar from "~/components/Navbar";
+import FileUploader from "~/components/FileUploader";
 
 const Upload = () => {
     const [isProcessing, setIsProcessing] = useState(false);
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    const [statusText, setStatustext] = useState('');
+    const [file, setFile] = useState<File | null>(null);
 
+    const handleFileSelect = (file: File | null) => {
+        setFile(file);
+    }
+    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const form = e.currentTarget.closest('form');
+        if(!form) return;
+        const formData = new FormData(form);
+
+        const companyName = formData.get('company-name');
+        const jobTitle = formData.get('job-title');
+        const jobDescription = formData.get('job-description');
+
+        console.log({
+            companyName,
+            jobTitle,
+            jobDescription,
+            file
+        })
     }
 
 
@@ -16,7 +37,7 @@ const Upload = () => {
                     <h1>Smart feedback for your dream job</h1>
                     {isProcessing ? (
                         <>
-                            <h2>{/*Upload state will be render here*/}</h2>
+                            <h2>{statusText}</h2>
                             <img src="/images/resume-scan.gif" className="w-full" />
                         </>
                     ) : (
@@ -38,7 +59,7 @@ const Upload = () => {
                             </div>
                             <div className="form-div">
                                 <label htmlFor="uploader">Upload Resume</label>
-                                <div>Uploader</div>
+                                <FileUploader  onFileSelect={handleFileSelect} />
                             </div>
                             <button className="primary-button" type="submit">
                                 Analyze Resume
