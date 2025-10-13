@@ -7,8 +7,11 @@ interface FileUploaderProps {
 }
 
 const FileUploader = ({ onFileSelect}: FileUploaderProps) => {
-
+    // Custom handling of PDF close btn
+    const [isFileRemoved, setIsFileRemoved] = useState(false);
     const onDrop = useCallback((acceptedFiles: File[]) => {
+        // After a first drop init again
+        setIsFileRemoved(false);
         const file = acceptedFiles[0] || null;
         onFileSelect?.(file);
     }, [onFileSelect]);
@@ -22,7 +25,13 @@ const FileUploader = ({ onFileSelect}: FileUploaderProps) => {
         maxSize: 20 * 1024 * 1024,
     });
 
-    const file = acceptedFiles[0] || null;
+    // const file = acceptedFiles[0] || null;
+    const file = !isFileRemoved ? (acceptedFiles[0] || null) : null;
+    const handleRemove = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        setIsFileRemoved(true);
+        onFileSelect?.(null);
+    };
 
     return (
         <div className="w-full gradient-border">
@@ -44,9 +53,10 @@ const FileUploader = ({ onFileSelect}: FileUploaderProps) => {
                                     </p>
                                 </div>
                             </div>
-                            <button className="p-2 cursor-pointer" onClick={(e) => {
-                                onFileSelect?.(null)
-                            }}>
+                            {/*<button className="p-2 cursor-pointer" onClick={(e) => {*/}
+                            {/*    onFileSelect?.(null)*/}
+                            {/*}}>*/}
+                            <button className="p-2 cursor-pointer" onClick={handleRemove}>
                                 <img src="/icons/cross.svg" alt="remove" className="w-4 h-4" />
                             </button>
                         </div>

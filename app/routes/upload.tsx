@@ -20,7 +20,6 @@ const Upload = () => {
 
     const handleAnalyze = async ({ companyName, jobTitle, jobDescription, file }: { companyName: string, jobTitle: string, jobDescription: string, file: File  }) => {
         setIsProcessing(true);
-        console.log('handleAnalyse');
         // File upload
         setStatustext('Uploading the file...');
         const uploadedFile = await fs.upload([file]);
@@ -66,7 +65,6 @@ const Upload = () => {
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-        console.log('111');
         e.preventDefault();
         const form = e.currentTarget.closest('form');
         if(!form) return;
@@ -77,7 +75,6 @@ const Upload = () => {
         const jobDescription = formData.get('job-description');
 
         if(!file) return;
-            console.log("444")
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }
 
