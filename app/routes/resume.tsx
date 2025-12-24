@@ -7,7 +7,7 @@ import Details from "~/components/Details";
 
 
 export const meta = () => ([
-    { title: 'CV Matchr AI | Auth'},
+    { title: 'CV Match | Auth'},
     { name: 'description', content: 'Detailed overview of your resume' },
 ])
 

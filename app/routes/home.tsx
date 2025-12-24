@@ -7,7 +7,7 @@ import {useEffect, useState} from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "CV Matchr AI" },
+    { title: "CV Match" },
     { name: "description", content: "Resume analyzer for your dream job!" },
   ];
 }
