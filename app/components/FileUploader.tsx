@@ -53,9 +53,6 @@ const FileUploader = ({ onFileSelect}: FileUploaderProps) => {
                                     </p>
                                 </div>
                             </div>
-                            {/*<button className="p-2 cursor-pointer" onClick={(e) => {*/}
-                            {/*    onFileSelect?.(null)*/}
-                            {/*}}>*/}
                             <button className="p-2 cursor-pointer" onClick={handleRemove}>
                                 <img src="/icons/cross.svg" alt="remove" className="w-4 h-4" />
                             </button>
@@ -63,15 +60,14 @@ const FileUploader = ({ onFileSelect}: FileUploaderProps) => {
 
                     ) : (
                         <div>
-                            <div className="mx-auto w-16 h-16 flex items-center justify-center mb-2">
-                                <img src="/icons/info.svg" alt="upload" className="size-20" />
+                            <div className="mx-auto w-16 flex items-center justify-center mb-2">
                             </div>
                             <p className="text-lg text-gray-500">
                                 <span className="font-semibold">
                                     Click to upload
                                 </span> or drag and drop
                             </p>
-                            <p className="text-lg text-gray-500">PDF (max {formatSize(maxFileSize)})</p>
+                            <p className="text-lg text-gray-500">PDF (max size {formatSize(maxFileSize)})</p>
                         </div>
                     )}
                 </div>
