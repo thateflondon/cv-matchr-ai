@@ -61,7 +61,7 @@ const Upload = () => {
         data.feedback = JSON.parse(feedbackText);
         await kv.set(`resume:${uuid}`, JSON.stringify(data));
         setStatustext(`Analysis complete, redirecting...`);
-        console.log(data);
+        console.log("data",data);
         navigate(`/resume/${uuid}`);
     }
 
@@ -79,10 +79,12 @@ const Upload = () => {
         handleAnalyze({ companyName, jobTitle, jobDescription, file });
     }
 
+    const userName = auth.user?.username;
 
     return (
         <main className="bg-[url('/images/bg-main.svg')] bg-cover">
-            <Navbar />
+            <div className="app-container">
+                <Navbar userName={userName}/>
             <section className="main-section">
                 <div className="page-heading py-16">
                     <h1>Smart feedback for your dream job</h1>
@@ -119,6 +121,7 @@ const Upload = () => {
                     )}
                 </div>
             </section>
+            </div>
         </main>
     )
 }

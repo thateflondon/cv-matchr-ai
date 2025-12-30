@@ -26,6 +26,7 @@ body {
 main {
     @apply min-h-screen pt-10;
 }
+
 h1 {
     @apply max-sm:text-[3rem] text-6xl  text-gradient leading-tight xl:tracking-[-2px] font-semibold;
 }
@@ -50,6 +51,9 @@ form {
 }
 
 @layer components {
+    .app-container {
+       @apply flex flex-col justify-center items-center;
+    }
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
     }
@@ -75,7 +79,7 @@ form {
         @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white;
     }
     .main-section {
-        @apply flex flex-col items-center gap-8 pt-12 max-sm:mx-2 mx-15 pb-5;
+        @apply flex flex-col items-center gap-8 pt-12 max-w-[1660px] max-sm:mx-2 mx-15 pb-5;
     }
     .page-heading {
         @apply flex flex-col items-center gap-8 max-w-4xl text-center max-sm:gap-4;
@@ -85,7 +89,7 @@ form {
     }
 
     .resume-card {
-        @apply flex flex-col gap-8 h-[560px] w-[350px] lg:w-[430px] xl:w-[490px] bg-white rounded-2xl p-4;
+        @apply flex flex-col gap-8 w-full max-w-[350px] lg:max-w-[430px] xl:max-w-[490px] bg-white rounded-2xl p-4;
     }
 
     .resume-card-header {
@@ -97,7 +101,7 @@ form {
     }
 
     .navbar {
-        @apply flex flex-row justify-between items-center bg-white rounded-full p-4 w-full px-10 max-w-[1200px] mx-auto;
+        @apply flex flex-row justify-between items-center rounded-full p-0 w-[90%] px-10 max-w-[1670px] mx-auto;
     }
 
     .score-badge {
@@ -113,6 +117,42 @@ form {
     }
     .uploader-selected-file {
         @apply flex items-center justify-between p-3 bg-gray-50 rounded-2xl;
+    }
+
+    .logo-wrapper {
+        @apply flex items-center justify-between;
+    }
+
+    .app-logo {
+        @apply bg-[url('/icons/check.svg')] bg-red-500;
+    }
+
+    .logo-text {
+        @apply bg-transparent border border-[#606beb] text-[#606beb] rounded-[25px] px-4 py-2;
+    }
+
+    .menu-right {
+        @apply flex items-center;
+    }
+
+    .username-container {
+        @apply pl-4;
+    }
+
+    .username-content {
+        @apply text-[#606beb] capitalize;
+    }
+
+    .dashboard {
+        @apply ml-[10px];
+    }
+
+    .language-choice {
+        @apply block w-[20px] h-[10px] ml-[10px];
+
+        img {
+            @apply w-full h-auto;
+        }
     }
 }
 

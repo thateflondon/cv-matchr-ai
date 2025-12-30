@@ -18,6 +18,8 @@ export default function Home() {
     // const [resumeUrl, setResumeUrl] = useState("");
     const [resumes, setResumes] = useState<Resume[]>([]);
     const [loadingResumes, setLoadingResumes] = useState(false);
+    
+    const userName = auth.user?.username; // permet de récupérer username via l'object user
 
     useEffect(() => {
         if(!auth.isAuthenticated) navigate('/auth?next=/'); // Si pas authentification on affiche la page login
@@ -38,14 +40,15 @@ export default function Home() {
             setLoadingResumes(false);
         }
         loadResumes();
-
+        console.log("user = ", auth.user);
     }, []);
 
   return (<main className="bg-[url('/images/bg-main.svg')] bg-cover">
-      {/*Navbar*/}
-      <Navbar/>
+    <div className="app-container">
+        {/*Navbar*/}
+      <Navbar userName={userName}/>
       {/*Navbar End */}
-    <section className="main-section">
+      <section className="main-section">
         {/*Header*/}
         <div className="page-heading py-16">
             <h1>Track your applications and Resume Ratings</h1>
@@ -82,5 +85,6 @@ export default function Home() {
         )}
         {/*Resume section end*/}
     </section>
+    </div>
   </main>)
 }
