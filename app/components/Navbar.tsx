@@ -9,9 +9,9 @@ const Navbar = ({ userName }: UserProps) => {
     <nav className="navbar">
       <Link to="/">
         <div className="logo-wrapper">
-          {/* <span className="app-logo" src="/public/icons/check.svg" alt="check" /> */}
-          <span className="app-logo"></span>
-          <p className="logo-text w-fit">CV Match</p>
+          <img className="app-logo" src="/public/icons/logo.png" alt="logo" />
+          {/* <span className="app-logo"></span>*/}
+          <p className="logo-text w-fit">atch</p> 
         </div>
       </Link>
 
