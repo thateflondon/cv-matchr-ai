@@ -4,7 +4,7 @@
 
 @theme {
     --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --color-dark-200: #475467;
     --color-light-blue-100: #c1d3f81a;
     --color-light-blue-200: #a7bff14d;
@@ -24,11 +24,11 @@ body {
 }
 
 main {
-    @apply min-h-screen pt-10;
+    @apply min-h-screen pt-10 relative;
 }
 
 h1 {
-    @apply max-sm:text-[3rem] text-6xl  text-gradient leading-tight xl:tracking-[-2px] font-semibold;
+    @apply max-sm:text-[3rem] text-6xl text-gradient leading-tight xl:tracking-[-2px] font-semibold;
 }
 
 h2 {
@@ -38,6 +38,7 @@ h2 {
 label {
     @apply text-dark-200;
 }
+
 input {
     @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
 }
@@ -52,38 +53,57 @@ form {
 
 @layer components {
     .app-container {
-       @apply flex flex-col justify-center items-center;
+        @apply flex flex-col justify-center items-center;
     }
+
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
     }
+
     .gradient-border {
         @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200 p-4 rounded-2xl;
     }
+
     .primary-button {
-        @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full;
+        @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full transition-all duration-300;
     }
+
+    .primary-button:hover {
+        @apply primary-gradient-hover;
+    }
+
     .resume-nav {
         @apply flex flex-row justify-between items-center p-4 border-b border-gray-200;
     }
+
     .resume-summary {
         @apply flex flex-row items-center justify-center p-4 gap-4;
+
         .category {
             @apply flex flex-row gap-2 items-center bg-gray-50 rounded-2xl p-4 w-full justify-between;
         }
     }
+
     .back-button {
         @apply flex flex-row items-center gap-2 border border-gray-200 rounded-lg p-2 shadow-sm;
     }
+
     .auth-button {
-        @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white;
+        @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white transition-all duration-300;
     }
+
+    .auth-button:hover {
+        @apply primary-gradient-hover;
+    }
+
     .main-section {
         @apply flex flex-col items-center gap-8 pt-12 max-w-[1660px] max-sm:mx-2 mx-15 pb-5;
     }
+
     .page-heading {
         @apply flex flex-col items-center gap-8 max-w-4xl text-center max-sm:gap-4;
     }
+
     .resumes-section {
         @apply flex flex-wrap max-md:flex-col max-md:gap-4 gap-6 items-start max-md:items-center w-full max-w-[1850px] justify-evenly;
     }
@@ -115,20 +135,21 @@ form {
     .uplader-drag-area {
         @apply relative p-8 text-center transition-all duration-700 cursor-pointer bg-white rounded-2xl min-h-[208px];
     }
+
     .uploader-selected-file {
         @apply flex items-center justify-between p-3 bg-gray-50 rounded-2xl;
     }
 
     .logo-wrapper {
-        @apply flex items-center justify-between;
+        @apply flex items-center justify-between w-[100px];
     }
 
     .app-logo {
-        @apply bg-[url('/icons/check.svg')] bg-red-500;
+        /* @apply bg-[url('/icons/check.svg')] bg-red-500; */
     }
 
     .logo-text {
-        @apply bg-transparent border border-[#606beb] text-[#606beb] rounded-[25px] px-4 py-2;
+        @apply bg-transparent text-[#606beb] translate-x-[-17px] pt-[5px] text-[20px] bg-gradient-to-r from-[#4DA3FF] via-[#4F7CFF] via-[65%] to-[#9B5CFF] bg-clip-text text-transparent;
     }
 
     .menu-right {
@@ -154,6 +175,32 @@ form {
             @apply w-full h-auto;
         }
     }
+
+    .footer-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        height: 100px;
+    }
+
+    .footer-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #606beb;
+        gap: 20px;
+
+        .gtu, .privacy, .contact {
+            font-size: 15px;
+        }
+    }
+
+    .copyright {
+        font-size: 12px;
+        color: #4F7CFF;
+    }
 }
 
 @utility bg-gradient {
@@ -168,14 +215,30 @@ form {
     @apply bg-gradient-to-b from-light-blue-100 to-light-blue-200;
 }
 
-@utility primary-gradient {
+/* @utility primary-gradient {
     background: linear-gradient(to bottom, #8e98ff, #606beb);
     box-shadow: 0px 74px 21px 0px #6678ef00;
+} */
+
+@utility primary-gradient {
+    background: linear-gradient(90deg,
+            #4DA3FF 0%,
+            #4F7CFF 35%,
+            #7A5CFF 65%,
+            #9B5CFF 100%);
 }
 
 @utility primary-gradient-hover {
-    background: linear-gradient(to bottom, #717dff, #4957eb);
+    background: linear-gradient(90deg,
+            #3D92F0 0%,
+            #3F6FEF 35%,
+            #6A4EEF 65%,
+            #8B4EEF 100%);
 }
+
+/* @utility primary-gradient-hover {
+    background: linear-gradient(to bottom, #717dff, #4957eb);
+} */
 
 @utility inset-shadow {
     box-shadow: inset 0 0 12px 0 rgba(36, 99, 235, 0.2);
@@ -186,7 +249,36 @@ form {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 2px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background: linear-gradient(180deg,
+            #4DA3FF 0%,
+            #4F7CFF 35%,
+            #7A5CFF 65%,
+            #9B5CFF 100%);
+}
+
+/* Hover state */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg,
+            #3D92F0 0%,
+            #3F6FEF 35%,
+            #6A4EEF 65%,
+            #8B4EEF 100%);
 }
