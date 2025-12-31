@@ -82,7 +82,7 @@ const Upload = () => {
     const userName = auth.user?.username;
 
     return (
-        <main className="bg-[url('/images/bg-main.svg')] bg-cover">
+        <main className="bg-[url('/images/bg-large.svg')] bg-cover">
             <div className="app-container">
                 <Navbar userName={userName}/>
             <section className="main-section">
