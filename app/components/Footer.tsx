@@ -1,6 +1,6 @@
-import React from "react";
-
 function Footer() {
+    const date = new Date().getFullYear();
+    
   return (
     <div className="footer-container">
       <div className="footer-content">
@@ -14,7 +14,7 @@ function Footer() {
           Contact Us
         </a>
       </div>
-      <div className="copyright">© 2025 CV Match. All rights reserved</div>
+      <div className="copyright">© {date} CV Match. All rights reserved</div>
     </div>
   );
 }
