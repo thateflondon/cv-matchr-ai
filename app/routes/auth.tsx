@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import HeroSection from "~/components/HeroSection";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
+import Features from "~/components/Features";
 
 export const meta = () => [
   { title: "CV Match | Auth" },
@@ -29,6 +30,7 @@ const Auth = () => {
       <div className="app-container auth">
         <Navbar userName={userName} />
         <HeroSection />
+        <Features/>
       </div>
       </main>
       <Footer/>
