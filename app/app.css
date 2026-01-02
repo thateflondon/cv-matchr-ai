@@ -28,7 +28,7 @@ body {
 }
 
 main {
-    @apply min-h-screen pt-10 relative;
+    @apply min-h-screen relative;
 }
 
 h1 {
@@ -57,10 +57,22 @@ form {
 
 @layer components {
     .app-container {
-        /* @apply flex flex-col justify-center items-center;
-        flex: 1 0 auto; */
         @apply flex-1;
+
+        &.auth {
+            @apply h-screen flex flex-col;
+
+            .navbar {
+                @apply flex-shrink-0;
+            }
+
+            .heros-section {
+                @apply flex-1 content-center overflow-y-auto;
+            }
+        }
     }
+
+
 
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
