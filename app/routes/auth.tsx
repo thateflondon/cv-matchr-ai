@@ -29,7 +29,6 @@ const Auth = () => {
       <div className="app-container auth">
         <Navbar userName={userName} />
         <HeroSection />
-        {/* <Footer/> */}
       </div>
       </main>
       <Footer/>
