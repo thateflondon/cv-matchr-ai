@@ -118,7 +118,7 @@ const Upload = () => {
                 <form
                   id="upload-form"
                   onSubmit={handleSubmit}
-                  className="flex flex-col gap-4 mt-8"
+                  className="flex flex-col gap-4 mt-8 px-4"
                 >
                   <div className="form-div">
                     <label htmlFor="company-name">Company Name</label>
