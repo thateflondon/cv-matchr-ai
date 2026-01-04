@@ -4,7 +4,7 @@ import logo from "public/icons/logo.png"
 const HeroSection = () => {
   return (
     <div className="heros-section relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-32">
+      <div className="hero-section-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-32">
         <div className="text-center">
           {/* <div className="flex justify-center mb-8">
             <img src={logo} alt="CVMatch Logo" className="h-16 sm:h-20" />
