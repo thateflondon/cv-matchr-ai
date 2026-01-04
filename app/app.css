@@ -72,7 +72,10 @@ form {
         }
     }
 
-
+    .hero-section-container {
+        height: 100vh;
+        align-content: center;
+    }
 
     .text-gradient {
         @apply bg-clip-text text-transparent bg-gradient-to-r from-[#AB8C95] via-[#000000] to-[#8E97C5];
@@ -140,7 +143,7 @@ form {
     }
 
     .navbar {
-        @apply flex flex-row justify-between items-center rounded-full p-0 w-[90%] px-10 max-w-[1670px] mx-auto;
+        @apply flex flex-row justify-between items-center rounded-full p-0 w-[90%] px-10 max-w-[1670px] mx-auto relative;
     }
 
     .score-badge {
@@ -172,11 +175,11 @@ form {
     }
 
     .menu-right {
-        @apply flex items-center;
+        @apply flex items-center gap-5;
     }
 
     .username-container {
-        @apply pl-4;
+        /* @apply pl-4; */
     }
 
     .username-content {
@@ -184,14 +187,67 @@ form {
     }
 
     .dashboard {
-        @apply ml-[10px];
+        @apply cursor-pointer;
+    }
+    
+    .language-selection {
+        @apply relative min-w-[20px];
     }
 
-    .language-choice {
-        @apply block w-[20px] h-[10px] ml-[10px];
+    .menu-right {
+        .language-choice {
+        @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center w-[20px] h-[10px];
 
         img {
             @apply w-full h-auto;
+        }
+    }
+    }
+    
+
+    /* Hamburger Menu Styles */
+    .hamburger-button {
+        @apply z-50 p-2 rounded-lg hover:bg-gray-100 transition-colors;
+    }
+
+    .mobile-menu-overlay {
+        @apply fixed inset-0 bg-black/50 z-50;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .mobile-menu-sidebar {
+        @apply fixed top-0 right-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out;
+    }
+
+    .mobile-menu-sidebar.open {
+        @apply translate-x-0;
+    }
+
+    .mobile-menu-close {
+        @apply absolute top-6 right-6 p-2 rounded-lg hover:bg-gray-100 transition-colors z-10;
+    }
+
+    .mobile-menu-content {
+        @apply flex flex-col gap-2 pt-20 px-6 h-full overflow-y-auto;
+    }
+
+    .mobile-menu-item {
+        @apply px-4 py-4 rounded-xl hover:bg-gray-50 transition-colors;
+
+        .primary-button {
+            @apply w-full text-center;
+        }
+
+        .username-container {
+            @apply pl-0;
+        }
+
+        .language-choice {
+            @apply w-auto ml-0;
+        }
+
+        .dashboard {
+            @apply ml-0;
         }
     }
 
@@ -248,11 +304,40 @@ form {
 @keyframes fadeIn {
     from {
         opacity: 0;
+        transform: translateY(-10px);
     }
 
     to {
         opacity: 1;
+        transform: translateY(0);
     }
+}
+
+@keyframes blob {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
 }
 
 /* Scrollbar */
