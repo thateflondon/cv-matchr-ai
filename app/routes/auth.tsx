@@ -5,6 +5,8 @@ import HeroSection from "~/components/HeroSection";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
 import Features from "~/components/Features";
+import HowItWorks from "~/components/HowItWorks";
+import CTA from "~/components/CTA";
 
 export const meta = () => [
   { title: "CV Match | Auth" },
@@ -26,14 +28,24 @@ const Auth = () => {
 
   return (
     <>
-      <main id="app" className="bg-[url('/images/bg-large.svg')] bg-cover">
-      <div className="app-container auth">
-        <Navbar userName={userName} />
-        <HeroSection />
-        <Features/>
-      </div>
+      <main
+        id="app"
+        className="heros-section relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
+      >
+        <div className="app-container auth">
+          <Navbar userName={userName} />
+          <HeroSection />
+          <Features />
+          <HowItWorks />
+          <CTA />
+        </div>
+        <div className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
+        </div>
       </main>
-      <Footer/>
+      <Footer />
     </>
   );
 };
