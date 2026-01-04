@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { usePuterStore } from "~/lib/puter";
 import { Link } from "react-router";
-import { Menu, X } from 'lucide-react';
+import { Menu, X } from "lucide-react";
 
 interface UserProps {
   userName?: string;
@@ -45,13 +45,18 @@ const Navbar = ({ userName }: UserProps) => {
             </>
           )}
           {/*Hidden before app translation is made */}
-          <span className="language-choice hidden">
-            <img src="/icons/lang_uk.svg" alt="english" />
-          </span>
+          <div className="language-selection">
+            <span className="language-choice">
+              <img src="/icons/lang_fr.svg" alt="english" />
+            </span>
+            <span className="language-choice">
+              <img src="/icons/lang_uk.svg" alt="english" />
+            </span>
+          </div>
         </div>
 
         {/* Hamburger Icon */}
-        <button 
+        <button
           className="hamburger-button md:hidden"
           onClick={toggleMenu}
           aria-label="Toggle menu"
@@ -63,12 +68,12 @@ const Navbar = ({ userName }: UserProps) => {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="mobile-menu-overlay" onClick={toggleMenu}>
-          <div 
-            className={`mobile-menu-sidebar ${isMenuOpen ? 'open' : ''}`}
+          <div
+            className={`mobile-menu-sidebar ${isMenuOpen ? "open" : ""}`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Close Button */}
-            <button 
+            <button
               className="mobile-menu-close"
               onClick={toggleMenu}
               aria-label="Close menu"
@@ -83,17 +88,18 @@ const Navbar = ({ userName }: UserProps) => {
                   <p className="primary-button w-fit">Upload Resume</p>
                 </div>
               </Link>
-              
+
               {auth.isAuthenticated && (
                 <>
                   <div className="mobile-menu-item">
                     <div className="dashboard">Dashboard</div>
                   </div>
-                  
+
                   <div className="mobile-menu-item">
                     {userName ? (
                       <div className="username-container">
-                        Welcome <span className="username-content">{userName}</span>
+                        Welcome{" "}
+                        <span className="username-content">{userName}</span>
                       </div>
                     ) : (
                       <div className="username-container">
@@ -105,12 +111,12 @@ const Navbar = ({ userName }: UserProps) => {
               )}
 
               <div className="mobile-menu-item">
-                <h4 className='pb-4'>Select language</h4>
+                <h4 className="pb-4">Select language</h4>
                 <span className="language-choice flex">
-                  <a className='w-[30px] mr-4' href="ENglish">
+                  <a className="w-[30px] mr-4" href="ENglish">
                     <img src="/icons/lang_uk.svg" alt="english" />
                   </a>
-                  <a className='w-[30px]' href="French">
+                  <a className="w-[30px]" href="FRench">
                     <img src="/icons/lang_fr.svg" alt="french" />
                   </a>
                   {/* <span className="ml-2">English</span> */}
