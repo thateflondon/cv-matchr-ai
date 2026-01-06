@@ -111,6 +111,9 @@ form {
 
     .auth-button {
         @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-[600px] max-md:w-full text-3xl font-semibold text-white transition-all duration-300;
+        &.login {
+            @apply w-full;
+        }
     }
 
     .auth-button:hover {
@@ -341,29 +344,39 @@ form {
 }
 
 /* Scrollbar */
+/* Firefox */
+* {
+  scrollbar-width: none;
+  scrollbar-color: #6A4EEF transparent;
+}
+
+/* Chrome / Edge / Safari */
 ::-webkit-scrollbar {
-    width: 2px;
-    height: 6px;
+  width: 2px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: transparent;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    border-radius: 9999px;
-    background: linear-gradient(180deg,
-            #4DA3FF 0%,
-            #4F7CFF 35%,
-            #7A5CFF 65%,
-            #9B5CFF 100%);
+  border-radius: 9999px;
+  background: linear-gradient(
+    180deg,
+    #4DA3FF 0%,
+    #4F7CFF 35%,
+    #7A5CFF 65%,
+    #9B5CFF 100%
+  );
 }
 
-/* Hover state */
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg,
-            #3D92F0 0%,
-            #3F6FEF 35%,
-            #6A4EEF 65%,
-            #8B4EEF 100%);
+  background: linear-gradient(
+    180deg,
+    #3D92F0 0%,
+    #3F6FEF 35%,
+    #6A4EEF 65%,
+    #8B4EEF 100%
+  );
 }
