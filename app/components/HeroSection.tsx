@@ -1,7 +1,29 @@
 import { ArrowRight, Upload } from "lucide-react";
-import logo from "public/icons/logo.png"
+import { useNavigate } from "react-router";
+import { usePuterStore } from "~/lib/puter";
+import logo from "public/icons/logo.png";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  onAuthRequired?: () => void;
+}
+
+const HeroSection = ({ onAuthRequired }: HeroSectionProps) => {
+  const navigate = useNavigate();
+  const { auth } = usePuterStore();
+
+  const handleGetStarted = () => {
+    if (auth.isAuthenticated) {
+      navigate('/upload');
+    } else {
+      onAuthRequired?.();
+    }
+  };
+
+  const scrollToHowItWorks = () => {
+    const element = document.getElementById('how-it-works');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <div className="heros-section relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <div className="hero-section-container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 sm:pt-24 sm:pb-32">
@@ -21,13 +43,19 @@ const HeroSection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="group bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer">
+            <button 
+              onClick={handleGetStarted}
+              className="group bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-full hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+            >
               <Upload className="w-5 h-5" />
               Check Your ATS Score
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
 
-            <button className="text-gray-700 px-8 py-4 rounded-full border-2 border-gray-300 hover:border-purple-500 hover:text-purple-600 transition-all cursor-pointer">
+            <button 
+              onClick={scrollToHowItWorks}
+              className="text-gray-700 px-8 py-4 rounded-full border-2 border-gray-300 hover:border-purple-500 hover:text-purple-600 transition-all cursor-pointer"
+            >
               See How It Works
             </button>
           </div>
