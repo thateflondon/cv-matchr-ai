@@ -1,6 +1,23 @@
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from 'react-router';
+import { usePuterStore } from '~/lib/puter';
 
-const CTA = () => {
+interface CTAProps {
+  onAuthRequired?: () => void;
+}
+
+const CTA = ({ onAuthRequired }: CTAProps) => {
+    const navigate = useNavigate();
+  const { auth } = usePuterStore();
+
+  const handleGetStarted = () => {
+    if (auth.isAuthenticated) {
+      navigate('/upload');
+    } else {
+      onAuthRequired?.();
+    }
+  };
+
   return (
     <div className="py-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -12,7 +29,7 @@ const CTA = () => {
           and landed more interviews.
         </p>
 
-        <button className="group bg-white text-purple-600 px-10 py-5 rounded-full hover:shadow-2xl transition-all inline-flex items-center gap-3">
+        <button onClick={handleGetStarted} className="cursor-pointer group bg-white text-purple-600 px-10 py-5 rounded-full hover:shadow-2xl transition-all inline-flex items-center gap-3">
           <span>Start Free Analysis</span>
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </button>
