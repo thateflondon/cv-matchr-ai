@@ -1,18 +1,29 @@
 import { useState } from "react";
 import { usePuterStore } from "~/lib/puter";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { Menu, X } from "lucide-react";
 
 interface UserProps {
   userName?: string;
+  onAuthRequired?: () => void;
 }
 
-const Navbar = ({ userName }: UserProps) => {
+const Navbar = ({ userName, onAuthRequired }: UserProps) => {
   const { auth } = usePuterStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleUploadClick = (e: React.MouseEvent) => {
+    if (!auth.isAuthenticated) {
+      e.preventDefault();
+      if (onAuthRequired) {
+        onAuthRequired();
+      }
+    }
   };
 
   return (
@@ -27,7 +38,7 @@ const Navbar = ({ userName }: UserProps) => {
 
         {/* Desktop Menu */}
         <div className="menu-right max-md:hidden">
-          <Link to="/upload">
+          <Link to="/upload" onClick={handleUploadClick}>
             <p className="primary-button w-fit">Upload Resume</p>
           </Link>
           {auth.isAuthenticated && (
@@ -83,7 +94,7 @@ const Navbar = ({ userName }: UserProps) => {
 
             {/* Menu Items */}
             <div className="mobile-menu-content">
-              <Link to="/upload" onClick={toggleMenu}>
+              <Link to="/upload" onClick={(e) => { handleUploadClick(e); toggleMenu(); }}>
                 <div className="mobile-menu-item">
                   <p className="primary-button w-fit">Upload Resume</p>
                 </div>
@@ -119,7 +130,6 @@ const Navbar = ({ userName }: UserProps) => {
                   <a className="w-[30px]" href="FRench">
                     <img src="/icons/lang_fr.svg" alt="french" />
                   </a>
-                  {/* <span className="ml-2">English</span> */}
                 </span>
               </div>
             </div>
