@@ -55,6 +55,7 @@ interface PuterStore {
     auth: {
         user: PuterUser | null;
         isAuthenticated: boolean;
+        is_temp: boolean;
         signIn: () => Promise<void>;
         signOut: () => Promise<void>;
         refreshUser: () => Promise<void>;
@@ -118,6 +119,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             isLoading: false,
             auth: {
                 user: null,
+                is_temp: false,
                 isAuthenticated: false,
                 signIn: get().auth.signIn,
                 signOut: get().auth.signOut,
@@ -144,6 +146,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
                 set({
                     auth: {
                         user,
+                        is_temp: true,
                         isAuthenticated: true,
                         signIn: get().auth.signIn,
                         signOut: get().auth.signOut,
@@ -158,6 +161,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
                 set({
                     auth: {
                         user: null,
+                        is_temp: false,
                         isAuthenticated: false,
                         signIn: get().auth.signIn,
                         signOut: get().auth.signOut,
@@ -209,6 +213,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             set({
                 auth: {
                     user: null,
+                    is_temp: false,
                     isAuthenticated: false,
                     signIn: get().auth.signIn,
                     signOut: get().auth.signOut,
@@ -238,6 +243,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
             set({
                 auth: {
                     user,
+                    is_temp: true,
                     isAuthenticated: true,
                     signIn: get().auth.signIn,
                     signOut: get().auth.signOut,
@@ -435,6 +441,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         auth: {
             user: null,
             isAuthenticated: false,
+            is_temp: false,
             signIn,
             signOut,
             refreshUser,
