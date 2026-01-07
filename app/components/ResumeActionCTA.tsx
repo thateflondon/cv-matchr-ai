@@ -1,4 +1,5 @@
-import { Download, Upload, Share2 } from "lucide-react";
+import { Download, Upload, Share2, FileEdit } from "lucide-react";
+import { useNavigate } from "react-router";
 
 interface ResumeActionCTAProps {
   score: number;
@@ -8,6 +9,8 @@ interface ResumeActionCTAProps {
 }
 
 const ResumeActionCTA = ({ score, onUploadNew, onDownload, onShare }: ResumeActionCTAProps) => {
+  const navigate = useNavigate();
+  
   const getMessage = () => {
     if (score > 80) {
       return {
@@ -24,7 +27,7 @@ const ResumeActionCTA = ({ score, onUploadNew, onDownload, onShare }: ResumeActi
     } else {
       return {
         title: "Room for Improvement 📈",
-        subtitle: "Don't worry! Upload a revised version to see your score improve.",
+        subtitle: "Don't worry! Use our CV Builder to create an ATS-friendly resume from scratch.",
         gradient: "from-orange-500 to-pink-600"
       };
     }
@@ -38,9 +41,19 @@ const ResumeActionCTA = ({ score, onUploadNew, onDownload, onShare }: ResumeActi
       <p className="max-sm:text-sm text-base mb-4 sm:mb-6 text-white/90">{subtitle}</p>
       
       <div className="flex flex-col sm:flex-row gap-3">
+        {score < 80 && (
+          <button 
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center justify-center gap-2 bg-white text-gray-900 px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-gray-100 transition-all max-sm:text-sm font-medium"
+          >
+            <FileEdit className="w-4 h-4 sm:w-5 sm:h-5" />
+            Create ATS-Friendly CV
+          </button>
+        )}
+        
         <button 
           onClick={onUploadNew}
-          className="flex items-center justify-center gap-2 bg-white text-gray-900 px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-gray-100 transition-all max-sm:text-sm"
+          className="flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm text-white border border-white/30 px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-white/30 transition-all max-sm:text-sm"
         >
           <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
           Upload New Version
