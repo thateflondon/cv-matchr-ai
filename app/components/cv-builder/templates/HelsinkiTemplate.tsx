@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { BaseTemplateProps } from "./BaseTemplate";
+import { BaseTemplateProps } from "./BaseTemplate";
 
 /**
  * Helsinki Template (Prime ATS)
@@ -10,7 +10,7 @@ import type { BaseTemplateProps } from "./BaseTemplate";
  */
 const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fontSize, fontWeight, spacing } = customization;
+    const { primaryColor, fontSize, fontWeight, spacing, fonts } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
     // A4 dimensions
@@ -27,11 +27,10 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: "Georgia, serif",
+          fontFamily: fonts.primary,
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
-          padding: "48px 56px",
         }}
       >
         {/* Header */}

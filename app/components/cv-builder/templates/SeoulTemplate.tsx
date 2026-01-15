@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import type { BaseTemplateProps } from "./BaseTemplate";
+import { BaseTemplateProps } from "./BaseTemplate";
 
 /**
  * Seoul Template (Pure ATS)
@@ -12,7 +12,7 @@ import type { BaseTemplateProps } from "./BaseTemplate";
  */
 const SeoulTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fontSize, fontWeight, spacing } = customization;
+    const { primaryColor, fontSize, fontWeight, spacing, fonts } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
     // A4 dimensions
@@ -23,15 +23,13 @@ const SeoulTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
       <div
         ref={ref}
         data-cv-preview="true"
-        className="bg-white"
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: "Georgia, serif",
+          fontFamily: fonts.primary,
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
-          padding: "40px 56px",
         }}
       >
         {/* Header - Split Layout */}
