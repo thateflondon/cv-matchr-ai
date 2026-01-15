@@ -1,4 +1,4 @@
-import type { CVTemplate, TemplateID } from "types/cv-builder";
+import type { CVTemplate, TemplateID } from "~/types/cv-builder";
 
 export const TEMPLATES: CVTemplate[] = [
   // ATS Friendly Templates

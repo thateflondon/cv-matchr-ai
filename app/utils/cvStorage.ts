@@ -1,4 +1,4 @@
-import type { CVData, CVCustomization } from "types/cv-builder";
+import type { CVData, CVCustomization } from "~/types/cv-builder";
 
 const STORAGE_KEY_PREFIX = "cv_builder_";
 const DATA_KEY = "data";
