@@ -1,5 +1,6 @@
 import { forwardRef } from "react";
 import type { BaseTemplateProps } from "./BaseTemplate";
+import { formatTextWithLineBreaks, isBulletPoint, removeBulletPrefix, sanitizeProfessionalSummary } from "~/utils/templateHelpers";
 
 /**
  * Tokyo Template (Modern)
@@ -10,7 +11,7 @@ import type { BaseTemplateProps } from "./BaseTemplate";
  */
 const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fontSize, fontWeight, spacing } = customization;
+    const { primaryColor, fontSize, fontWeight, spacing, fonts } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData, languages } = data;
 
     // A4 dimensions
@@ -21,15 +22,13 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
       <div
         ref={ref}
         data-cv-preview="true"
-        className="bg-white"
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: "Arial, sans-serif",
+          fontFamily: fonts.primary,
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
-          padding: "40px 48px",
         }}
       >
         {/* Header with Photo */}
@@ -121,7 +120,7 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                 PROFESSIONAL SUMMARY
               </h2>
             </div>
-            <p style={{ textAlign: "justify" }}>{professionalSummary}</p>
+            <p style={{ textAlign: "justify" }}>{sanitizeProfessionalSummary(professionalSummary)}</p>
           </div>
         )}
 
@@ -180,17 +179,40 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                   </div>
                 </div>
                 
-                {exp.description && (
-                  <p style={{ marginBottom: "6px", color: "#333333" }}>
-                    {exp.description}
-                  </p>
-                )}
+                {exp.description && (() => {
+                  const lines = formatTextWithLineBreaks(exp.description);
+                  const bulletLines = lines.filter(isBulletPoint);
+                  const textLines = lines.filter(line => !isBulletPoint(line));
+                  
+                  return (
+                    <>
+                      {textLines.length > 0 && (
+                        <div style={{ marginBottom: "6px", color: "#333333" }}>
+                          {textLines.map((line, i) => (
+                            <p key={i} style={{ marginBottom: "4px" }}>{line}</p>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {bulletLines.length > 0 && (
+                        <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
+                          {bulletLines.map((line, i) => (
+                            <li key={i} style={{ marginBottom: "3px", color: "#333333" }}>
+                              {removeBulletPrefix(line)}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </>
+                  );
+                })()}
                 
-                {exp.achievements && exp.achievements.length > 0 && (
+                {/* Only show achievements if description doesn't already contain them */}
+                {!exp.description && exp.achievements && exp.achievements.length > 0 && (
                   <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
                     {exp.achievements.map((achievement, i) => (
                       <li key={i} style={{ marginBottom: "3px", color: "#333333" }}>
-                        {achievement}
+                        {removeBulletPrefix(achievement)}
                       </li>
                     ))}
                   </ul>

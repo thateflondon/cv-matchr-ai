@@ -1,4 +1,4 @@
-import type { CVCustomization, CVTemplate } from "types/cv-builder";
+import { CVCustomization, CVTemplate } from "types/cv-builder";
 import { Check, Search } from "lucide-react";
 import { useState } from "react";
 import { TEMPLATES, getTemplatesByCategory } from "~/constants/templates";
@@ -46,6 +46,11 @@ export default function TemplateColorsPanel({
   );
 
   const handleColorChange = (color: string) => {
+    // Don't allow color change if template doesn't support it
+    if (customization.template.supportsColorCustomization === false) {
+      return;
+    }
+    
     onUpdate({
       ...customization,
       primaryColor: color,
@@ -70,23 +75,35 @@ export default function TemplateColorsPanel({
           This color will be used for section titles and accents throughout
           your resume.
         </p>
+        
+        {customization.template.supportsColorCustomization === false && (
+          <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <p className="text-sm text-yellow-800">
+              ⚠️ This template does not support color customization to maintain ATS compatibility.
+            </p>
+          </div>
+        )}
+        
         <div className="grid grid-cols-5 gap-3">
           {colorPresets.map((color) => (
             <button
               key={color.value}
               onClick={() => handleColorChange(color.value)}
-              className={`relative h-12 rounded-lg border-2 transition-all ${
+              disabled={customization.template.supportsColorCustomization === false}
+              className={`relative w-12 h-12 rounded-full border-2 transition-all flex items-center justify-center ${
                 customization.primaryColor === color.value
-                  ? "border-gray-900 scale-105"
-                  : "border-gray-200 hover:border-gray-400"
+                  ? "border-gray-900 scale-110 shadow-lg"
+                  : "border-gray-300 hover:border-gray-500 hover:scale-105"
+              } ${
+                customization.template.supportsColorCustomization === false
+                  ? "opacity-30 cursor-not-allowed"
+                  : ""
               }`}
               style={{ backgroundColor: color.value }}
-              title={color.name}
+              title={customization.template.supportsColorCustomization === false ? "Color customization disabled for this template" : color.name}
             >
               {customization.primaryColor === color.value && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Check className="w-5 h-5 text-white drop-shadow-lg" />
-                </div>
+                <Check className="w-5 h-5 text-white drop-shadow-lg" />
               )}
             </button>
           ))}
