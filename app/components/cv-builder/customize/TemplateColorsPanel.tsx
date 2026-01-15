@@ -1,4 +1,4 @@
-import { CVCustomization, CVTemplate } from "types/cv-builder";
+import { CVCustomization, CVTemplate } from "~/types/cv-builder";
 import { Check, Search } from "lucide-react";
 import { useState } from "react";
 import { TEMPLATES, getTemplatesByCategory } from "~/constants/templates";
