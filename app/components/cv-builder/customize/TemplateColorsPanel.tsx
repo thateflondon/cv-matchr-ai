@@ -1,7 +1,7 @@
 import type { CVCustomization, CVTemplate } from "~/types/cv-builder";
 import { Check, Search } from "lucide-react";
 import { useState } from "react";
-import { TEMPLATES, getTemplatesByCategory } from "~/constants/templates";
+import { getTemplatesByCategory } from "~/constants/templates";
 
 interface TemplateColorsPanelProps {
   customization: CVCustomization;
