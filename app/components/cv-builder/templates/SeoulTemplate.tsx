@@ -12,7 +12,7 @@ import type { BaseTemplateProps } from "./BaseTemplate";
  */
 const SeoulTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fontSize, fontWeight, lineHeight } = customization;
+    const { primaryColor, fontSize, fontWeight, spacing } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
     // A4 dimensions
@@ -28,7 +28,7 @@ const SeoulTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
           fontFamily: "Georgia, serif",
-          lineHeight: `${lineHeight}%`,
+          lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
           padding: "40px 56px",
