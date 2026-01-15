@@ -1,12 +1,6 @@
-import type { CVData, CVEducation } from "types/cv-builder";
-import { Plus, Trash2, GripVertical } from "lucide-react";
-import FormInput from "~/components/common/FormInput";
-import {
-  validateRequired,
-  validateGPA,
-  validateLength,
-  sanitizeInput,
-} from "~/utils/formValidation";
+import type { CVData, CVEducation } from "~/types/cv-builder";
+import { Plus, Sparkles } from "lucide-react";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -14,8 +8,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -24,6 +18,10 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import CollapsibleSection from "../common/CollapsibleSection";
+import FormInput from "~/components/common/FormInput";
+import RichTextEditor from "~/components/common/RichTextEditor";
+import SectionHeader from "../common/SectionHeader";
 
 interface EducationSectionProps {
   data: CVData;
@@ -32,19 +30,27 @@ interface EducationSectionProps {
 }
 
 interface SortableEducationItemProps {
-  id: string;
-  index: number;
   edu: CVEducation;
-  onUpdate: (index: number, field: keyof CVEducation, value: string | boolean) => void;
-  onRemove: (index: number) => void;
+  index: number;
+  id: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onDelete: () => void;
+  onUpdate: (field: keyof CVEducation, value: string | boolean) => void;
+  getTitle: (edu: CVEducation) => string;
+  onAIClick: () => void;
 }
 
 function SortableEducationItem({
-  id,
-  index,
   edu,
+  index,
+  id,
+  isExpanded,
+  onToggle,
+  onDelete,
   onUpdate,
-  onRemove,
+  getTitle,
+  onAIClick,
 }: SortableEducationItemProps) {
   const {
     attributes,
@@ -62,120 +68,84 @@ function SortableEducationItem({
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="p-6 bg-gray-50 border border-gray-200 rounded-lg relative"
-    >
-      {/* Drag Handle */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute left-2 top-6 cursor-grab active:cursor-grabbing"
+    <div ref={setNodeRef} style={style}>
+      <CollapsibleSection
+        title={getTitle(edu)}
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+        onDelete={onDelete}
+        isDraggable={true}
+        dragHandleProps={{ ...attributes, ...listeners }}
       >
-        <GripVertical className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-      </div>
-
-      {/* Delete Button */}
-      <button
-        onClick={() => onRemove(index)}
-        className="absolute right-4 top-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-        aria-label="Remove education"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
-
-      <div className="ml-6 space-y-4">
-        {/* Degree */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Degree <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={edu.degree}
-            onChange={(e) => onUpdate(index, "degree", e.target.value)}
-            placeholder="Bachelor of Science in Computer Science"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        {/* Institution & Location */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Institution <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={edu.institution}
-              onChange={(e) => onUpdate(index, "institution", e.target.value)}
-              placeholder="Stanford University"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Location
-            </label>
-            <input
-              type="text"
-              value={edu.location || ""}
-              onChange={(e) => onUpdate(index, "location", e.target.value)}
-              placeholder="Stanford, CA"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-        </div>
-
-        {/* Graduation Date & GPA */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-3">
+        <div className="space-y-4">
+          {/* School & Degree */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <FormInput
-              id={`graduationDate-${index}`}
-              label="Graduation Date"
+              id={`edu-school-${index}`}
+              label="School"
+              value={edu.institution}
+              onChange={(value) => onUpdate("institution", value)}
+              placeholder="e.g., University of California"
+              maxLength={200}
+            />
+            <FormInput
+              id={`edu-degree-${index}`}
+              label="Degree"
+              value={edu.degree}
+              onChange={(value) => onUpdate("degree", value)}
+              placeholder="e.g., Bachelor of Science"
+              maxLength={200}
+            />
+          </div>
+
+          {/* Start & End Date */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormInput
+              id={`edu-start-date-${index}`}
+              label="Start & End Date"
               value={edu.graduationDate}
-              onChange={(value) => onUpdate(index, "graduationDate", value)}
-              placeholder="MM/YYYY"
-              required={!edu.isCurrentlyStudying}
-              disabled={edu.isCurrentlyStudying}
-              description="Format: MM/YYYY"
-              validate={(value) => {
-                if (edu.isCurrentlyStudying) return { isValid: true };
-                const requiredCheck = validateRequired(value, "Graduation date");
-                if (!requiredCheck.isValid) return requiredCheck;
-                return validateLength(value, 0, 20, "Graduation date");
-              }}
+              onChange={(value) => onUpdate("graduationDate", value)}
+              placeholder="YYYY"
               maxLength={20}
             />
-
-            {/* Currently Studying Checkbox */}
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={edu.isCurrentlyStudying || false}
-                onChange={(e) =>
-                  onUpdate(index, "isCurrentlyStudying", e.target.checked)
-                }
-                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-              />
-              <span className="text-sm text-gray-700">Currently studying</span>
-            </label>
+            <FormInput
+              id={`edu-end-date-${index}`}
+              label=" "
+              value=""
+              onChange={() => {}}
+              placeholder="YYYY"
+              maxLength={20}
+              optional
+            />
           </div>
 
+          {/* City */}
           <FormInput
-            id={`gpa-${index}`}
-            label="GPA"
-            value={edu.gpa || ""}
-            onChange={(value) => onUpdate(index, "gpa", value)}
-            placeholder="3.8"
+            id={`edu-city-${index}`}
+            label="City"
+            value={edu.location || ""}
+            onChange={(value) => onUpdate("location", value)}
+            placeholder="e.g., Berkeley, CA"
             optional
-            validate={validateGPA}
-            description="Out of 4.0"
-            maxLength={5}
+            maxLength={100}
           />
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Description
+            </label>
+            <RichTextEditor
+              value={edu.achievements?.join("\n") || ""}
+              onChange={(value) => onUpdate("achievements", [value])}
+              placeholder="e.g., Graduated with honors, Dean's List"
+              minHeight="120px"
+              showAIButton={true}
+              onAIClick={onAIClick}
+            />
+          </div>
         </div>
-      </div>
+      </CollapsibleSection>
     </div>
   );
 }
@@ -185,6 +155,12 @@ export default function EducationSection({
   onUpdate,
   aiSuggestions,
 }: EducationSectionProps) {
+  const [expandedEducation, setExpandedEducation] = useState<Set<number>>(
+    new Set([0])
+  );
+
+  const education = data.education || [];
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -192,28 +168,43 @@ export default function EducationSection({
     })
   );
 
+  const toggleEducation = (index: number) => {
+    const newExpanded = new Set(expandedEducation);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedEducation(newExpanded);
+  };
+
   const handleAddEducation = () => {
     const newEducation: CVEducation = {
       degree: "",
       institution: "",
       location: "",
       graduationDate: "",
+      isCurrentlyStudying: false,
       gpa: "",
       achievements: [],
     };
     onUpdate({
       ...data,
-      education: [...(data.education || []), newEducation],
+      education: [...education, newEducation],
     });
+    setExpandedEducation(new Set([...expandedEducation, education.length]));
   };
 
   const handleRemoveEducation = (index: number) => {
-    const updated = [...(data.education || [])];
+    const updated = [...education];
     updated.splice(index, 1);
     onUpdate({
       ...data,
       education: updated,
     });
+    const newExpanded = new Set(expandedEducation);
+    newExpanded.delete(index);
+    setExpandedEducation(newExpanded);
   };
 
   const handleUpdateEducation = (
@@ -221,7 +212,7 @@ export default function EducationSection({
     field: keyof CVEducation,
     value: string | boolean
   ) => {
-    const updated = [...(data.education || [])];
+    const updated = [...education];
     updated[index] = {
       ...updated[index],
       [field]: value,
@@ -236,63 +227,103 @@ export default function EducationSection({
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const educationList = data.education || [];
-      const oldIndex = educationList.findIndex(
-        (_, i) => `edu-${i}` === active.id
-      );
-      const newIndex = educationList.findIndex((_, i) => `edu-${i}` === over.id);
+      const oldIndex = education.findIndex((_, i) => `edu-${i}` === active.id);
+      const newIndex = education.findIndex((_, i) => `edu-${i}` === over.id);
 
-      const reordered = arrayMove(educationList, oldIndex, newIndex);
-      onUpdate({
-        ...data,
-        education: reordered,
-      });
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const updated = arrayMove(education, oldIndex, newIndex);
+        onUpdate({
+          ...data,
+          education: updated,
+        });
+      }
     }
   };
 
-  const education = data.education || [];
-  const educationIds = education.map((_, index) => `edu-${index}`);
+  const getEducationTitle = (edu: CVEducation) => {
+    if (edu.degree && edu.institution) {
+      const dateRange = edu.graduationDate || "";
+      return `${edu.degree} at ${edu.institution}${dateRange ? ` (${dateRange})` : ""}`;
+    }
+    if (edu.degree) {
+      return edu.degree;
+    }
+    if (edu.institution) {
+      return edu.institution;
+    }
+    return "(Not specified)";
+  };
+
+  const handleAIClick = () => {
+    // TODO: Implement AI writer functionality
+    console.log("AI writer clicked for education");
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Education List */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={educationIds} strategy={verticalListSortingStrategy}>
-          {education.map((edu, index) => (
-            <SortableEducationItem
-              key={`edu-${index}`}
-              id={`edu-${index}`}
-              index={index}
-              edu={edu}
-              onUpdate={handleUpdateEducation}
-              onRemove={handleRemoveEducation}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
+    <div className="space-y-4">
+      <SectionHeader
+        title="Formations"
+        description="A varied education on your resume sums up the value that your learnings and background will bring to job."
+      />
 
-      {/* Add Education Button */}
+      {/* Education List */}
+      <div className="space-y-3">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={education.map((_, index) => `edu-${index}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            {education.map((edu, index) => {
+              const isExpanded = expandedEducation.has(index);
+              return (
+                <SortableEducationItem
+                  key={index}
+                  edu={edu}
+                  index={index}
+                  id={`edu-${index}`}
+                  isExpanded={isExpanded}
+                  onToggle={() => toggleEducation(index)}
+                  onDelete={() => handleRemoveEducation(index)}
+                  onUpdate={(field, value) =>
+                    handleUpdateEducation(index, field, value)
+                  }
+                  getTitle={getEducationTitle}
+                  onAIClick={handleAIClick}
+                />
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
+
+      {/* Add Button */}
       <button
+        type="button"
         onClick={handleAddEducation}
-        className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
+        className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
-        <Plus className="w-5 h-5" />
-        <span className="font-medium">Add Education</span>
+        <Plus className="w-4 h-4" />
+        <span className="text-sm font-medium">+ Add one more education</span>
       </button>
 
-      {/* Tips */}
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">Tips:</h4>
-        <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
-          <li>List education in reverse chronological order</li>
-          <li>Include honors, awards, or relevant coursework if applicable</li>
-          <li>Only include GPA if it's 3.5 or higher</li>
-          <li>For recent graduates, education can go before experience</li>
-        </ul>
+      {/* Ask AI Writer Button */}
+      <div className="flex justify-center pt-4">
+        <button
+          type="button"
+          onClick={handleAIClick}
+          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+          }}
+        >
+          <Sparkles className="w-5 h-5" />
+          <span className="font-medium">Ask AI writer</span>
+        </button>
       </div>
     </div>
   );

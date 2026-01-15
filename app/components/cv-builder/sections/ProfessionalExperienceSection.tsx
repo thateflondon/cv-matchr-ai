@@ -1,5 +1,6 @@
-import type { CVData, CVProfessionalExperience } from "types/cv-builder";
-import { Plus, Trash2, GripVertical, Lightbulb } from "lucide-react";
+import type { CVData, CVProfessionalExperience } from "~/types/cv-builder";
+import { Plus, Sparkles } from "lucide-react";
+import { useState } from "react";
 import {
   DndContext,
   closestCenter,
@@ -7,8 +8,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent,
 } from "@dnd-kit/core";
-import type { DragEndEvent } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
@@ -17,6 +18,10 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import CollapsibleSection from "../common/CollapsibleSection";
+import FormInput from "~/components/common/FormInput";
+import RichTextEditor from "~/components/common/RichTextEditor";
+import SectionHeader from "../common/SectionHeader";
 
 interface ProfessionalExperienceSectionProps {
   data: CVData;
@@ -25,21 +30,27 @@ interface ProfessionalExperienceSectionProps {
 }
 
 interface SortableExperienceItemProps {
-  id: string;
-  index: number;
   exp: CVProfessionalExperience;
-  onUpdate: (index: number, field: keyof CVProfessionalExperience, value: string) => void;
-  onRemove: (index: number) => void;
-  aiSuggestion?: any;
+  index: number;
+  id: string;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onDelete: () => void;
+  onUpdate: (field: keyof CVProfessionalExperience, value: string) => void;
+  getTitle: (exp: CVProfessionalExperience) => string;
+  onAIClick: () => void;
 }
 
 function SortableExperienceItem({
-  id,
-  index,
   exp,
+  index,
+  id,
+  isExpanded,
+  onToggle,
+  onDelete,
   onUpdate,
-  onRemove,
-  aiSuggestion,
+  getTitle,
+  onAIClick,
 }: SortableExperienceItemProps) {
   const {
     attributes,
@@ -57,134 +68,86 @@ function SortableExperienceItem({
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="p-6 bg-gray-50 border border-gray-200 rounded-lg relative"
-    >
-      {/* Drag Handle */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute left-2 top-6 cursor-grab active:cursor-grabbing"
+    <div ref={setNodeRef} style={style}>
+      <CollapsibleSection
+        title={getTitle(exp)}
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+        onDelete={onDelete}
+        isDraggable={true}
+        dragHandleProps={{ ...attributes, ...listeners }}
       >
-        <GripVertical className="w-5 h-5 text-gray-400 hover:text-gray-600" />
-      </div>
-
-      {/* Delete Button */}
-      <button
-        onClick={() => onRemove(index)}
-        className="absolute right-4 top-4 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-        aria-label="Remove experience"
-      >
-        <Trash2 className="w-4 h-4" />
-      </button>
-
-      <div className="ml-6 space-y-4">
-        {/* Job Title & Company */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Job Title <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
+        <div className="space-y-4">
+          {/* Job Title & Employer */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormInput
+              id={`exp-job-title-${index}`}
+              label="Job title"
               value={exp.jobTitle}
-              onChange={(e) => onUpdate(index, "jobTitle", e.target.value)}
-              placeholder="Senior Software Engineer"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(value) => onUpdate("jobTitle", value)}
+              placeholder="e.g., Senior Software Engineer"
+              maxLength={100}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Company <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
+            <FormInput
+              id={`exp-employer-${index}`}
+              label="Employer"
               value={exp.company}
-              onChange={(e) => onUpdate(index, "company", e.target.value)}
-              placeholder="Tech Corp"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(value) => onUpdate("company", value)}
+              placeholder="e.g., Tech Corp"
+              maxLength={100}
             />
           </div>
-        </div>
 
-        {/* Location */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Location
-          </label>
-          <input
-            type="text"
-            value={exp.location || ""}
-            onChange={(e) => onUpdate(index, "location", e.target.value)}
-            placeholder="San Francisco, CA"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
-        {/* Dates */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Start Date <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
+          {/* Start & End Date */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <FormInput
+              id={`exp-start-date-${index}`}
+              label="Start & End Date"
               value={exp.startDate}
-              onChange={(e) => onUpdate(index, "startDate", e.target.value)}
-              placeholder="Jan 2020"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(value) => onUpdate("startDate", value)}
+              placeholder="MM/YYYY"
+              maxLength={20}
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              End Date
-            </label>
-            <input
-              type="text"
+            <FormInput
+              id={`exp-end-date-${index}`}
+              label=" "
               value={exp.endDate || ""}
-              onChange={(e) => onUpdate(index, "endDate", e.target.value)}
-              placeholder="Present"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={(value) => onUpdate("endDate", value)}
+              placeholder="MM/YYYY or Present"
+              maxLength={20}
+            />
+          </div>
+
+          {/* City, State */}
+          <FormInput
+            id={`exp-location-${index}`}
+            label="City, State"
+            value={exp.location || ""}
+            onChange={(value) => onUpdate("location", value)}
+            placeholder="e.g., San Francisco, CA"
+            optional
+            maxLength={100}
+          />
+
+          {/* Description */}
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">
+              Description
+            </label>
+            <RichTextEditor
+              value={exp.description || ""}
+              onChange={(value) => onUpdate("description", value)}
+              placeholder="e.g., Created and implemented lesson plans based on child-led interests and curiosities."
+              minHeight="150px"
+              showAIButton={true}
+              onAIClick={onAIClick}
+              showCharacterCount={true}
+              minCharacters={200}
+              recruiterTip="Recruiters read on average 6 seconds per resume: write 200+ characters to increase interview chances"
             />
           </div>
         </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Description
-          </label>
-          <textarea
-            value={exp.description || ""}
-            onChange={(e) => onUpdate(index, "description", e.target.value)}
-            placeholder="Describe your responsibilities and achievements. Use action verbs and quantify results when possible."
-            rows={4}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-          />
-        </div>
-
-        {/* AI Suggestion for this experience */}
-        {aiSuggestion && (
-          <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <div className="flex items-start gap-2">
-              <Lightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-              <div className="flex-1">
-                <p className="text-sm text-blue-900">
-                  <strong>AI Suggestion:</strong> {aiSuggestion.text}
-                </p>
-                <button
-                  onClick={() => onUpdate(index, "description", aiSuggestion.text)}
-                  className="text-sm text-blue-600 font-medium mt-1 hover:underline"
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      </CollapsibleSection>
     </div>
   );
 }
@@ -194,12 +157,28 @@ export default function ProfessionalExperienceSection({
   onUpdate,
   aiSuggestions,
 }: ProfessionalExperienceSectionProps) {
+  const [expandedExperiences, setExpandedExperiences] = useState<Set<number>>(
+    new Set([0])
+  );
+
+  const experiences = data.professionalExperience || [];
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const toggleExperience = (index: number) => {
+    const newExpanded = new Set(expandedExperiences);
+    if (newExpanded.has(index)) {
+      newExpanded.delete(index);
+    } else {
+      newExpanded.add(index);
+    }
+    setExpandedExperiences(newExpanded);
+  };
 
   const handleAddExperience = () => {
     const newExperience: CVProfessionalExperience = {
@@ -213,20 +192,21 @@ export default function ProfessionalExperienceSection({
     };
     onUpdate({
       ...data,
-      professionalExperience: [
-        ...(data.professionalExperience || []),
-        newExperience,
-      ],
+      professionalExperience: [...experiences, newExperience],
     });
+    setExpandedExperiences(new Set([...expandedExperiences, experiences.length]));
   };
 
   const handleRemoveExperience = (index: number) => {
-    const updated = [...(data.professionalExperience || [])];
+    const updated = [...experiences];
     updated.splice(index, 1);
     onUpdate({
       ...data,
       professionalExperience: updated,
     });
+    const newExpanded = new Set(expandedExperiences);
+    newExpanded.delete(index);
+    setExpandedExperiences(newExpanded);
   };
 
   const handleUpdateExperience = (
@@ -234,7 +214,7 @@ export default function ProfessionalExperienceSection({
     field: keyof CVProfessionalExperience,
     value: string
   ) => {
-    const updated = [...(data.professionalExperience || [])];
+    const updated = [...experiences];
     updated[index] = {
       ...updated[index],
       [field]: value,
@@ -245,69 +225,122 @@ export default function ProfessionalExperienceSection({
     });
   };
 
+  const moveExperience = (dragIndex: number, hoverIndex: number) => {
+    const updated = [...experiences];
+    const [dragged] = updated.splice(dragIndex, 1);
+    updated.splice(hoverIndex, 0, dragged);
+    onUpdate({
+      ...data,
+      professionalExperience: updated,
+    });
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const experiences = data.professionalExperience || [];
       const oldIndex = experiences.findIndex((_, i) => `exp-${i}` === active.id);
       const newIndex = experiences.findIndex((_, i) => `exp-${i}` === over.id);
 
-      const reordered = arrayMove(experiences, oldIndex, newIndex);
-      onUpdate({
-        ...data,
-        professionalExperience: reordered,
-      });
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const updated = arrayMove(experiences, oldIndex, newIndex);
+        onUpdate({
+          ...data,
+          professionalExperience: updated,
+        });
+      }
     }
   };
 
-  const experiences = data.professionalExperience || [];
-  const experienceIds = experiences.map((_, index) => `exp-${index}`);
+  const getExperienceTitle = (exp: CVProfessionalExperience) => {
+    if (exp.jobTitle && exp.company) {
+      const dateRange =
+        exp.startDate && exp.endDate
+          ? `${exp.startDate} - ${exp.endDate}`
+          : exp.startDate
+          ? `${exp.startDate} - Present`
+          : "";
+      return `${exp.jobTitle} at ${exp.company}${dateRange ? ` (${dateRange})` : ""}`;
+    }
+    if (exp.jobTitle) {
+      return exp.jobTitle;
+    }
+    if (exp.company) {
+      return exp.company;
+    }
+    return "(Not specified)";
+  };
+
+  const handleAIClick = () => {
+    // TODO: Implement AI writer functionality
+    console.log("AI writer clicked for all experiences");
+  };
 
   return (
-    <div className="space-y-6">
-      {/* Experiences List */}
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext items={experienceIds} strategy={verticalListSortingStrategy}>
-          {experiences.map((exp, index) => (
-            <SortableExperienceItem
-              key={`exp-${index}`}
-              id={`exp-${index}`}
-              index={index}
-              exp={exp}
-              onUpdate={handleUpdateExperience}
-              onRemove={handleRemoveExperience}
-              aiSuggestion={aiSuggestions?.experience?.[index]}
-            />
-          ))}
-        </SortableContext>
-      </DndContext>
+    <div className="space-y-4">
+      <SectionHeader
+        title="Experiences"
+        description="Show your relevant experience (last 10 years). Use bullet points to note your achievements, if possible - use numbers/facts (Achieved X, measured by Y, by doing Z)."
+      />
 
-      {/* Add Experience Button */}
+      {/* Experiences List */}
+      <div className="space-y-3">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={experiences.map((_, index) => `exp-${index}`)}
+            strategy={verticalListSortingStrategy}
+          >
+            {experiences.map((exp, index) => {
+              const isExpanded = expandedExperiences.has(index);
+              return (
+                <SortableExperienceItem
+                  key={index}
+                  exp={exp}
+                  index={index}
+                  id={`exp-${index}`}
+                  isExpanded={isExpanded}
+                  onToggle={() => toggleExperience(index)}
+                  onDelete={() => handleRemoveExperience(index)}
+                  onUpdate={(field, value) =>
+                    handleUpdateExperience(index, field, value)
+                  }
+                  getTitle={getExperienceTitle}
+                  onAIClick={handleAIClick}
+                />
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
+
+      {/* Add Button */}
       <button
+        type="button"
         onClick={handleAddExperience}
-        className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
+        className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
-        <Plus className="w-5 h-5" />
-        <span className="font-medium">Add Experience</span>
+        <Plus className="w-4 h-4" />
+        <span className="text-sm font-medium">+ Add one more employment</span>
       </button>
 
-      {/* Tips */}
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">
-          Writing Tips:
-        </h4>
-        <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
-          <li>Start bullet points with strong action verbs (Led, Developed, Increased)</li>
-          <li>Quantify achievements with numbers, percentages, or metrics</li>
-          <li>Focus on impact and results, not just responsibilities</li>
-          <li>Tailor descriptions to match the job you're applying for</li>
-          <li>List experiences in reverse chronological order</li>
-        </ul>
+      {/* Ask AI Writer Button */}
+      <div className="flex justify-center pt-4">
+        <button
+          type="button"
+          onClick={handleAIClick}
+          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+          }}
+        >
+          <Sparkles className="w-5 h-5" />
+          <span className="font-medium">Ask AI writer</span>
+        </button>
       </div>
     </div>
   );

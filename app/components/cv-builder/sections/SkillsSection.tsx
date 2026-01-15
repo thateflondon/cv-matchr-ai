@@ -1,8 +1,26 @@
-import type { CVData, CVSkillGroup } from "types/cv-builder";
-import { Plus, X, Lightbulb, Trash2 } from "lucide-react";
+import type { CVData, Skill } from "~/types/cv-builder";
+import { Plus, Sparkles } from "lucide-react";
 import { useState } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import CollapsibleSection from "../common/CollapsibleSection";
 import FormInput from "~/components/common/FormInput";
-import { validateLength } from "~/utils/formValidation";
+import SectionHeader from "../common/SectionHeader";
 
 interface SkillsSectionProps {
   data: CVData;
@@ -10,237 +28,260 @@ interface SkillsSectionProps {
   aiSuggestions?: any;
 }
 
+interface SortableSkillItemProps {
+  skill: Skill;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onDelete: () => void;
+  onUpdate: (field: keyof Skill, value: string) => void;
+  getTitle: (skill: Skill) => string;
+  showExperienceLevel: boolean;
+}
+
+function SortableSkillItem({
+  skill,
+  isExpanded,
+  onToggle,
+  onDelete,
+  onUpdate,
+  getTitle,
+  showExperienceLevel,
+}: SortableSkillItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: skill.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <CollapsibleSection
+        title={getTitle(skill)}
+        isExpanded={isExpanded}
+        onToggle={onToggle}
+        onDelete={onDelete}
+        isDraggable={true}
+        dragHandleProps={{ ...attributes, ...listeners }}
+      >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <FormInput
+            id={`skill-name-${skill.id}`}
+            label="Skill"
+            value={skill.name}
+            onChange={(value) => onUpdate("name", value)}
+            placeholder="e.g., JavaScript, React, Python"
+            maxLength={50}
+          />
+
+          {showExperienceLevel && (
+            <div>
+              <label
+                htmlFor={`skill-level-${skill.id}`}
+                className="block text-sm font-medium text-foreground mb-2"
+              >
+                Level
+              </label>
+              <select
+                id={`skill-level-${skill.id}`}
+                value={skill.level || ""}
+                onChange={(e) => onUpdate("level", e.target.value)}
+                className="w-full px-3 py-2.5 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors bg-input-background"
+              >
+                <option value="">Select level</option>
+                <option value="novice">Novice</option>
+                <option value="beginner">Beginner</option>
+                <option value="skillful">Skillful</option>
+                <option value="experienced">Experienced</option>
+                <option value="expert">Expert</option>
+              </select>
+            </div>
+          )}
+        </div>
+      </CollapsibleSection>
+    </div>
+  );
+}
+
 export default function SkillsSection({
   data,
   onUpdate,
   aiSuggestions,
 }: SkillsSectionProps) {
-  const [skillInput, setSkillInput] = useState("");
-  const [groupTitleInput, setGroupTitleInput] = useState("");
+  const [expandedSkills, setExpandedSkills] = useState<Set<string>>(new Set());
+  const [showExperienceLevel, setShowExperienceLevel] = useState(true);
 
-  const skillGroups = data.skillGroups || [];
+  const skills = data.skillsData || [];
 
-  const handleAddGroup = () => {
-    const newGroup: CVSkillGroup = {
-      title: groupTitleInput.trim() || undefined,
-      skills: [],
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const toggleSkill = (id: string) => {
+    const newExpanded = new Set(expandedSkills);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedSkills(newExpanded);
+  };
+
+  const handleAddSkill = () => {
+    const newSkill: Skill = {
+      id: Date.now().toString(),
+      name: "",
+      level: "",
     };
     onUpdate({
       ...data,
-      skillGroups: [...skillGroups, newGroup],
+      skillsData: [...skills, newSkill],
     });
-    setGroupTitleInput("");
+    setExpandedSkills(new Set([...expandedSkills, newSkill.id]));
   };
 
-  const handleRemoveGroup = (groupIndex: number) => {
-    const updated = [...skillGroups];
-    updated.splice(groupIndex, 1);
+  const handleRemoveSkill = (id: string) => {
+    const updated = skills.filter((skill) => skill.id !== id);
     onUpdate({
       ...data,
-      skillGroups: updated,
+      skillsData: updated,
     });
+    const newExpanded = new Set(expandedSkills);
+    newExpanded.delete(id);
+    setExpandedSkills(newExpanded);
   };
 
-  const handleUpdateGroupTitle = (groupIndex: number, title: string) => {
-    const updated = [...skillGroups];
-    updated[groupIndex] = {
-      ...updated[groupIndex],
-      title: title.trim() || undefined,
-    };
+  const handleUpdateSkill = (id: string, field: keyof Skill, value: string) => {
+    const updated = skills.map((skill) =>
+      skill.id === id ? { ...skill, [field]: value } : skill
+    );
     onUpdate({
       ...data,
-      skillGroups: updated,
+      skillsData: updated,
     });
   };
 
-  const handleAddSkillToGroup = (groupIndex: number, skill: string) => {
-    if (skill.trim()) {
-      const updated = [...skillGroups];
-      updated[groupIndex] = {
-        ...updated[groupIndex],
-        skills: [...updated[groupIndex].skills, skill.trim()],
-      };
-      onUpdate({
-        ...data,
-        skillGroups: updated,
-      });
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = skills.findIndex((skill) => skill.id === active.id);
+      const newIndex = skills.findIndex((skill) => skill.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const updated = arrayMove(skills, oldIndex, newIndex);
+        onUpdate({
+          ...data,
+          skillsData: updated,
+        });
+      }
     }
   };
 
-  const handleRemoveSkillFromGroup = (
-    groupIndex: number,
-    skillIndex: number
-  ) => {
-    const updated = [...skillGroups];
-    const updatedSkills = [...updated[groupIndex].skills];
-    updatedSkills.splice(skillIndex, 1);
-    updated[groupIndex] = {
-      ...updated[groupIndex],
-      skills: updatedSkills,
-    };
-    onUpdate({
-      ...data,
-      skillGroups: updated,
-    });
+  const getSkillTitle = (skill: Skill) => {
+    if (skill.name && skill.level && showExperienceLevel) {
+      return `${skill.name} (${skill.level})`;
+    }
+    if (skill.name) {
+      return skill.name;
+    }
+    return "(Not specified)";
+  };
+
+  const handleAIClick = () => {
+    // TODO: Implement AI writer functionality
+    console.log("AI writer clicked for skills");
   };
 
   return (
-    <div className="space-y-6">
-      <p className="text-sm text-gray-600">
-        Organize your skills into groups (e.g., "Programming Languages", "Tools
-        & Technologies"). Groups with titles help structure your CV better.
-      </p>
+    <div className="space-y-4">
+      <SectionHeader
+        title="Expertises"
+        description="Choose 5 important skills that show you fit the position. Make sure they match the key skills mentioned in the job listing (especially when applying via an online system)."
+      />
 
-      {/* Skill Groups */}
-      {skillGroups.map((group, groupIndex) => (
-        <div
-          key={groupIndex}
-          className="p-4 bg-gray-50 border border-gray-200 rounded-lg relative"
+      {/* Toggle Experience Level */}
+      <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg">
+        <label className="flex items-center gap-3 cursor-pointer flex-1">
+          <input
+            type="checkbox"
+            checked={!showExperienceLevel}
+            onChange={(e) => setShowExperienceLevel(!e.target.checked)}
+            className="w-5 h-5 text-primary border-border rounded focus:ring-primary"
+          />
+          <span className="text-sm font-medium text-foreground">
+            Don't show experience level
+          </span>
+        </label>
+      </div>
+
+      {/* Skills List */}
+      <div className="space-y-3">
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
         >
-          {/* Delete Group Button */}
-          <button
-            onClick={() => handleRemoveGroup(groupIndex)}
-            className="absolute right-3 top-3 p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            aria-label="Remove skill group"
+          <SortableContext
+            items={skills.map((skill) => skill.id)}
+            strategy={verticalListSortingStrategy}
           >
-            <Trash2 className="w-4 h-4" />
-          </button>
-
-          <div className="space-y-4 pr-8">
-            {/* Group Title (Optional) */}
-            <FormInput
-              id={`group-title-${groupIndex}`}
-              label="Group Title"
-              value={group.title || ""}
-              onChange={(value) => handleUpdateGroupTitle(groupIndex, value)}
-              placeholder="e.g., Programming Languages, Tools & Technologies"
-              optional
-              validate={(value) =>
-                validateLength(value, 0, 50, "Group title")
-              }
-              maxLength={50}
-              description="Leave blank for a single ungrouped skills list"
-            />
-
-            {/* Skills Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Skills
-              </label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={skillInput}
-                  onChange={(e) => setSkillInput(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      handleAddSkillToGroup(groupIndex, skillInput);
-                      setSkillInput("");
-                    }
-                  }}
-                  placeholder="e.g., JavaScript, Python, React"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            {skills.map((skill) => {
+              const isExpanded = expandedSkills.has(skill.id);
+              return (
+                <SortableSkillItem
+                  key={skill.id}
+                  skill={skill}
+                  isExpanded={isExpanded}
+                  onToggle={() => toggleSkill(skill.id)}
+                  onDelete={() => handleRemoveSkill(skill.id)}
+                  onUpdate={(field, value) =>
+                    handleUpdateSkill(skill.id, field, value)
+                  }
+                  getTitle={getSkillTitle}
+                  showExperienceLevel={showExperienceLevel}
                 />
-                <button
-                  onClick={() => {
-                    handleAddSkillToGroup(groupIndex, skillInput);
-                    setSkillInput("");
-                  }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span className="hidden sm:inline">Add</span>
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Press Enter or click Add
-              </p>
-            </div>
+              );
+            })}
+          </SortableContext>
+        </DndContext>
+      </div>
 
-            {/* Skills List */}
-            {group.skills.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {group.skills.map((skill, skillIndex) => (
-                  <div
-                    key={skillIndex}
-                    className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg border border-blue-200"
-                  >
-                    <span className="text-sm font-medium">{skill}</span>
-                    <button
-                      onClick={() =>
-                        handleRemoveSkillFromGroup(groupIndex, skillIndex)
-                      }
-                      className="text-blue-600 hover:text-blue-800"
-                      aria-label={`Remove ${skill}`}
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
-
-      {/* Add Skill Group Button */}
+      {/* Add Button */}
       <button
-        onClick={handleAddGroup}
-        className="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-blue-500 hover:text-blue-600 transition-colors flex items-center justify-center gap-2"
+        type="button"
+        onClick={handleAddSkill}
+        className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
-        <Plus className="w-5 h-5" />
-        <span className="font-medium">Add Skill Group</span>
+        <Plus className="w-4 h-4" />
+        <span className="text-sm font-medium">+ Add one more skill</span>
       </button>
 
-      {/* AI Suggestions */}
-      {aiSuggestions?.skills && aiSuggestions.skills.length > 0 && (
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <div className="flex items-start gap-2 mb-3">
-            <Lightbulb className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <h4 className="text-sm font-semibold text-blue-900 mb-2">
-                AI Suggested Skills
-              </h4>
-              <p className="text-sm text-blue-800 mb-3">
-                Based on your experience, consider adding these skills:
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {aiSuggestions.skills.map((skill: string, index: number) => {
-                  const allSkills = skillGroups.flatMap((g) => g.skills);
-                  const isAdded = allSkills.includes(skill);
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        if (!isAdded && skillGroups.length > 0) {
-                          handleAddSkillToGroup(0, skill);
-                        }
-                      }}
-                      className="px-3 py-1 bg-white border border-blue-300 text-blue-700 rounded-lg text-sm hover:bg-blue-100 transition-colors"
-                      disabled={isAdded}
-                    >
-                      {isAdded ? "✓ " : "+ "}
-                      {skill}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Tips */}
-      <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-        <h4 className="text-sm font-medium text-gray-900 mb-2">Tips:</h4>
-        <ul className="text-sm text-gray-600 space-y-1 list-disc list-inside">
-          <li>Group similar skills together (e.g., "Programming Languages", "Design Tools")</li>
-          <li>Use industry-standard terms for ATS optimization</li>
-          <li>Prioritize skills mentioned in job descriptions</li>
-          <li>Be honest - only list skills you can demonstrate</li>
-          <li>Leave group title blank if you prefer an ungrouped list</li>
-        </ul>
+      {/* Ask AI Writer Button */}
+      <div className="flex justify-center pt-4">
+        <button
+          type="button"
+          onClick={handleAIClick}
+          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+          style={{
+            background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+            color: "white",
+          }}
+        >
+          <Sparkles className="w-5 h-5" />
+          <span className="font-medium">Ask AI writer</span>
+        </button>
       </div>
     </div>
   );
