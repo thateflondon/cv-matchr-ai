@@ -301,7 +301,7 @@ export default function BuilderTab({
             <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
               <CustomizeMode
                 customization={customization}
-                onChange={setCustomization}
+                onUpdate={setCustomization}
               />
             </div>
 
