@@ -165,15 +165,25 @@ export default function TemplateColorsPanel({
                   : "border-gray-200 hover:border-gray-400"
               }`}
             >
-              {/* Template Preview Placeholder */}
+              {/* Template Preview */}
               <div
-                className={`w-full h-32 bg-gray-100 rounded mb-3 flex items-center justify-center ${
+                className={`w-full h-32 rounded mb-3 overflow-hidden ${
                   customization.template.id === template.id
-                    ? "bg-blue-100"
+                    ? "ring-2 ring-blue-600"
                     : ""
                 }`}
               >
-                <span className="text-gray-400 text-xs">Preview</span>
+                {template.thumbnail ? (
+                  <img
+                    src={template.thumbnail}
+                    alt={`${template.name} preview`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                    <span className="text-gray-400 text-xs">Preview</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-start justify-between">
