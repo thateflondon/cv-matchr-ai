@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { BaseTemplateProps } from "./BaseTemplate";
+import type { BaseTemplateProps } from "./BaseTemplate";
 
 /**
  * Helsinki Template (Prime ATS)
