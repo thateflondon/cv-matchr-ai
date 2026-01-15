@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { CVData } from "~/types/cv-builder";
+import type { CVData, CVCustomization } from "~/types/cv-builder";
 import PersonalDetailsSection from "./sections/PersonalDetailsSection";
 import ProfessionalSummarySection from "./sections/ProfessionalSummarySection";
 import WebsitesAndSocialLinksSection from "./sections/WebsitesAndSocialLinksSection";
@@ -15,6 +15,7 @@ interface EditModeProps {
   cvData: CVData;
   onChange: (data: CVData) => void;
   aiSuggestions?: any; // TODO: Define AI suggestions type
+  customization?: CVCustomization;
 }
 
 const sections = [
@@ -32,6 +33,7 @@ export default function EditMode({
   cvData,
   onChange,
   aiSuggestions,
+  customization,
 }: EditModeProps) {
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const currentSection = sections[currentSectionIndex];
@@ -67,6 +69,7 @@ export default function EditMode({
           data={cvData}
           onUpdate={onChange}
           aiSuggestions={aiSuggestions}
+          customization={customization}
         />
       </div>
 

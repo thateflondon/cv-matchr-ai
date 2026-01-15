@@ -1,6 +1,7 @@
-import type { CVData } from "types/cv-builder";
-import { Lightbulb } from "lucide-react";
+import type { CVData, CVCustomization } from "~/types/cv-builder";
 import FormInput from "~/components/common/FormInput";
+import { Upload, X, Camera } from "lucide-react";
+import { useState, useRef } from "react";
 import {
   validateRequired,
   validateEmail,
@@ -14,13 +15,18 @@ interface PersonalDetailsSectionProps {
   data: CVData;
   onUpdate: (data: CVData) => void;
   aiSuggestions?: any;
+  customization?: CVCustomization;
 }
 
 export default function PersonalDetailsSection({
   data,
   onUpdate,
   aiSuggestions,
+  customization,
 }: PersonalDetailsSectionProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   const handleChange = (field: string, value: string) => {
     // Sanitize input before saving
     const sanitizedValue = sanitizeInput(value);
@@ -43,10 +49,177 @@ export default function PersonalDetailsSection({
     location: "",
     linkedin: "",
     website: "",
+    photo: "",
+  };
+
+  const supportsPhoto = customization?.template?.hasPhoto ?? false;
+
+  const handlePhotoUpload = (file: File) => {
+    if (!supportsPhoto) return;
+
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload an image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size should be less than 5MB");
+      return;
+    }
+
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      handleChange("photo", base64String);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handlePhotoUpload(file);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (supportsPhoto) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    
+    if (!supportsPhoto) return;
+
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      handlePhotoUpload(file);
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    handleChange("photo", "");
+  };
+
+  const handlePhotoClick = () => {
+    if (supportsPhoto) {
+      fileInputRef.current?.click();
+    }
   };
 
   return (
     <div className="space-y-6">
+      {/* Photo Upload Section */}
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">
+          Photo de profil
+          {!supportsPhoto && (
+            <span className="ml-2 text-xs text-muted-foreground">
+              (Non disponible pour ce template)
+            </span>
+          )}
+        </label>
+        
+        <div
+          className={`relative border-2 border-dashed rounded-lg p-6 transition-all ${
+            supportsPhoto
+              ? isDragging
+                ? "border-primary bg-primary/5"
+                : "border-border hover:border-primary/50 cursor-pointer"
+              : "border-gray-300 bg-gray-100 cursor-not-allowed opacity-60"
+          }`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onClick={handlePhotoClick}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInputChange}
+            className="hidden"
+            disabled={!supportsPhoto}
+          />
+
+          {personalDetails.photo ? (
+            <div className="flex items-center gap-4">
+              <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
+                <img
+                  src={personalDetails.photo}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-foreground">
+                  Photo téléchargée
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Cliquez pour changer ou glissez-déposez
+                </p>
+              </div>
+              {supportsPhoto && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemovePhoto();
+                  }}
+                  className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center text-center">
+              <div
+                className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 ${
+                  supportsPhoto
+                    ? "bg-primary/10 text-primary"
+                    : "bg-gray-200 text-gray-400"
+                }`}
+              >
+                <Camera className="w-8 h-8" />
+              </div>
+              <p
+                className={`text-sm font-medium mb-1 ${
+                  supportsPhoto ? "text-foreground" : "text-gray-400"
+                }`}
+              >
+                {supportsPhoto
+                  ? "Cliquez pour télécharger ou glissez-déposez"
+                  : "Ce template ne supporte pas les photos"}
+              </p>
+              {supportsPhoto && (
+                <p className="text-xs text-muted-foreground">
+                  PNG, JPG jusqu'à 5MB
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+
+        {supportsPhoto && (
+          <p className="text-xs text-muted-foreground mt-2">
+            💡 Utilisez une photo professionnelle avec un fond neutre pour de meilleurs résultats
+          </p>
+        )}
+      </div>
+
       {/* Name Fields */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <FormInput
