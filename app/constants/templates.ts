@@ -9,6 +9,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "ATS-optimized template with clean, professional layout",
+    thumbnail: "/templates/helsinki-template.jpg",
   },
   {
     id: "template-seoul",
@@ -17,6 +18,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Minimalist ATS-friendly design for maximum compatibility",
+    thumbnail: "/templates/seoul-template.jpg",
   },
   {
     id: "template-athens",
@@ -285,6 +287,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Specialist professional template",
+    thumbnail: "/templates/specialist_traditional1-template.jpg",
   },
   {
     id: "template-rirekisho",
@@ -309,6 +312,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Academic CV format",
+    thumbnail: "/templates/academic-template.jpg",
   },
   {
     id: "template-entry_level",
@@ -317,6 +321,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Entry-level focused template",
+    thumbnail: "/templates/entry_level-template.jpg",
   },
 ];
 
