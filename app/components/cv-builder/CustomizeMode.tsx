@@ -7,7 +7,7 @@ import type { CVCustomization } from "~/types/cv-builder";
 
 interface CustomizeModeProps {
   customization: CVCustomization;
-  onUpdate: (customization: CVCustomization) => void;
+  onChange: (customization: CVCustomization) => void;
 }
 
 const panels = [
@@ -18,7 +18,7 @@ const panels = [
 
 export default function CustomizeMode({
   customization,
-  onUpdate,
+  onChange,
 }: CustomizeModeProps) {
   const [activePanel, setActivePanel] = useState<"template" | "text" | "layout">(
     "template"
@@ -59,14 +59,14 @@ export default function CustomizeMode({
         {activePanel === "template" && (
           <TemplateColorsPanel
             customization={customization}
-            onUpdate={onUpdate}
+            onUpdate={onChange}
           />
         )}
         {activePanel === "text" && (
-          <TextPanel customization={customization} onUpdate={onUpdate} />
+          <TextPanel customization={customization} onUpdate={onChange} />
         )}
         {activePanel === "layout" && (
-          <LayoutPanel customization={customization} onUpdate={onUpdate} />
+          <LayoutPanel customization={customization} onUpdate={onChange} />
         )}
       </div>
     </div>
