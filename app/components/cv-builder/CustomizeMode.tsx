@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { Palette, Type, Layout } from "lucide-react";
+import TemplateColorsPanel from "./customize/TemplateColorsPanel";
 import TextPanel from "./customize/TextPanel";
 import LayoutPanel from "./customize/LayoutPanel";
 import type { CVCustomization } from "~/types/cv-builder";
