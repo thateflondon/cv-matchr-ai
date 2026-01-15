@@ -6,8 +6,8 @@ import CVBuilderNavbar from "../cv-builder/CVBuilderNavbar";
 import BottomActionBar from "../cv-builder/BottomActionBar";
 import CustomizeSlidePanel from "../cv-builder/CustomizeSlidePanel";
 import MigrationBanner from "../cv-builder/MigrationBanner";
-import type { CVData, CVCustomization } from "types/cv-builder";
-import { defaultCVData, defaultCustomization } from "types/cv-builder";
+import type { CVData, CVCustomization } from "~/types/cv-builder";
+import { defaultCVData, defaultCustomization } from "~/types/cv-builder";
 import {
   saveCVData,
   loadCVData,
@@ -19,7 +19,7 @@ import {
   convertFeedbackToSuggestions,
 } from "~/utils/cvDataExtractor";
 import { exportCVToPDF } from "~/utils/pdfExport";
-import { toast } from "sonner";
+import { toast } from "sonner@2.0.3";
 import {
   saveResumeToPuter,
   updateResumeInPuter,
@@ -301,7 +301,7 @@ export default function BuilderTab({
             <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
               <CustomizeMode
                 customization={customization}
-                onUpdate={setCustomization}
+                onChange={setCustomization}
               />
             </div>
 
