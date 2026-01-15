@@ -10,7 +10,7 @@ import type { BaseTemplateProps } from "./BaseTemplate";
  */
 const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fontSize, fontWeight, spacing } = customization;
+    const { primaryColor, fontSize, fontWeight, spacing, fonts } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
     // A4 dimensions
@@ -21,11 +21,10 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
       <div
         ref={ref}
         data-cv-preview="true"
-        className="bg-white relative"
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: "Arial, sans-serif",
+          fontFamily: fonts.primary,
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",

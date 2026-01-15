@@ -1,4 +1,4 @@
-import type { CVCustomization } from "types/cv-builder";
+import { CVCustomization } from "~/types/cv-builder";
 
 interface TextPanelProps {
   customization: CVCustomization;
