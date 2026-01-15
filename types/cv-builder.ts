@@ -25,6 +25,7 @@ export interface CVEducation {
   institution: string;
   location?: string;
   graduationDate: string;
+  isCurrentlyStudying?: boolean;
   gpa?: string;
   achievements?: string[];
 }
@@ -35,32 +36,114 @@ export interface CVAdditionalSection {
   content: string | string[];
 }
 
+export interface CVSkillGroup {
+  title?: string;
+  skills: string[];
+}
+
+export interface SocialLink {
+  id: string;
+  label: string;
+  url: string;
+}
+
+export interface Language {
+  id: string;
+  language: string;
+  level: string;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  level?: string;
+}
+
 export interface CVData {
   personalDetails: CVPersonalDetails | null;
   professionalSummary: string;
   professionalExperience: CVProfessionalExperience[];
   education: CVEducation[];
   skills: string[];
+  skillGroups?: CVSkillGroup[];
   accomplishments?: string[];
   powerStatement?: string;
   additionalSections?: CVAdditionalSection[];
+  socialLinks?: SocialLink[];
+  languages?: Language[];
+  skillsData?: Skill[];
 }
 
+export type TemplateCategory = 
+  | "all" 
+  | "ats" 
+  | "classic" 
+  | "modern" 
+  | "creative" 
+  | "two-column" 
+  | "professional"
+  | "specialist";
+
+export type TemplateID = 
+  | "template-london"
+  | "template-santiago"
+  | "template-dublin"
+  | "template-helsinki"
+  | "template-seoul"
+  | "template-specialist_traditional1"
+  | "template-berlin"
+  | "template-athens"
+  | "template-new_york"
+  | "template-vienna"
+  | "template-prague"
+  | "template-brussels"
+  | "template-sydney"
+  | "template-shanghai"
+  | "template-stockholm"
+  | "template-paris"
+  | "template-madrid"
+  | "template-rome"
+  | "template-milan"
+  | "template-toronto"
+  | "template-singapore"
+  | "template-amsterdam"
+  | "template-barcelona"
+  | "template-oslo"
+  | "template-chicago"
+  | "template-copenhagen"
+  | "template-boston"
+  | "template-geneva"
+  | "template-tokyo"
+  | "template-lisbon"
+  | "template-moscow"
+  | "template-rio"
+  | "template-vancouver"
+  | "template-cape_town"
+  | "template-rirekisho"
+  | "template-shokumukeirekisho"
+  | "template-academic"
+  | "template-entry_level";
+
 export interface CVTemplate {
-  id: string;
+  id: TemplateID;
   name: string;
-  category: "all" | "ats" | "photo" | "two-column" | "modern" | "classic";
+  category: TemplateCategory;
   hasPhoto: boolean;
   columns: 1 | 2;
   thumbnail?: string;
+  description?: string;
 }
 
 export interface CVCustomization {
   template: CVTemplate;
   primaryColor: string;
-  primaryFont: string;
-  secondaryFont: string;
-  lineHeight: number;
+  fonts: {
+    primary: string;
+    secondary: string;
+  };
+  spacing: {
+    lineHeight: number;
+  };
   fontSize: {
     primaryHeading: number;
     secondaryHeading: number;
@@ -68,19 +151,19 @@ export interface CVCustomization {
     sectionTitles: number;
   };
   fontWeight: {
-    primaryHeading: "400" | "500" | "600" | "700";
-    secondaryHeading: "400" | "500" | "600" | "700";
-    body: "400" | "500" | "600" | "700";
-    sectionTitles: "400" | "500" | "600" | "700";
+    primaryHeading: string;
+    secondaryHeading: string;
+    body: string;
+    sectionTitles: string;
   };
-  dateFormat: "short" | "long" | "numeric" | "year";
+  dateFormat: "short" | "long";
   dateAlignment: "left" | "right";
   headerAlignment: "left" | "center" | "right";
 }
 
 export const defaultTemplate: CVTemplate = {
-  id: "ats-classic",
-  name: "ATS Classic",
+  id: "template-helsinki",
+  name: "Prime ATS",
   category: "ats",
   hasPhoto: false,
   columns: 1,
@@ -89,9 +172,13 @@ export const defaultTemplate: CVTemplate = {
 export const defaultCustomization: CVCustomization = {
   template: defaultTemplate,
   primaryColor: "#2563eb",
-  primaryFont: "Arial, sans-serif",
-  secondaryFont: "Arial, sans-serif",
-  lineHeight: 140,
+  fonts: {
+    primary: "Arial, sans-serif",
+    secondary: "Arial, sans-serif",
+  },
+  spacing: {
+    lineHeight: 140,
+  },
   fontSize: {
     primaryHeading: 24,
     secondaryHeading: 16,
@@ -115,6 +202,7 @@ export const defaultCVData: CVData = {
   professionalExperience: [],
   education: [],
   skills: [],
+  skillGroups: [],
   accomplishments: [],
   powerStatement: "",
   additionalSections: [],

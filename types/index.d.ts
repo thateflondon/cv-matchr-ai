@@ -1,59 +1,61 @@
 // Helps AI to structure response
 interface Job {
-    title: string;
-    description: string;
-    location: string;
-    requiredSkills: string[];
+  title: string;
+  description: string;
+  location: string;
+  requiredSkills: string[];
 }
 
 interface Resume {
-    id: string;
-    companyName?: string;
-    jobTitle?: string;
-    imagePath: string;
-    resumePath: string;
-    feedback: Feedback;
+  id: string;
+  companyName?: string;
+  jobTitle?: string;
+  imagePath: string;
+  resumePath: string;
+  feedback: Feedback;
+  extractedText?: string;
+  parsedData?: any; // CVData from AI parsing (using any to avoid circular imports)
 }
 
 interface Feedback {
-    overallScore: number;
-    ATS: {
-        score: number;
-        tips: {
-            type: "good" | "improve";
-            tip: string;
-        }[];
-    };
-    toneAndStyle: {
-        score: number;
-        tips: {
-            type: "good" | "improve";
-            tip: string;
-            explanation: string;
-        }[];
-    };
-    content: {
-        score: number;
-        tips: {
-            type: "good" | "improve";
-            tip: string;
-            explanation: string;
-        }[];
-    };
-    structure: {
-        score: number;
-        tips: {
-            type: "good" | "improve";
-            tip: string;
-            explanation: string;
-        }[];
-    };
-    skills: {
-        score: number;
-        tips: {
-            type: "good" | "improve";
-            tip: string;
-            explanation: string;
-        }[];
-    };
+  overallScore: number;
+  ATS: {
+    score: number;
+    tips: {
+      type: "good" | "improve";
+      tip: string;
+    }[];
+  };
+  toneAndStyle: {
+    score: number;
+    tips: {
+      type: "good" | "improve";
+      tip: string;
+      explanation: string;
+    }[];
+  };
+  content: {
+    score: number;
+    tips: {
+      type: "good" | "improve";
+      tip: string;
+      explanation: string;
+    }[];
+  };
+  structure: {
+    score: number;
+    tips: {
+      type: "good" | "improve";
+      tip: string;
+      explanation: string;
+    }[];
+  };
+  skills: {
+    score: number;
+    tips: {
+      type: "good" | "improve";
+      tip: string;
+      explanation: string;
+    }[];
+  };
 }
