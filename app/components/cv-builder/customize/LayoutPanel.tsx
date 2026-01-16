@@ -1,5 +1,5 @@
-import type { CVCustomization } from "types/cv-builder";
-import { AlignLeft, AlignCenter, AlignRight, Plus, Minus } from "lucide-react";
+import type { CVCustomization } from "~/types/cv-builder";
+import { AlignLeft, AlignCenter, AlignRight, Minus, Plus } from "lucide-react";
 
 interface LayoutPanelProps {
   customization: CVCustomization;
@@ -10,6 +10,8 @@ export default function LayoutPanel({
   customization,
   onUpdate,
 }: LayoutPanelProps) {
+  const layoutCustomizationDisabled = customization.template.supportsLayoutCustomization === false;
+
   const formats = [
     { value: "a4", label: 'A4 (8.27" x 11.69")' },
     { value: "letter", label: 'Letter (8.5" x 11")' },
@@ -35,6 +37,15 @@ export default function LayoutPanel({
 
   return (
     <div className="space-y-6">
+      {/* Warning Banner */}
+      {layoutCustomizationDisabled && (
+        <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-sm text-yellow-800">
+            ⚠️ This template does not support layout customization to maintain its structure.
+          </p>
+        </div>
+      )}
+
       {/* Format */}
       <div>
         <label className="block text-sm font-medium text-foreground mb-2">
