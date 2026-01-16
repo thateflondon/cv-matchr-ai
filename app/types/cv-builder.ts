@@ -132,7 +132,10 @@ export interface CVTemplate {
   columns: 1 | 2;
   thumbnail?: string;
   description?: string;
+  // Customization capabilities - if false or undefined, the control will be disabled
   supportsColorCustomization?: boolean; // If false, color customization will be disabled
+  supportsFontCustomization?: boolean; // If false, font customization will be disabled
+  supportsLayoutCustomization?: boolean; // If false, layout customization will be disabled
 }
 
 export interface CVCustomization {
