@@ -126,7 +126,11 @@ export default function TemplateColorsPanel({
 
         {/* Custom Color Input */}
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className={`block text-sm font-medium mb-2 ${
+            customization.template.supportsColorCustomization === false
+              ? "text-gray-400"
+              : "text-gray-700"
+          }`}>
             Or choose a custom color:
           </label>
           <div className="flex items-center gap-3">
@@ -134,14 +138,24 @@ export default function TemplateColorsPanel({
               type="color"
               value={customization.primaryColor}
               onChange={(e) => handleColorChange(e.target.value)}
-              className="h-10 w-20 rounded-lg border border-gray-300 cursor-pointer"
+              disabled={customization.template.supportsColorCustomization === false}
+              className={`h-10 w-20 rounded-lg border border-gray-300 ${
+                customization.template.supportsColorCustomization === false
+                  ? "opacity-30 cursor-not-allowed"
+                  : "cursor-pointer"
+              }`}
             />
             <input
               type="text"
               value={customization.primaryColor}
               onChange={(e) => handleColorChange(e.target.value)}
+              disabled={customization.template.supportsColorCustomization === false}
               placeholder="#000000"
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className={`flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                customization.template.supportsColorCustomization === false
+                  ? "opacity-30 cursor-not-allowed bg-gray-50"
+                  : ""
+              }`}
             />
           </div>
         </div>
