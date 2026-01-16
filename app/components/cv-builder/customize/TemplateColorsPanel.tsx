@@ -45,6 +45,13 @@ export default function TemplateColorsPanel({
       template.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Debug logging
+  console.log("🔍 Debug Template Selection:");
+  console.log("Selected category:", selectedCategory);
+  console.log("Total templates:", getTemplatesByCategory(selectedCategory).length);
+  console.log("Filtered templates:", filteredTemplates.length);
+  console.log("Current template:", customization.template.id);
+
   const handleColorChange = (color: string) => {
     // Don't allow color change if template doesn't support it
     if (customization.template.supportsColorCustomization === false) {
@@ -58,10 +65,18 @@ export default function TemplateColorsPanel({
   };
 
   const handleTemplateChange = (template: CVTemplate) => {
-    onUpdate({
+    console.log("🎯 Template change requested:");
+    console.log("  From:", customization.template.id);
+    console.log("  To:", template.id);
+    console.log("  onUpdate function:", typeof onUpdate);
+    
+    const newCustomization = {
       ...customization,
       template,
-    });
+    };
+    
+    console.log("  New customization:", newCustomization);
+    onUpdate(newCustomization);
   };
 
   return (
