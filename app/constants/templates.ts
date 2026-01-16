@@ -10,6 +10,9 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "ATS-optimized template with clean, professional layout",
     thumbnail: "/templates/helsinki-template.jpg",
+    supportsColorCustomization: false, // Uses fixed golden accents
+    supportsFontCustomization: true,
+    supportsLayoutCustomization: true,
   },
   {
     id: "template-seoul",
@@ -19,6 +22,9 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "Minimalist ATS-friendly design for maximum compatibility",
     thumbnail: "/templates/seoul-template.jpg",
+    supportsColorCustomization: true,
+    supportsFontCustomization: true,
+    supportsLayoutCustomization: true,
   },
   {
     id: "template-athens",
