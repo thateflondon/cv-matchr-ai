@@ -16,12 +16,15 @@ const TemplateRenderer = forwardRef<HTMLDivElement, TemplateRendererProps>(
   ({ data, customization }, ref) => {
     const templateId = customization.template.id;
 
+    // Add console log to track template rendering
+    console.log("🎨 Rendering template:", templateId, customization.template.name);
+
     switch (templateId) {
-      // ATS Templates
+      // ATS Templates - using specific implementations
       case "template-helsinki":
         return <HelsinkiTemplate ref={ref} data={data} customization={customization} />;
 
-      // Default case
+      // All other templates use BaseTemplate which adapts to the template config
       default:
         return <BaseTemplate ref={ref} data={data} customization={customization} />;
     }
