@@ -2,9 +2,9 @@ import { forwardRef } from "react";
 import type { CVData, CVCustomization, TemplateID } from "~/types/cv-builder";
 import HelsinkiTemplate from "./HelsinkiTemplate";
 import SeoulTemplate from "./SeoulTemplate";
-import TokyoTemplate from "./TokyoTemplate";
-import LondonTemplate from "./LondonTemplate";
-import PragueTemplate from "./PragueTemplate";
+import AcademicTemplate from "./AcademicTemplate";
+import EntryLevelTemplate from "./EntryLevelTemplate";
+import SpecialistTemplate from "./SpecialistTemplate";
 import BaseTemplate from "./BaseTemplate";
 
 export interface TemplateRendererProps {
@@ -30,17 +30,16 @@ const TemplateRenderer = forwardRef<HTMLDivElement, TemplateRendererProps>(
       
       case "template-seoul":
         return <SeoulTemplate ref={ref} data={data} customization={customization} />;
+
+      // Specialist Templates
+      case "template-academic":
+        return <AcademicTemplate ref={ref} data={data} customization={customization} />;
       
-      case "template-prague":
-        return <PragueTemplate ref={ref} data={data} customization={customization} />;
-
-      // Modern Templates - specific implementations
-      case "template-tokyo":
-        return <TokyoTemplate ref={ref} data={data} customization={customization} />;
-
-      // Classic Templates - specific implementations
-      case "template-london":
-        return <LondonTemplate ref={ref} data={data} customization={customization} />;
+      case "template-entry_level":
+        return <EntryLevelTemplate ref={ref} data={data} customization={customization} />;
+      
+      case "template-specialist_traditional1":
+        return <SpecialistTemplate ref={ref} data={data} customization={customization} />;
 
       // All other templates use BaseTemplate which adapts to the template config
       default:
