@@ -74,7 +74,7 @@ export default function EditMode({
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
+      <div className="flex items-center gap-[1vw] justify-center pt-6 border-t border-gray-200 mt-6 mb-6">
         <button
           onClick={handleBack}
           disabled={currentSectionIndex === 0}
