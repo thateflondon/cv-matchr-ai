@@ -26,7 +26,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         className="bg-white w-full"
         style={{
           minHeight: `${a4Height}px`,
-          fontFamily: fonts.primary,
+          fontFamily: fonts.secondary, // Body text uses secondary font
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           fontWeight: fontWeight.body,
@@ -38,6 +38,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         <div className="mb-6">
           <h1
             style={{
+              fontFamily: fonts.primary, // Primary font for main heading
               fontSize: `${fontSize.primaryHeading}px`,
               fontWeight: fontWeight.primaryHeading,
               marginBottom: "8px",
@@ -74,6 +75,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -98,6 +100,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -129,10 +132,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                   </div>
                 </div>
                 
-                {exp.description && (
-                  <p style={{ marginBottom: "6px" }}>{exp.description}</p>
-                )}
-                
+                {/* Achievements/Responsibilities */}
                 {exp.achievements && exp.achievements.length > 0 && (
                   <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
                     {exp.achievements.map((achievement, i) => (
@@ -141,6 +141,11 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                       </li>
                     ))}
                   </ul>
+                )}
+                
+                {/* Fallback: Show description if no achievements (for backward compatibility) */}
+                {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                  <p style={{ marginBottom: "6px" }}>{exp.description}</p>
                 )}
               </div>
             ))}
@@ -159,6 +164,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -224,6 +230,7 @@ const HelsinkiTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
