@@ -1,6 +1,6 @@
 import type { CVData, CVCustomization } from "~/types/cv-builder";
 import FormInput from "~/components/common/FormInput";
-import { Upload, X, Camera } from "lucide-react";
+import { Upload, X, Camera, AlertTriangle } from "lucide-react";
 import { useState, useRef } from "react";
 import {
   validateRequired,
@@ -126,7 +126,8 @@ export default function PersonalDetailsSection({
         <label className="block text-sm font-medium text-foreground mb-2">
           Photo de profil
           {!supportsPhoto && (
-            <span className="ml-2 text-xs text-muted-foreground">
+            <span className="ml-2 text-xs text-amber-600 flex items-center gap-1 inline-flex">
+              <AlertTriangle className="w-3 h-3" />
               (Non disponible pour ce template)
             </span>
           )}
@@ -156,7 +157,7 @@ export default function PersonalDetailsSection({
 
           {personalDetails.photo ? (
             <div className="flex items-center gap-4">
-              <div className="relative w-24 h-24 rounded-lg overflow-hidden bg-gray-100">
+              <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
                 <img
                   src={personalDetails.photo}
                   alt="Profile"
@@ -187,13 +188,13 @@ export default function PersonalDetailsSection({
           ) : (
             <div className="flex flex-col items-center text-center">
               <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center mb-3 ${
+                className={`w-20 h-20 rounded-full flex items-center justify-center mb-3 ${
                   supportsPhoto
                     ? "bg-primary/10 text-primary"
                     : "bg-gray-200 text-gray-400"
                 }`}
               >
-                <Camera className="w-8 h-8" />
+                <Camera className={`${supportsPhoto ? "w-9 h-9" : "w-8 h-8"}`} />
               </div>
               <p
                 className={`text-sm font-medium mb-1 ${
