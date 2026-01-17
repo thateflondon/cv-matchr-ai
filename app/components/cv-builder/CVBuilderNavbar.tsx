@@ -66,7 +66,7 @@ export default function CVBuilderNavbar({
             <img
               src={currentLang.flag}
               alt={currentLang.label}
-              className="w-5 h-5 object-cover flex-shrink-0"
+              className="w-5 h-2.5 object-cover flex-shrink-0"
             />
             <span className="text-sm font-medium text-gray-700">
               {currentLang.label}
@@ -93,7 +93,7 @@ export default function CVBuilderNavbar({
                     <img
                       src={lang.flag}
                       alt={lang.label}
-                      className="w-5 h-5 object-cover flex-shrink-0"
+                      className="w-5 h-2.5 object-cover flex-shrink-0"
                     />
                     {lang.label}
                   </button>
