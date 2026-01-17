@@ -30,7 +30,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         className="bg-white w-full"
         style={{
           minHeight: `${a4Height}px`,
-          fontFamily: fonts.primary,
+          fontFamily: fonts.secondary, // Body text uses secondary font
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           fontWeight: fontWeight.body,
@@ -61,6 +61,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             <div style={{ flex: 1 }}>
               <h1
                 style={{
+                  fontFamily: fonts.primary, // Primary font for main heading
                   fontSize: `${fontSize.primaryHeading}px`,
                   fontWeight: fontWeight.primaryHeading,
                   marginBottom: "8px",
@@ -73,6 +74,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
               {personalDetails?.jobTitle && (
                 <div
                   style={{
+                    fontFamily: fonts.primary, // Primary font for job title
                     fontSize: `${fontSize.secondaryHeading}px`,
                     fontWeight: fontWeight.secondaryHeading,
                     marginBottom: "8px",
@@ -105,6 +107,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
           <div style={{ marginBottom: spacing.sections + "px" }}>
             <h2
               style={{
+                fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
@@ -124,6 +127,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
           <div style={{ marginBottom: spacing.sections + "px" }}>
             <h2
               style={{
+                fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
@@ -185,6 +189,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
           <div style={{ marginBottom: spacing.sections + "px" }}>
             <h2
               style={{
+                fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
@@ -246,6 +251,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
           <div style={{ marginBottom: spacing.sections + "px" }}>
             <h2
               style={{
+                fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
