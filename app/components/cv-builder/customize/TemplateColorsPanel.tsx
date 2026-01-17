@@ -172,10 +172,10 @@ export default function TemplateColorsPanel({
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                selectedCategory === category.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${\
+                selectedCategory === category.id\
+                  ? "primary-gradient text-white shadow-sm"\
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"\
               }`}
             >
               {category.label}
@@ -189,18 +189,18 @@ export default function TemplateColorsPanel({
             <button
               key={template.id}
               onClick={() => handleTemplateChange(template)}
-              className={`p-4 border-2 rounded-lg text-left transition-all ${
-                customization.template.id === template.id
-                  ? "border-blue-600 bg-blue-50"
-                  : "border-gray-200 hover:border-gray-400"
+              className={`p-4 border-2 rounded-lg text-left transition-all ${\
+                customization.template.id === template.id\
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"\
+                  : "border-gray-200 hover:border-gray-400"\
               }`}
             >
               {/* Template Preview */}
               <div
-                className={`w-full h-32 rounded mb-3 overflow-hidden ${
-                  customization.template.id === template.id
-                    ? "ring-2 ring-blue-600"
-                    : ""
+                className={`w-full h-32 rounded mb-3 overflow-hidden ${\
+                  customization.template.id === template.id\
+                    ? "ring-2 ring-primary"\
+                    : ""\
                 }`}
               >
                 {template.thumbnail ? (
@@ -243,7 +243,7 @@ export default function TemplateColorsPanel({
                   </div>
                 </div>
                 {customization.template.id === template.id && (
-                  <Check className="w-5 h-5 text-blue-600 flex-shrink-0 ml-2" />
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 ml-2" />
                 )}
               </div>
             </button>
@@ -258,16 +258,16 @@ export default function TemplateColorsPanel({
       </div>
 
       {/* Template Info */}
-      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <h4 className="text-sm font-medium text-blue-900 mb-2">
+      <div className="p-4 bg-gradient-to-r from-blue-50 to-purple-50 border border-primary/20 rounded-lg">
+        <h4 className="text-sm font-medium text-gray-900 mb-2">
           About {customization.template.name}
         </h4>
         {customization.template.description && (
-          <p className="text-sm text-blue-800 mb-3">
+          <p className="text-sm text-gray-700 mb-3">
             {customization.template.description}
           </p>
         )}
-        <ul className="text-sm text-blue-800 space-y-1">
+        <ul className="text-sm text-gray-700 space-y-1">
           <li>
             • <strong>Columns:</strong> {customization.template.columns}{" "}
             column{customization.template.columns > 1 ? "s" : ""}
