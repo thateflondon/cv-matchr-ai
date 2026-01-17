@@ -67,6 +67,7 @@ export interface CVData {
   skills: string[];
   skillGroups?: CVSkillGroup[];
   accomplishments?: string[];
+  selectedAchievements?: string[]; // Academic template specific
   powerStatement?: string;
   additionalSections?: CVAdditionalSection[];
   socialLinks?: SocialLink[];
@@ -209,6 +210,4 @@ export const defaultCVData: CVData = {
   skills: [],
   skillGroups: [],
   accomplishments: [],
-  powerStatement: "",
-  additionalSections: [],
 };

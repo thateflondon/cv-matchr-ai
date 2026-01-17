@@ -13,7 +13,7 @@ export interface AcademicTemplateProps {
 const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
   ({ data, customization }, ref) => {
     const { primaryColor } = customization;
-    const { personalDetails, professionalSummary, professionalExperience, education, skillsData, certifications } = data;
+    const { personalDetails, professionalSummary, selectedAchievements, professionalExperience, education, skillsData, certifications } = data;
 
     // Use primary color or default blue
     const accentColor = primaryColor || "#0A5F8C";
@@ -112,20 +112,18 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
             )}
 
             {/* Selected Achievements */}
-            {skillsData && skillsData.length > 0 && (
+            {selectedAchievements && selectedAchievements.length > 0 && (
               <div className="mb-8">
                 <h2 className="text-2xl mb-4" style={{ color: accentColor }}>
                   Selected Achievements
                 </h2>
                 <ul className="space-y-2">
-                  {skillsData.map((skillGroup, groupIndex) =>
-                    skillGroup.items?.map((item, itemIndex) => (
-                      <li key={`${groupIndex}-${itemIndex}`} className="flex items-start">
-                        <span className="text-gray-700 mr-3">•</span>
-                        <span className="text-gray-700">{item}</span>
-                      </li>
-                    ))
-                  )}
+                  {selectedAchievements.map((achievement, index) => (
+                    <li key={index} className="flex items-start">
+                      <span className="text-gray-700 mr-3">•</span>
+                      <span className="text-gray-700">{achievement}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}

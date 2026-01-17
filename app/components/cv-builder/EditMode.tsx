@@ -1,39 +1,58 @@
-import type { CVData, CVCustomization } from "~/types/cv-builder";
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import type { CVData, CVCustomization } from "~/types/cv-builder";
 import PersonalDetailsSection from "./sections/PersonalDetailsSection";
 import ProfessionalSummarySection from "./sections/ProfessionalSummarySection";
+import SelectedAchievementsSection from "./sections/SelectedAchievementsSection";
+import WebsitesAndSocialLinksSection from "./sections/WebsitesAndSocialLinksSection";
 import ProfessionalExperienceSection from "./sections/ProfessionalExperienceSection";
 import EducationSection from "./sections/EducationSection";
 import SkillsSection from "./sections/SkillsSection";
-import CertificationsSection from "./sections/CertificationsSection";
 import LanguagesSection from "./sections/LanguagesSection";
+import AdditionalSectionsManager from "./sections/AdditionalSectionsManager";
 import ResumeCompleteness from "./ResumeCompleteness";
 
 interface EditModeProps {
-  data: CVData;
-  onUpdate: (data: CVData) => void;
-  aiSuggestions?: any;
-  customization: CVCustomization;
+  cvData: CVData;
+  onChange: (data: CVData) => void;
+  aiSuggestions?: any; // TODO: Define AI suggestions type
+  customization?: CVCustomization;
 }
 
-// Section configuration - Removed "Websites & Social Links" as it's now integrated into Personal Details
-const sections = [
-  { id: "personal", label: "Personal Details", component: PersonalDetailsSection },
-  { id: "summary", label: "Professional Summary", component: ProfessionalSummarySection },
-  { id: "experience", label: "Professional Experience", component: ProfessionalExperienceSection },
-  { id: "education", label: "Education", component: EducationSection },
-  { id: "skills", label: "Areas of Expertise", component: SkillsSection },
-  { id: "certifications", label: "Certifications", component: CertificationsSection },
-  { id: "languages", label: "Languages", component: LanguagesSection },
-];
-
 export default function EditMode({
-  data,
-  onUpdate,
+  cvData,
+  onChange,
   aiSuggestions,
   customization,
 }: EditModeProps) {
+  // Build sections array dynamically based on template
+  const isAcademicTemplate = customization?.template.id === "template-academic";
+  
+  const baseSections = [
+    { id: "personal", label: "Personal Details", component: PersonalDetailsSection },
+    { id: "summary", label: "Professional Summary", component: ProfessionalSummarySection },
+  ];
+  
+  // Add Selected Achievements section only for Academic template
+  if (isAcademicTemplate) {
+    baseSections.push({
+      id: "achievements",
+      label: "Selected Achievements",
+      component: SelectedAchievementsSection,
+    });
+  }
+  
+  // Add remaining sections
+  const sections = [
+    ...baseSections,
+    { id: "websites", label: "Websites & Social Links", component: WebsitesAndSocialLinksSection },
+    { id: "experience", label: "Professional Experience", component: ProfessionalExperienceSection },
+    { id: "education", label: "Education", component: EducationSection },
+    { id: "skills", label: "Areas of Expertise", component: SkillsSection },
+    { id: "languages", label: "Languages", component: LanguagesSection },
+    { id: "additional", label: "Additional Sections", component: AdditionalSectionsManager },
+  ];
+
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const currentSection = sections[currentSectionIndex];
   const SectionComponent = currentSection.component;
@@ -54,7 +73,7 @@ export default function EditMode({
     <div className="h-full flex flex-col">
       {/* Resume Completeness Badge */}
       <div className="mb-6">
-        <ResumeCompleteness cvData={data} />
+        <ResumeCompleteness cvData={cvData} />
       </div>
 
       {/* Section Title */}
@@ -65,8 +84,8 @@ export default function EditMode({
       {/* Section Content */}
       <div className="flex-1 overflow-auto">
         <SectionComponent
-          data={data}
-          onUpdate={onUpdate}
+          data={cvData}
+          onUpdate={onChange}
           aiSuggestions={aiSuggestions}
           customization={customization}
         />
@@ -83,7 +102,7 @@ export default function EditMode({
               : "text-gray-700 hover:bg-gray-100"
           }`}
         >
-          <ChevronDown className="w-5 h-5" />
+          <ChevronLeft className="w-5 h-5" />
           <span className="font-medium hidden sm:inline">Back</span>
         </button>
 
@@ -121,7 +140,7 @@ export default function EditMode({
           <span className="font-medium sm:hidden">
             {currentSectionIndex === sections.length - 1 ? "Finish" : "Next"}
           </span>
-          <ChevronUp className="w-5 h-5" />
+          <ChevronRight className="w-5 h-5" />
         </button>
       </div>
     </div>

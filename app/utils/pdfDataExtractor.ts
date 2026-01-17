@@ -54,6 +54,7 @@ Return a JSON object with this EXACT structure:
   ],
   "skills": ["JavaScript", "React", "Node.js", "Python", "AWS"],
   "accomplishments": ["Published 3 research papers", "Won hackathon 2023"],
+  "selectedAchievements": ["Published 15+ peer-reviewed articles in top-tier journals", "Secured $2M in research funding from NSF"],
   "powerStatement": "Award-winning software engineer with proven track record of delivering scalable solutions",
   "additionalSections": []
 }
@@ -72,6 +73,7 @@ CRITICAL INSTRUCTIONS:
   * Remove the marker symbol but keep the EXACT text of each point
   * Preserve the original order from the resume
   * If text is in paragraph form without markers, try to split logical achievements into separate items
+- For selectedAchievements: Look for a section titled "Selected Achievements", "Key Achievements", "Notable Accomplishments", or similar. Extract each item as a separate string in the array. This is typically found in academic CVs.
 - For dates: Use MM/YYYY format (e.g., "01/2020", "06/2015")
 - For current positions/studies: Use "Present" as endDate
 - For education achievements: Extract honors, awards, achievements as array items
