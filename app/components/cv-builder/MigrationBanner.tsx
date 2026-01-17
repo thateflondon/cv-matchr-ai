@@ -21,9 +21,9 @@ export default function MigrationBanner({ onMigrate }: MigrationBannerProps) {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4 mb-4">
+    <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-primary/20 rounded-lg p-4 mb-4">
       <div className="flex items-start gap-3">
-        <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+        <AlertCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
         <div className="flex-1">
           <h3 className="text-sm font-semibold text-gray-900 mb-1">
             🆕 Enhanced PDF Data Extraction Available
@@ -37,7 +37,7 @@ export default function MigrationBanner({ onMigrate }: MigrationBannerProps) {
             <button
               onClick={handleMigrate}
               disabled={isMigrating}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium"
+              className="flex items-center gap-2 px-4 py-2 primary-gradient text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed text-xs font-medium shadow-sm"
             >
               {isMigrating ? (
                 <>

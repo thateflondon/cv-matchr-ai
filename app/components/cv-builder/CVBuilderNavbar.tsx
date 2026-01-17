@@ -49,6 +49,14 @@ export default function CVBuilderNavbar({
     <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
       {/* Left Section */}
       <div className="flex items-center gap-4">
+        <button
+          onClick={onToggleSidebar}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+          aria-label="Toggle sidebar"
+        >
+          <Menu className="w-5 h-5 text-gray-600" />
+        </button>
+
         {/* Language Selector */}
         <div className="relative">
           <button
@@ -110,7 +118,7 @@ export default function CVBuilderNavbar({
           >
             {mode.label}
             {mode.badge && (
-              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-blue-500 text-white text-xs rounded-full">
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 primary-gradient text-white text-xs rounded-full shadow-sm">
                 {mode.badge}
               </span>
             )}
@@ -121,7 +129,7 @@ export default function CVBuilderNavbar({
         <div className="relative ml-2">
           <button
             onClick={() => setDownloadDropdownOpen(!downloadDropdownOpen)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 primary-gradient text-white rounded-lg hover:opacity-90 transition-opacity shadow-sm"
           >
             <Download className="w-4 h-4" />
             <span className="text-sm font-medium">Download</span>

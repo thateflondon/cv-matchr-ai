@@ -58,7 +58,7 @@ export default function BottomActionBar({
         {/* Export PDF Button */}
         <button
           onClick={onExport}
-          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="flex items-center justify-center gap-2 px-6 py-2.5 primary-gradient text-white rounded-lg hover:opacity-90 transition-opacity shadow-sm"
         >
           <Download className="w-4 h-4" />
           <span className="text-sm font-medium">Export PDF</span>
