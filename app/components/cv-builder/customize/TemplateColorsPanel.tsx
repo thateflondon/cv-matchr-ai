@@ -10,14 +10,9 @@ interface TemplateColorsPanelProps {
 
 const colorPresets = [
   { name: "Blue", value: "#2563eb" },
-  { name: "Purple", value: "#7c3aed" },
   { name: "Green", value: "#059669" },
-  { name: "Red", value: "#dc2626" },
+  { name: "Purple", value: "#7c3aed" },
   { name: "Orange", value: "#ea580c" },
-  { name: "Pink", value: "#db2777" },
-  { name: "Teal", value: "#0d9488" },
-  { name: "Indigo", value: "#4f46e5" },
-  { name: "Gray", value: "#4b5563" },
   { name: "Black", value: "#000000" },
 ];
 
@@ -99,64 +94,53 @@ export default function TemplateColorsPanel({
           </div>
         )}
         
-        <div className="grid grid-cols-5 gap-3">
+        {/* Color Picker - Centered with 5 presets + 1 custom */}
+        <div className="flex items-center justify-center gap-3">
+          {/* Preset Colors */}
           {colorPresets.map((color) => (
             <button
               key={color.value}
               onClick={() => handleColorChange(color.value)}
               disabled={customization.template.supportsColorCustomization === false}
-              className={`relative w-12 h-12 rounded-full border-2 transition-all flex items-center justify-center ${
+              className={`relative w-8 h-8 rounded-full border-2 transition-all flex items-center justify-center ${
                 customization.primaryColor === color.value
-                  ? "border-gray-900 scale-110 shadow-lg"
-                  : "border-gray-300 hover:border-gray-500 hover:scale-105"
+                  ? "border-gray-900"
+                  : "border-gray-300 hover:border-gray-500"
               } ${
                 customization.template.supportsColorCustomization === false
                   ? "opacity-30 cursor-not-allowed"
-                  : ""
+                  : "cursor-pointer"
               }`}
               style={{ backgroundColor: color.value }}
               title={customization.template.supportsColorCustomization === false ? "Color customization disabled for this template" : color.name}
             >
               {customization.primaryColor === color.value && (
-                <Check className="w-5 h-5 text-white drop-shadow-lg" />
+                <Check className="w-4 h-4 text-white drop-shadow-lg" />
               )}
             </button>
           ))}
-        </div>
-
-        {/* Custom Color Input */}
-        <div className="mt-4">
-          <label className={`block text-sm font-medium mb-2 ${
-            customization.template.supportsColorCustomization === false
-              ? "text-gray-400"
-              : "text-gray-700"
-          }`}>
-            Or choose a custom color:
-          </label>
-          <div className="flex items-center gap-3">
+          
+          {/* Custom Color Picker */}
+          <div className="relative">
             <input
               type="color"
               value={customization.primaryColor}
               onChange={(e) => handleColorChange(e.target.value)}
               disabled={customization.template.supportsColorCustomization === false}
-              className={`h-10 w-20 rounded-lg border border-gray-300 ${
+              className="absolute inset-0 w-8 h-8 opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            />
+            <div
+              className={`w-8 h-8 rounded-full border-2 border-gray-300 flex items-center justify-center transition-all ${
                 customization.template.supportsColorCustomization === false
                   ? "opacity-30 cursor-not-allowed"
-                  : "cursor-pointer"
+                  : "hover:border-gray-500 cursor-pointer"
               }`}
-            />
-            <input
-              type="text"
-              value={customization.primaryColor}
-              onChange={(e) => handleColorChange(e.target.value)}
-              disabled={customization.template.supportsColorCustomization === false}
-              placeholder="#000000"
-              className={`flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                customization.template.supportsColorCustomization === false
-                  ? "opacity-30 cursor-not-allowed bg-gray-50"
-                  : ""
-              }`}
-            />
+              style={{
+                background: `conic-gradient(from 0deg, red, yellow, lime, aqua, blue, magenta, red)`
+              }}
+            >
+              <div className="w-4 h-4 bg-white rounded-full"></div>
+            </div>
           </div>
         </div>
       </div>
