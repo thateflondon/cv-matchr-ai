@@ -136,6 +136,10 @@ export interface CVTemplate {
   supportsColorCustomization?: boolean; // If false, color customization will be disabled
   supportsFontCustomization?: boolean; // If false, font customization will be disabled
   supportsLayoutCustomization?: boolean; // If false, layout customization will be disabled
+  // Export formats
+  supportsPDF?: boolean; // Default: true
+  supportsDOCX?: boolean; // Default: false
+  isFree?: boolean; // Premium templates require subscription
 }
 
 export interface CVCustomization {
@@ -160,8 +164,8 @@ export interface CVCustomization {
     body: string;
     sectionTitles: string;
   };
-  dateFormat: "short" | "long";
-  dateAlignment: "left" | "right";
+  dateFormat: "short" | "long" | "numeric";
+  dateAlignment: "left" | "right" | "inline";
   headerAlignment: "left" | "center" | "right";
 }
 

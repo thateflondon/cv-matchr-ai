@@ -184,70 +184,77 @@ export default function TemplateColorsPanel({
         </div>
 
         {/* Template Grid */}
-        <div className="grid grid-cols-2 gap-4 max-h-[600px] overflow-y-auto">
-          {filteredTemplates.map((template) => (
-            <button
-              key={template.id}
-              onClick={() => handleTemplateChange(template)}
-              className={`p-4 border-2 rounded-lg text-left transition-all ${
-                customization.template.id === template.id
-                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                  : "border-gray-200 hover:border-gray-400"
-              }`}
-            >
-              {/* Template Preview */}
-              <div
-                className={`w-full h-32 rounded mb-3 overflow-hidden ${
-                  customization.template.id === template.id
-                    ? "ring-2 ring-primary"
-                    : ""
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 max-h-[600px] overflow-y-auto pr-2">
+          {filteredTemplates.map((template) => {
+            const isSelected = customization.template.id === template.id;
+            const supportsPDF = template.supportsPDF !== false; // Default true
+            const supportsDOCX = template.supportsDOCX === true;
+            const isFree = template.isFree === true;
+            
+            return (
+              <button
+                key={template.id}
+                onClick={() => handleTemplateChange(template)}
+                data-testid={template.id}
+                className={`relative group rounded-xl border-2 transition-all overflow-hidden ${
+                  isSelected
+                    ? "border-primary bg-primary/5 shadow-md"
+                    : "border-gray-200 hover:border-gray-300 hover:shadow-sm"
                 }`}
               >
-                {template.thumbnail ? (
-                  <img
-                    src={template.thumbnail}
-                    alt={`${template.name} preview`}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-400 text-xs">Preview</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <h4 className="text-sm font-medium text-gray-900 mb-1">
+                {/* Template Name */}
+                <div className="px-3 py-2 bg-gradient-to-br from-gray-50 to-gray-100/50 border-b border-gray-200">
+                  <h4 className="text-sm font-semibold text-gray-900 text-center truncate">
                     {template.name}
                   </h4>
-                  {template.description && (
-                    <p className="text-xs text-gray-500 line-clamp-2 mb-2">
-                      {template.description}
-                    </p>
-                  )}
-                  <div className="flex flex-wrap gap-1">
-                    {template.hasPhoto && (
-                      <span className="text-xs px-2 py-0.5 bg-purple-100 text-purple-700 rounded">
-                        Photo
-                      </span>
-                    )}
-                    {template.columns === 2 && (
-                      <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded">
-                        2 Col
-                      </span>
-                    )}
-                    <span className="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded capitalize">
-                      {template.category}
-                    </span>
-                  </div>
                 </div>
-                {customization.template.id === template.id && (
-                  <Check className="w-5 h-5 text-primary flex-shrink-0 ml-2" />
-                )}
-              </div>
-            </button>
-          ))}
+
+                {/* Badges and Checkmark Container */}
+                <div className="px-3 py-3 flex items-center justify-between">
+                  {/* Format Badges */}
+                  <div className="flex items-center gap-1.5">
+                    {supportsPDF && (
+                      <span className="inline-block px-2 py-0.5 text-[10px] font-semibold text-white bg-amber-500 rounded uppercase tracking-wide">
+                        pdf
+                      </span>
+                    )}
+                    {supportsDOCX && (
+                      <span className="inline-block px-2 py-0.5 text-[10px] font-semibold text-white bg-amber-500 rounded uppercase tracking-wide">
+                        docx
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Free Badge (if applicable) */}
+                  {isFree && (
+                    <span className="inline-block px-2 py-0.5 text-[10px] font-semibold text-white bg-indigo-500 rounded uppercase tracking-wide">
+                      Free
+                    </span>
+                  )}
+
+                  {/* Checkmark Icon */}
+                  {isSelected && (
+                    <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="text-primary"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="m21 7.4-8.9 10.08c-.6.68-1.65.7-2.27.03L5 12.36l1.5-1.44 4.44 4.73L19.46 6 21 7.4Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {filteredTemplates.length === 0 && (
