@@ -24,7 +24,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: fonts.primary,
+          fontFamily: fonts.secondary, // Body text uses secondary font
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
@@ -49,6 +49,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             <div className="flex justify-between items-start mb-3">
               <h1
                 style={{
+                  fontFamily: fonts.primary, // Primary font for main heading
                   fontSize: `${fontSize.primaryHeading}px`,
                   fontWeight: fontWeight.primaryHeading,
                   color: "#000000",
@@ -99,6 +100,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             <div className="mb-5">
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -118,6 +120,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             <div className="mb-5">
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -164,10 +167,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                     </div>
                   </div>
                   
-                  {exp.description && (
-                    <p style={{ marginBottom: "6px" }}>{exp.description}</p>
-                  )}
-                  
+                  {/* Achievements/Responsibilities */}
                   {exp.achievements && exp.achievements.length > 0 && (
                     <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
                       {exp.achievements.map((achievement, i) => (
@@ -176,6 +176,11 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                         </li>
                       ))}
                     </ul>
+                  )}
+                  
+                  {/* Fallback: Show description if no achievements (for backward compatibility) */}
+                  {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                    <p style={{ marginBottom: "6px" }}>{exp.description}</p>
                   )}
                 </div>
               ))}
@@ -187,6 +192,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             <div className="mb-5">
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -258,6 +264,7 @@ const PragueTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             <div className="mb-5">
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
