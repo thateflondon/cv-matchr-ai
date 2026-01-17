@@ -1,4 +1,4 @@
-import type { CVData } from "types/cv-builder";
+import type { CVData } from "~/types/cv-builder";
 
 /**
  * Parses raw resume text into structured CV data using AI
@@ -95,6 +95,13 @@ CRITICAL INSTRUCTIONS:
     }
 
     const parsedData = JSON.parse(cleanedContent) as CVData;
+
+    // Sanitize professional summary to remove "Profil:" or "Profile:" prefix
+    if (parsedData.professionalSummary) {
+      parsedData.professionalSummary = parsedData.professionalSummary
+        .replace(/^(Profil|Profile)\s*:\s*/i, '')
+        .trim();
+    }
 
     return parsedData;
   } catch (error) {
