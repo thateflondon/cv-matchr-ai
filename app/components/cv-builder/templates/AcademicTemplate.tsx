@@ -12,63 +12,52 @@ export interface AcademicTemplateProps {
  */
 const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fonts, spacing, fontSize, fontWeight } = customization;
-    const { personalDetails, professionalSummary, selectedAchievements, professionalExperience, education, skillsData, certifications } = data;
+    const { primaryColor } = customization;
+    const { personalDetails, professionalSummary, selectedAchievements, professionalExperience, education, certifications } = data;
 
     // Use primary color or default blue
     const accentColor = primaryColor || "#0A5F8C";
-
-    // A4 dimensions in pixels (at 72 DPI)
-    const a4Height = 842;
 
     return (
       <div
         ref={ref}
         data-cv-preview="true"
-        className="bg-white w-full"
         style={{
-          minHeight: `${a4Height}px`,
-          fontFamily: fonts.secondary,
-          lineHeight: `${spacing.lineHeight}%`,
-          fontSize: `${fontSize.body}px`,
-          fontWeight: fontWeight.body,
-          color: "#333333",
-          position: "relative",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+          backgroundColor: "white",
+          boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)",
+          maxWidth: "56rem",
+          margin: "0 auto",
         }}
       >
         {/* Blue left border */}
-        <div style={{ position: "relative", display: "flex" }}>
+        <div style={{ display: "flex", position: "relative" }}>
           <div 
             style={{ 
               position: "absolute",
-              width: "8px",
-              top: "30px",
-              height: "160px",
+              top: "3vw",
+              width: "0.5rem",
+              height: "16vw",
               backgroundColor: accentColor,
-              left: "0",
             }}
           />
           
-          <div style={{ flex: "1", padding: "48px" }}>
+          <div style={{ flex: "1 1 0%", padding: "3rem" }}>
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
               <div>
-                <h1 
-                  style={{ 
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.primaryHeading}px`,
-                    fontWeight: fontWeight.primaryHeading,
-                    marginBottom: "8px",
-                    color: accentColor,
-                  }}
-                >
+                <h1 style={{ 
+                  fontSize: "2.25rem",
+                  lineHeight: "2.5rem",
+                  color: accentColor,
+                  marginBottom: "0.5rem",
+                }}>
                   {personalDetails?.firstName} {personalDetails?.lastName}
                 </h1>
                 {personalDetails?.jobTitle && (
                   <p style={{ 
-                    fontSize: `${fontSize.secondaryHeading - 2}px`,
                     color: accentColor,
+                    fontSize: "1.125rem",
+                    lineHeight: "1.75rem",
                   }}>
                     {personalDetails.jobTitle}
                   </p>
@@ -76,7 +65,7 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
               </div>
               
               {/* Contact Info - Right side */}
-              <div style={{ textAlign: "right", fontSize: `${fontSize.body - 1}px` }}>
+              <div style={{ textAlign: "right", fontSize: "0.875rem", lineHeight: "1.25rem" }}>
                 {/* Line 1: Email • Phone */}
                 <div style={{ display: "flex" }}>
                   {personalDetails?.email && (
@@ -130,10 +119,10 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
 
             {/* Summary */}
             {professionalSummary && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
+              <div style={{ marginBottom: "2rem" }}>
                 <p style={{ 
-                  lineHeight: "1.625",
                   color: accentColor,
+                  lineHeight: "1.625",
                 }}>
                   {professionalSummary}
                 </p>
@@ -142,23 +131,24 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
 
             {/* Selected Achievements */}
             {selectedAchievements && selectedAchievements.length > 0 && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <h2 
-                  style={{ 
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.secondaryHeading}px`,
-                    fontWeight: fontWeight.secondaryHeading,
-                    marginBottom: "16px",
-                    color: accentColor,
-                  }}
-                >
+              <div style={{ marginBottom: "2rem" }}>
+                <h2 style={{ 
+                  fontSize: "1.5rem",
+                  lineHeight: "2rem",
+                  color: accentColor,
+                  marginBottom: "1rem",
+                }}>
                   Selected Achievements
                 </h2>
                 <ul style={{ listStyle: "none", padding: "0", margin: "0" }}>
                   {selectedAchievements.map((achievement, index) => (
-                    <li key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "8px" }}>
-                      <span style={{ color: "#4B5563", marginRight: "12px" }}>•</span>
-                      <span style={{ color: "#4B5563" }}>{achievement}</span>
+                    <li key={index} style={{ 
+                      display: "flex",
+                      alignItems: "flex-start",
+                      marginTop: index > 0 ? "0.5rem" : "0",
+                    }}>
+                      <span style={{ color: "#374151", marginRight: "0.75rem" }}>•</span>
+                      <span style={{ color: "#374151" }}>{achievement}</span>
                     </li>
                   ))}
                 </ul>
@@ -167,33 +157,25 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
 
             {/* Education and Credentials */}
             {education && education.length > 0 && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <h2 
-                  style={{ 
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.secondaryHeading}px`,
-                    fontWeight: fontWeight.secondaryHeading,
-                    marginBottom: "16px",
-                    color: accentColor,
-                  }}
-                >
+              <div style={{ marginBottom: "2rem" }}>
+                <h2 style={{ 
+                  fontSize: "1.5rem",
+                  lineHeight: "2rem",
+                  color: accentColor,
+                  marginBottom: "1rem",
+                }}>
                   Education and Credentials
                 </h2>
                 
                 {education.map((edu, index) => (
-                  <div key={index} style={{ marginBottom: "16px" }}>
-                    <h3 style={{ 
-                      fontSize: `${fontSize.body}px`,
-                      fontWeight: fontWeight.secondaryHeading,
-                      color: accentColor,
-                      marginBottom: "4px",
-                    }}>
+                  <div key={index} style={{ marginBottom: "1rem" }}>
+                    <h3 style={{ color: accentColor }}>
                       {edu.degree}
                       {edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}
                     </h3>
                     <p style={{ 
-                      color: "#4B5563",
-                      marginLeft: "16px",
+                      color: "#374151",
+                      marginLeft: "1rem",
                     }}>
                       {edu.institution}
                       {edu.location && `, ${edu.location}`}
@@ -208,18 +190,11 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                 {certifications && certifications.length > 0 && (
                   <>
                     {certifications.map((cert, index) => (
-                      <div key={index} style={{ marginBottom: "16px" }}>
-                        <h3 style={{ 
-                          fontSize: `${fontSize.body}px`,
-                          fontWeight: fontWeight.secondaryHeading,
-                          color: accentColor,
-                          marginBottom: "4px",
-                        }}>
-                          {cert.name}
-                        </h3>
+                      <div key={index} style={{ marginBottom: "1rem" }}>
+                        <h3 style={{ color: accentColor }}>{cert.name}</h3>
                         <p style={{ 
-                          color: "#4B5563",
-                          marginLeft: "16px",
+                          color: "#374151",
+                          marginLeft: "1rem",
                         }}>
                           {cert.issuer}
                           {cert.date && ` (${cert.date})`}
@@ -233,37 +208,34 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
 
             {/* Professional Experience */}
             {professionalExperience && professionalExperience.length > 0 && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <h2 
-                  style={{ 
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.secondaryHeading}px`,
-                    fontWeight: fontWeight.secondaryHeading,
-                    marginBottom: "16px",
-                    color: accentColor,
-                  }}
-                >
+              <div style={{ marginBottom: "2rem" }}>
+                <h2 style={{ 
+                  fontSize: "1.5rem",
+                  lineHeight: "2rem",
+                  color: accentColor,
+                  marginBottom: "1rem",
+                }}>
                   Professional Experience
                 </h2>
                 
                 {professionalExperience.map((exp, index) => (
-                  <div key={index} style={{ marginBottom: "24px" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                  <div key={index} style={{ marginBottom: "1.5rem" }}>
+                    <div style={{ 
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      marginBottom: "0.75rem",
+                    }}>
                       <div>
-                        <h3 style={{ 
-                          fontSize: `${fontSize.body}px`,
-                          fontWeight: fontWeight.secondaryHeading,
-                          color: accentColor,
-                          marginBottom: "4px",
-                        }}>
+                        <h3 style={{ color: accentColor }}>
                           {exp.jobTitle}
                           {exp.company && `, ${exp.company}`}
                           {exp.location && `, ${exp.location}`}
                         </h3>
                         {exp.company && (
                           <p style={{ 
-                            marginLeft: "16px",
                             color: accentColor,
+                            marginLeft: "1rem",
                           }}>
                             {exp.company}
                             {(exp.startDate || exp.endDate) && (
@@ -281,19 +253,27 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                     
                     {exp.description && (
                       <p style={{ 
-                        color: "#4B5563",
-                        marginBottom: "12px",
+                        color: "#374151",
+                        marginBottom: "0.75rem",
                       }}>
                         {exp.description}
                       </p>
                     )}
                     
                     {exp.achievements && exp.achievements.length > 0 && (
-                      <ul style={{ listStyle: "none", padding: "0", margin: "0 0 12px 0" }}>
+                      <ul style={{ 
+                        listStyle: "none",
+                        padding: "0",
+                        margin: "0 0 0.75rem 0",
+                      }}>
                         {exp.achievements.map((achievement, i) => (
-                          <li key={i} style={{ display: "flex", alignItems: "flex-start", marginBottom: "8px" }}>
-                            <span style={{ color: "#4B5563", marginRight: "12px" }}>•</span>
-                            <span style={{ color: "#4B5563" }}>{achievement}</span>
+                          <li key={i} style={{ 
+                            display: "flex",
+                            alignItems: "flex-start",
+                            marginTop: i > 0 ? "0.5rem" : "0",
+                          }}>
+                            <span style={{ color: "#374151", marginRight: "0.75rem" }}>•</span>
+                            <span style={{ color: "#374151" }}>{achievement}</span>
                           </li>
                         ))}
                       </ul>
@@ -302,6 +282,17 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                 ))}
               </div>
             )}
+
+            {/* Page number - commented out as in original */}
+            {/* <div style={{ 
+              textAlign: "right",
+              fontSize: "0.875rem",
+              lineHeight: "1.25rem",
+              color: accentColor,
+              marginTop: "2rem",
+            }}>
+              Page 1 | 1
+            </div> */}
           </div>
         </div>
       </div>
