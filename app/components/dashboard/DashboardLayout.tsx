@@ -1,4 +1,4 @@
-import { useState, type ReactNode, useEffect } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import { Menu, X, FileText, Edit, LayoutGrid, BarChart3 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -73,9 +73,9 @@ export default function DashboardLayout({
               <button
                 key={tab.id}
                 onClick={() => onTabChange(tab.id)}
-                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-colors mb-1 ${
+                className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg transition-all mb-1 ${
                   isActive
-                    ? "bg-blue-50 text-blue-600"
+                    ? "bg-primary/10 text-primary shadow-sm"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
                 title={sidebarOpen ? undefined : tab.label}
