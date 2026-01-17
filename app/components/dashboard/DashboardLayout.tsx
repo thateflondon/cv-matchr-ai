@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
+import { useState, ReactNode, useEffect } from "react";
 import { Menu, X, FileText, Edit, LayoutGrid, BarChart3 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -13,17 +12,33 @@ export default function DashboardLayout({
   activeTab,
   onTabChange,
 }: DashboardLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Keep sidebar closed by default, but allow responsive behavior
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    // Set initial state
+    handleResize();
+
+    // Listen for window resize
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const tabs = [
     { id: "resumes" as const, label: "My Resumes", icon: FileText },
-    { id: "builder" as const, label: "CV Builder", icon: Edit },
+    { id: "builder" as const, label: "Resume Builder", icon: Edit },
     // { id: "applications" as const, label: "Applications", icon: LayoutGrid },
     // { id: "stats" as const, label: "Statistics", icon: BarChart3 },
   ];
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-full bg-gray-50">
       {/* Sidebar */}
       <aside
         className={`${
