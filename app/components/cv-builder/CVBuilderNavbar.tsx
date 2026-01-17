@@ -17,8 +17,6 @@ interface CVBuilderNavbarProps {
 const languages = [
   { code: "en", label: "English", flag: "/icons/lang_uk.svg" },
   { code: "fr", label: "Français", flag: "/icons/lang_fr.svg" },
-  { code: "es", label: "Español", flag: "/icons/lang_es.svg" },
-  { code: "de", label: "Deutsch", flag: "/icons/lang_de.svg" },
 ];
 
 export default function CVBuilderNavbar({
@@ -35,6 +33,10 @@ export default function CVBuilderNavbar({
 }: CVBuilderNavbarProps) {
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const [downloadDropdownOpen, setDownloadDropdownOpen] = useState(false);
+
+  // Default to English if no language is selected
+  const currentLang = languages.find((lang) => lang.code === selectedLanguage) || languages[0];
+  const availableLanguages = languages.filter((lang) => lang.code !== currentLang.code);
 
   const modes = [
     { id: "edit", label: "Edit" },
@@ -62,12 +64,12 @@ export default function CVBuilderNavbar({
             className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
           >
             <img
-              src={languages.find((lang) => lang.code === selectedLanguage)?.flag}
-              alt={languages.find((lang) => lang.code === selectedLanguage)?.label}
+              src={currentLang.flag}
+              alt={currentLang.label}
               className="w-5 h-5"
             />
             <span className="text-sm font-medium text-gray-700">
-              {languages.find((lang) => lang.code === selectedLanguage)?.label}
+              {currentLang.label}
             </span>
             <ChevronDown className="w-4 h-4 text-gray-500" />
           </button>
@@ -79,18 +81,14 @@ export default function CVBuilderNavbar({
                 onClick={() => setLanguageDropdownOpen(false)}
               />
               <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
-                {languages.map((lang) => (
+                {availableLanguages.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => {
                       onLanguageChange(lang.code);
                       setLanguageDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg flex items-center gap-2 ${
-                      selectedLanguage === lang.code
-                        ? "bg-blue-50 text-blue-700 font-medium"
-                        : "text-gray-700"
-                    }`}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-lg flex items-center gap-2 text-gray-700"
                   >
                     <img
                       src={lang.flag}
