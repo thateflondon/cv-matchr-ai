@@ -160,10 +160,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                   {exp.location && `, ${exp.location}`}
                 </div>
 
-                {exp.description && (
-                  <p style={{ marginBottom: "6px" }}>{exp.description}</p>
-                )}
-
+                {/* Achievements/Responsibilities */}
                 {exp.achievements && exp.achievements.length > 0 && (
                   <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
                     {exp.achievements.map((achievement, i) => (
@@ -172,6 +169,11 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                       </li>
                     ))}
                   </ul>
+                )}
+
+                {/* Fallback: Show description if no achievements (for backward compatibility) */}
+                {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                  <p style={{ marginBottom: "6px" }}>{exp.description}</p>
                 )}
               </div>
             ))}
