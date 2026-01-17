@@ -117,14 +117,6 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
 
   const suggestions = getSuggestions();
 
-  // Determine progress bar color
-  const getProgressColor = () => {
-    if (completeness === 100) return "#10b981"; // green-500
-    if (completeness >= 80) return "#3b82f6"; // blue-500
-    if (completeness >= 50) return "#f59e0b"; // amber-500
-    return "#ef4444"; // red-500
-  };
-
   return (
     <div className="w-full space-y-3">
       {/* Progress Bar Section */}
@@ -140,10 +132,9 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
         {/* Progress Bar */}
         <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
           <div
-            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out primary-gradient"
             style={{
               width: `${completeness}%`,
-              backgroundColor: getProgressColor(),
             }}
           />
         </div>
