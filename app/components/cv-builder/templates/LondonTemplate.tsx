@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { BaseTemplateProps } from "./BaseTemplate";
+import type { BaseTemplateProps } from "./BaseTemplate";
 
 /**
  * London Template (Classic)
@@ -24,60 +24,52 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: fonts.primary,
+          fontFamily: fonts.secondary, // Body text uses secondary font
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
         }}
       >
-        {/* Header with Photo */}
-        <div className="mb-5">
-          <div className="flex gap-4 items-start mb-3">
-            {/* Photo */}
-            {personalDetails?.photo && (
-              <div
-                style={{
-                  width: "68px",
-                  height: "68px",
-                  flexShrink: 0,
-                  overflow: "hidden",
-                  borderRadius: "2px",
-                  border: "1px solid #e0e0e0",
-                }}
-              >
-                <img
-                  src={personalDetails.photo}
-                  alt={`${personalDetails.firstName} ${personalDetails.lastName}`}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                  }}
-                />
-              </div>
-            )}
-
-            {/* Name */}
-            <div className="flex-1">
-              <h1
-                style={{
-                  fontSize: `${fontSize.primaryHeading}px`,
-                  fontWeight: fontWeight.primaryHeading,
-                  color: "#000000",
-                  marginTop: "8px",
-                }}
-              >
-                {personalDetails?.firstName} {personalDetails?.lastName}
-              </h1>
+        {/* Header */}
+        <div
+          style={{
+            textAlign: "center",
+            paddingBottom: "16px",
+            marginBottom: "20px",
+            borderBottom: "2px solid #000000",
+          }}
+        >
+          <h1
+            style={{
+              fontFamily: fonts.primary, // Primary font for main heading
+              fontSize: `${fontSize.primaryHeading}px`,
+              fontWeight: fontWeight.primaryHeading,
+              marginBottom: "8px",
+              color: "#000000",
+            }}
+          >
+            {personalDetails?.firstName} {personalDetails?.lastName}
+          </h1>
+          
+          {personalDetails?.jobTitle && (
+            <div
+              style={{
+                fontFamily: fonts.primary, // Primary font for job title
+                fontSize: `${fontSize.secondaryHeading}px`,
+                fontWeight: fontWeight.secondaryHeading,
+                color: "#333333",
+                marginBottom: "8px",
+              }}
+            >
+              {personalDetails.jobTitle}
             </div>
-          </div>
-
+          )}
+          
           {/* Contact Info - Single Line */}
           <div
             style={{
               fontSize: `${fontSize.body - 1}px`,
               color: "#333333",
-              marginLeft: personalDetails?.photo ? "84px" : "0",
             }}
           >
             {personalDetails?.location && <span>{personalDetails.location} | </span>}
@@ -99,6 +91,7 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -123,6 +116,7 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -152,18 +146,20 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                   {exp.startDate} - {exp.endDate || "Present"}
                 </div>
                 
-                {exp.description && (
-                  <p style={{ marginBottom: "6px" }}>{exp.description}</p>
-                )}
-                
+                {/* Achievements/Responsibilities */}
                 {exp.achievements && exp.achievements.length > 0 && (
                   <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
                     {exp.achievements.map((achievement, i) => (
-                      <li key={i} style={{ marginBottom: "3px" }}>
+                      <li key={i} style={{ marginBottom: "2px" }}>
                         {achievement}
                       </li>
                     ))}
                   </ul>
+                )}
+                
+                {/* Fallback: Show description if no achievements (for backward compatibility) */}
+                {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                  <p style={{ marginBottom: "6px" }}>{exp.description}</p>
                 )}
               </div>
             ))}
@@ -184,6 +180,7 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                 >
                   <h2
                     style={{
+                      fontFamily: fonts.primary, // Primary font for section titles
                       fontSize: `${fontSize.sectionTitles}px`,
                       fontWeight: fontWeight.sectionTitles,
                       color: "#000000",
@@ -221,6 +218,7 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
@@ -283,6 +281,7 @@ const LondonTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: "#000000",
