@@ -53,7 +53,7 @@ export default function ProfessionalSummarySection({
 
       {/* AI Suggestion */}
       {aiSuggestions?.professionalSummary && (
-        <div className="p-4 bg-accent border border-border rounded-lg">
+        <div className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
           <div className="flex items-start gap-2 mb-3">
             <Sparkles className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
             <div className="flex-1">
@@ -75,7 +75,7 @@ export default function ProfessionalSummarySection({
       )}
 
       {/* Tips */}
-      <div className="p-4 bg-muted border border-border rounded-lg">
+      <div className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
         <h4 className="text-sm font-medium text-foreground mb-2">
           Writing Tips:
         </h4>
@@ -89,7 +89,7 @@ export default function ProfessionalSummarySection({
       </div>
 
       {/* Example */}
-      <div className="p-4 bg-accent border border-border rounded-lg">
+      <div className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
         <h4 className="text-sm font-medium text-foreground mb-2">Example:</h4>
         <p className="text-sm text-muted-foreground leading-relaxed italic">
           "Results-driven Senior Software Engineer with 7+ years of experience
