@@ -19,7 +19,7 @@ import {
   convertFeedbackToSuggestions,
 } from "~/utils/cvDataExtractor";
 import { exportCVToPDF } from "~/utils/pdfExport";
-import { toast } from "sonner@2.0.3";
+import { toast } from "sonner";
 import {
   saveResumeToPuter,
   updateResumeInPuter,
