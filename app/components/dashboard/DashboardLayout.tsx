@@ -1,4 +1,4 @@
-import { useState, ReactNode, useEffect } from "react";
+import { useState, type ReactNode, useEffect } from "react";
 import { Menu, X, FileText, Edit, LayoutGrid, BarChart3 } from "lucide-react";
 
 interface DashboardLayoutProps {
