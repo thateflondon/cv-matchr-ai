@@ -124,8 +124,8 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
         {/* Header with Score */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <div className="text-2xl font-bold text-primary">{completeness}</div>
-            <p className="text-sm font-medium text-gray-600">Resume completeness</p>
+            <div className="text-2xl font-bold text-primary">{completeness}%</div>
+            <p className="text-sm font-medium text-gray-600">{completeness}% complete</p>
           </div>
         </div>
 
