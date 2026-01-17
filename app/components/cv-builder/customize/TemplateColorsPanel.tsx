@@ -216,36 +216,21 @@ export default function TemplateColorsPanel({
                   </div>
                 )}
 
-                {/* Badges Overlay - Top Left */}
-                <div className="absolute top-1.5 left-1.5 flex flex-col gap-1">
-                  {/* Format badges */}
-                  <div className="flex flex-wrap gap-0.5">
-                    <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-amber-500 text-white rounded shadow-sm">
-                      pdf
-                    </span>
-                    {template.category !== "specialist" && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-amber-500 text-white rounded shadow-sm">
-                        docx
+                {/* Badges Overlay - Bottom Left */}
+                {(template.hasPhoto || template.columns === 2) && (
+                  <div className="absolute bottom-1.5 left-1.5 flex flex-wrap gap-0.5">
+                    {template.hasPhoto && (
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-purple-500 text-white rounded shadow-sm">
+                        Photo
+                      </span>
+                    )}
+                    {template.columns === 2 && (
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-emerald-500 text-white rounded shadow-sm">
+                        2 Col
                       </span>
                     )}
                   </div>
-
-                  {/* Additional badges */}
-                  {(template.hasPhoto || template.columns === 2) && (
-                    <div className="flex flex-wrap gap-0.5">
-                      {template.hasPhoto && (
-                        <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-purple-500 text-white rounded shadow-sm">
-                          Photo
-                        </span>
-                      )}
-                      {template.columns === 2 && (
-                        <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-emerald-500 text-white rounded shadow-sm">
-                          2 Col
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </div>
+                )}
 
                 {/* Check Icon - Top Right (when selected) */}
                 {customization.template.id === template.id && (
