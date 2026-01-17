@@ -25,45 +25,23 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         style={{
           width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: fonts.primary,
+          fontFamily: fonts.secondary, // Body text uses secondary font
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
           color: "#000000",
         }}
       >
-        {/* Header with Photo */}
-        <div className="flex gap-6 mb-6">
-          {/* Photo */}
-          {personalDetails?.photo && (
-            <div
-              style={{
-                width: "80px",
-                height: "80px",
-                flexShrink: 0,
-                overflow: "hidden",
-                borderRadius: "4px",
-              }}
-            >
-              <img
-                src={personalDetails.photo}
-                alt={`${personalDetails.firstName} ${personalDetails.lastName}`}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            </div>
-          )}
-
-          {/* Name and Contact */}
-          <div className="flex-1">
+        {/* Header with Professional Photo */}
+        <div className="relative mb-5">
+          {/* Personal Info */}
+          <div className="mb-4">
             <h1
               style={{
+                fontFamily: fonts.primary, // Primary font for main heading
                 fontSize: `${fontSize.primaryHeading}px`,
                 fontWeight: fontWeight.primaryHeading,
-                marginBottom: "4px",
                 color: "#000000",
+                marginBottom: "6px",
               }}
             >
               {personalDetails?.firstName} {personalDetails?.lastName}
@@ -72,10 +50,11 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             {personalDetails?.jobTitle && (
               <div
                 style={{
+                  fontFamily: fonts.primary, // Primary font for job title
                   fontSize: `${fontSize.secondaryHeading}px`,
                   fontWeight: fontWeight.secondaryHeading,
-                  color: primaryColor,
-                  marginBottom: "8px",
+                  color: "#666666",
+                  marginBottom: "4px",
                 }}
               >
                 {personalDetails.jobTitle}
@@ -98,6 +77,32 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
               {personalDetails?.linkedin && <span>• {personalDetails.linkedin}</span>}
             </div>
           </div>
+
+          {/* Photo */}
+          {personalDetails?.photo && (
+            <div
+              style={{
+                width: "80px",
+                height: "80px",
+                flexShrink: 0,
+                overflow: "hidden",
+                borderRadius: "4px",
+                position: "absolute",
+                top: "0",
+                right: "0",
+              }}
+            >
+              <img
+                src={personalDetails.photo}
+                alt={`${personalDetails.firstName} ${personalDetails.lastName}`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Professional Summary */}
@@ -112,6 +117,7 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: primaryColor,
@@ -136,6 +142,7 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: primaryColor,
@@ -179,43 +186,22 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
                   </div>
                 </div>
                 
-                {exp.description && (() => {
-                  const lines = formatTextWithLineBreaks(exp.description);
-                  const bulletLines = lines.filter(isBulletPoint);
-                  const textLines = lines.filter(line => !isBulletPoint(line));
-                  
-                  return (
-                    <>
-                      {textLines.length > 0 && (
-                        <div style={{ marginBottom: "6px", color: "#333333" }}>
-                          {textLines.map((line, i) => (
-                            <p key={i} style={{ marginBottom: "4px" }}>{line}</p>
-                          ))}
-                        </div>
-                      )}
-                      
-                      {bulletLines.length > 0 && (
-                        <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
-                          {bulletLines.map((line, i) => (
-                            <li key={i} style={{ marginBottom: "3px", color: "#333333" }}>
-                              {removeBulletPrefix(line)}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </>
-                  );
-                })()}
-                
-                {/* Only show achievements if description doesn't already contain them */}
-                {!exp.description && exp.achievements && exp.achievements.length > 0 && (
+                {/* Achievements/Responsibilities */}
+                {exp.achievements && exp.achievements.length > 0 && (
                   <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
                     {exp.achievements.map((achievement, i) => (
                       <li key={i} style={{ marginBottom: "3px", color: "#333333" }}>
-                        {removeBulletPrefix(achievement)}
+                        {achievement}
                       </li>
                     ))}
                   </ul>
+                )}
+                
+                {/* Fallback: Show description if no achievements (for backward compatibility) */}
+                {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                  <div style={{ color: "#333333", marginTop: "4px" }}>
+                    <p style={{ textAlign: "justify" }}>{exp.description}</p>
+                  </div>
                 )}
               </div>
             ))}
@@ -236,6 +222,7 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
               >
                 <h2
                   style={{
+                    fontFamily: fonts.primary, // Primary font for section titles
                     fontSize: `${fontSize.sectionTitles}px`,
                     fontWeight: fontWeight.sectionTitles,
                     color: primaryColor,
@@ -293,6 +280,7 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
               >
                 <h2
                   style={{
+                    fontFamily: fonts.primary, // Primary font for section titles
                     fontSize: `${fontSize.sectionTitles}px`,
                     fontWeight: fontWeight.sectionTitles,
                     color: primaryColor,
@@ -328,6 +316,7 @@ const TokyoTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
             >
               <h2
                 style={{
+                  fontFamily: fonts.primary, // Primary font for section titles
                   fontSize: `${fontSize.sectionTitles}px`,
                   fontWeight: fontWeight.sectionTitles,
                   color: primaryColor,
