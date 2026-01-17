@@ -19,7 +19,7 @@ import {
   convertFeedbackToSuggestions,
 } from "~/utils/cvDataExtractor";
 import { exportCVToPDF } from "~/utils/pdfExport";
-import { toast } from "sonner";
+import { toast } from "sonner@2.0.3";
 import {
   saveResumeToPuter,
   updateResumeInPuter,
@@ -283,11 +283,12 @@ export default function BuilderTab({
                 cvData={cvData}
                 onChange={setCvData}
                 aiSuggestions={aiSuggestions}
+                customization={customization}
               />
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto p-8 flex justify-center">
+            <div className="flex-1 bg-gray-50 overflow-y-auto p-8 flex justify-center">
               <CVPreview
                 ref={previewRef}
                 data={cvData}
@@ -306,7 +307,7 @@ export default function BuilderTab({
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto p-8 flex justify-center">
+            <div className="flex-1 bg-gray-50 overflow-y-auto p-8 flex justify-center">
               <CVPreview
                 ref={previewRef}
                 data={cvData}
