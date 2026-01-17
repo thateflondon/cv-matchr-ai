@@ -184,31 +184,31 @@ export default function TemplateColorsPanel({
         </div>
 
         {/* Template Grid */}
-        <div className="grid grid-cols-2 gap-4 max-h-[600px] overflow-y-auto pr-2">
+        <div className="grid grid-cols-4 gap-3 max-h-[600px] overflow-y-auto pr-2">
           {filteredTemplates.map((template) => (
             <button
               key={template.id}
               onClick={() => handleTemplateChange(template)}
-              className={`group relative flex flex-col border-2 rounded-xl overflow-hidden transition-all hover:shadow-md ${
+              className={`group relative flex flex-col border-2 rounded-lg overflow-hidden transition-all hover:shadow-md ${
                 customization.template.id === template.id
                   ? "border-primary bg-white ring-2 ring-primary/20"
                   : "border-gray-200 hover:border-gray-300 bg-white"
               }`}
             >
               {/* Template Name at Top */}
-              <div className="px-3 py-2 border-b border-gray-100 bg-gray-50/50">
-                <h4 className="text-sm font-medium text-gray-900 text-left truncate">
+              <div className="px-2 py-1.5 border-b border-gray-100 bg-gray-50/50">
+                <h4 className="text-xs font-medium text-gray-900 text-left truncate">
                   {template.name}
                 </h4>
               </div>
 
-              {/* Template Preview with Overlay Badges */}
-              <div className="relative w-full h-40 bg-gray-100 flex items-center justify-center overflow-hidden">
+              {/* Template Preview with Overlay Badges - Full height to show entire template */}
+              <div className="relative w-full h-64 bg-white flex items-center justify-center overflow-hidden">
                 {template.thumbnail ? (
                   <img
                     src={template.thumbnail}
                     alt={`${template.name} preview`}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
@@ -217,38 +217,40 @@ export default function TemplateColorsPanel({
                 )}
 
                 {/* Badges Overlay - Top Left */}
-                <div className="absolute top-2 left-2 flex flex-col gap-1.5">
+                <div className="absolute top-1.5 left-1.5 flex flex-col gap-1">
                   {/* Format badges */}
-                  <div className="flex flex-wrap gap-1">
-                    <span className="text-[10px] font-semibold px-2 py-0.5 bg-amber-500 text-white rounded shadow-sm">
+                  <div className="flex flex-wrap gap-0.5">
+                    <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-amber-500 text-white rounded shadow-sm">
                       pdf
                     </span>
                     {template.category !== "specialist" && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 bg-amber-500 text-white rounded shadow-sm">
+                      <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-amber-500 text-white rounded shadow-sm">
                         docx
                       </span>
                     )}
                   </div>
 
                   {/* Additional badges */}
-                  <div className="flex flex-wrap gap-1">
-                    {template.hasPhoto && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 bg-purple-500 text-white rounded shadow-sm">
-                        Photo
-                      </span>
-                    )}
-                    {template.columns === 2 && (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 bg-emerald-500 text-white rounded shadow-sm">
-                        2 Col
-                      </span>
-                    )}
-                  </div>
+                  {(template.hasPhoto || template.columns === 2) && (
+                    <div className="flex flex-wrap gap-0.5">
+                      {template.hasPhoto && (
+                        <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-purple-500 text-white rounded shadow-sm">
+                          Photo
+                        </span>
+                      )}
+                      {template.columns === 2 && (
+                        <span className="text-[9px] font-semibold px-1.5 py-0.5 bg-emerald-500 text-white rounded shadow-sm">
+                          2 Col
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Check Icon - Top Right (when selected) */}
                 {customization.template.id === template.id && (
-                  <div className="absolute top-2 right-2 w-7 h-7 primary-gradient rounded-full flex items-center justify-center shadow-lg">
-                    <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                  <div className="absolute top-1.5 right-1.5 w-6 h-6 primary-gradient rounded-full flex items-center justify-center shadow-lg">
+                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
                   </div>
                 )}
               </div>
