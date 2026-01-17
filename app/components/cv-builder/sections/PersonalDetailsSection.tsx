@@ -1,15 +1,7 @@
 import type { CVData, CVCustomization } from "~/types/cv-builder";
-import FormInput from "~/components/common/FormInput";
-import { Upload, X, Camera, AlertTriangle } from "lucide-react";
+import { X, Camera, AlertTriangle } from "lucide-react";
 import { useState, useRef } from "react";
-import {
-  validateRequired,
-  validateEmail,
-  validatePhone,
-  validateURL,
-  validateLength,
-  sanitizeInput,
-} from "~/utils/formValidation";
+import { sanitizeInput } from "~/utils/formValidation";
 
 interface PersonalDetailsSectionProps {
   data: CVData;
@@ -120,252 +112,238 @@ export default function PersonalDetailsSection({
   };
 
   return (
-    <div className="space-y-6">
+    <form className="flex flex-col gap-4 mt-4 px-4">
       {/* Photo Upload Section */}
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">
+      <div className="form-div">
+        <label htmlFor="photo-upload" className="text-sm font-medium text-foreground">
           Photo de profil
           {!supportsPhoto && (
-            <span className="ml-2 text-xs text-amber-600 flex items-center gap-1 inline-flex">
+            <span className="ml-2 text-xs text-amber-600 inline-flex items-center gap-1">
               <AlertTriangle className="w-3 h-3" />
               (Non disponible pour ce template)
             </span>
           )}
         </label>
         
-        <div
-          className={`relative border-2 border-dashed rounded-lg p-6 transition-all ${
-            supportsPhoto
-              ? isDragging
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary/50 cursor-pointer"
-              : "border-gray-300 bg-gray-100 cursor-not-allowed opacity-60"
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={handlePhotoClick}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleFileInputChange}
-            className="hidden"
-            disabled={!supportsPhoto}
-          />
+        <div className="w-full gradient-border">
+          <div
+            className={`relative transition-all rounded-xl overflow-hidden ${
+              supportsPhoto
+                ? isDragging
+                  ? "bg-primary/10"
+                  : "bg-white cursor-pointer hover:bg-gray-50"
+                : "bg-gray-100 cursor-not-allowed opacity-60"
+            }`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={handlePhotoClick}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileInputChange}
+              className="hidden"
+              disabled={!supportsPhoto}
+              id="photo-upload"
+            />
 
-          {personalDetails.photo ? (
-            <div className="flex items-center gap-4">
-              <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
-                <img
-                  src={personalDetails.photo}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
+            {personalDetails.photo ? (
+              <div className="flex items-center gap-4 p-4">
+                <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex-shrink-0">
+                  <img
+                    src={personalDetails.photo}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="text-base font-semibold text-foreground">
+                    Photo téléchargée
+                  </p>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    Cliquez pour changer ou glissez-déposez
+                  </p>
+                </div>
+                {supportsPhoto && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemovePhoto();
+                    }}
+                    className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
               </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-foreground">
-                  Photo téléchargée
+            ) : (
+              <div className="flex flex-col items-center text-center p-6">
+                <div className="mx-auto w-16 flex items-center justify-center mb-2">
+                  <div
+                    className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                      supportsPhoto
+                        ? "bg-primary/10 text-primary"
+                        : "bg-gray-200 text-gray-400"
+                    }`}
+                  >
+                    <Camera className="w-8 h-8" />
+                  </div>
+                </div>
+                <p className={`text-lg ${supportsPhoto ? "text-gray-700" : "text-gray-500"}`}>
+                  {supportsPhoto ? (
+                    <>
+                      <span className="font-semibold">Click to upload</span> or drag and drop
+                    </>
+                  ) : (
+                    "Ce template ne supporte pas les photos"
+                  )}
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Cliquez pour changer ou glissez-déposez
-                </p>
+                {supportsPhoto && (
+                  <p className="text-lg text-gray-500">
+                    PNG, JPG (max size 5 MB)
+                  </p>
+                )}
               </div>
-              {supportsPhoto && (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRemovePhoto();
-                  }}
-                  className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center text-center">
-              <div
-                className={`w-20 h-20 rounded-full flex items-center justify-center mb-3 ${
-                  supportsPhoto
-                    ? "bg-primary/10 text-primary"
-                    : "bg-gray-200 text-gray-400"
-                }`}
-              >
-                <Camera className={`${supportsPhoto ? "w-9 h-9" : "w-8 h-8"}`} />
-              </div>
-              <p
-                className={`text-sm font-medium mb-1 ${
-                  supportsPhoto ? "text-foreground" : "text-gray-400"
-                }`}
-              >
-                {supportsPhoto
-                  ? "Cliquez pour télécharger ou glissez-déposez"
-                  : "Ce template ne supporte pas les photos"}
-              </p>
-              {supportsPhoto && (
-                <p className="text-xs text-muted-foreground">
-                  PNG, JPG jusqu'à 5MB
-                </p>
-              )}
-            </div>
-          )}
+            )}
+          </div>
         </div>
-
-        {supportsPhoto && (
-          <p className="text-xs text-muted-foreground mt-2">
-            💡 Utilisez une photo professionnelle avec un fond neutre pour de meilleurs résultats
-          </p>
-        )}
       </div>
 
       {/* Name Fields */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormInput
-          id="firstName"
-          label="First Name"
-          value={personalDetails.firstName}
-          onChange={(value) => handleChange("firstName", value)}
-          placeholder="John"
-          required
-          validate={(value) => {
-            const requiredCheck = validateRequired(value, "First name");
-            if (!requiredCheck.isValid) return requiredCheck;
-            return validateLength(value, 1, 50, "First name");
-          }}
-          maxLength={50}
-        />
-        <FormInput
-          id="lastName"
-          label="Last Name"
-          value={personalDetails.lastName}
-          onChange={(value) => handleChange("lastName", value)}
-          placeholder="Doe"
-          required
-          validate={(value) => {
-            const requiredCheck = validateRequired(value, "Last name");
-            if (!requiredCheck.isValid) return requiredCheck;
-            return validateLength(value, 1, 50, "Last name");
-          }}
-          maxLength={50}
-        />
+        <div className="form-div">
+          <label htmlFor="firstName" className="text-sm font-medium text-foreground">
+            First Name <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="firstName"
+            type="text"
+            value={personalDetails.firstName}
+            onChange={(e) => handleChange("firstName", e.target.value)}
+            placeholder="John"
+            maxLength={50}
+            required
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
+        <div className="form-div">
+          <label htmlFor="lastName" className="text-sm font-medium text-foreground">
+            Last Name <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="lastName"
+            type="text"
+            value={personalDetails.lastName}
+            onChange={(e) => handleChange("lastName", e.target.value)}
+            placeholder="Doe"
+            maxLength={50}
+            required
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
       </div>
 
       {/* Job Title */}
-      <div>
-        <FormInput
+      <div className="form-div">
+        <label htmlFor="jobTitle" className="text-sm font-medium text-foreground">
+          Job Title <span className="text-destructive">*</span>
+        </label>
+        <input
           id="jobTitle"
-          label="Job Title"
+          type="text"
           value={personalDetails.jobTitle}
-          onChange={(value) => handleChange("jobTitle", value)}
+          onChange={(e) => handleChange("jobTitle", e.target.value)}
           placeholder="Senior Software Engineer"
-          required
-          validate={(value) => {
-            const requiredCheck = validateRequired(value, "Job title");
-            if (!requiredCheck.isValid) return requiredCheck;
-            return validateLength(value, 2, 100, "Job title");
-          }}
           maxLength={100}
+          required
+          className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
         />
-        {aiSuggestions?.jobTitle && (
-          <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-2">
-            <Lightbulb className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm text-blue-900">
-                <strong>AI Suggestion:</strong> {aiSuggestions.jobTitle.text}
-              </p>
-              <button className="text-sm text-blue-600 font-medium mt-1 hover:underline">
-                Apply
-              </button>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Contact Information */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormInput
-          id="email"
-          label="Email"
-          type="email"
-          value={personalDetails.email}
-          onChange={(value) => handleChange("email", value)}
-          placeholder="john.doe@email.com"
-          required
-          validate={(value) => {
-            const requiredCheck = validateRequired(value, "Email");
-            if (!requiredCheck.isValid) return requiredCheck;
-            return validateEmail(value);
-          }}
-          maxLength={254}
-        />
-        <FormInput
-          id="phone"
-          label="Phone"
-          type="tel"
-          value={personalDetails.phone}
-          onChange={(value) => handleChange("phone", value)}
-          placeholder="+1 (555) 123-4567"
-          required
-          validate={(value) => {
-            const requiredCheck = validateRequired(value, "Phone number");
-            if (!requiredCheck.isValid) return requiredCheck;
-            return validatePhone(value);
-          }}
-          maxLength={20}
-        />
+        <div className="form-div">
+          <label htmlFor="email" className="text-sm font-medium text-foreground">
+            Email <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={personalDetails.email}
+            onChange={(e) => handleChange("email", e.target.value)}
+            placeholder="john.doe@email.com"
+            maxLength={254}
+            required
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
+        <div className="form-div">
+          <label htmlFor="phone" className="text-sm font-medium text-foreground">
+            Phone <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="phone"
+            type="tel"
+            value={personalDetails.phone}
+            onChange={(e) => handleChange("phone", e.target.value)}
+            placeholder="+1 (555) 123-4567"
+            maxLength={20}
+            required
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
       </div>
 
       {/* Location */}
-      <FormInput
-        id="location"
-        label="Location"
-        value={personalDetails.location}
-        onChange={(value) => handleChange("location", value)}
-        placeholder="New York, NY"
-        optional
-        validate={(value) => validateLength(value, 0, 100, "Location")}
-        maxLength={100}
-      />
+      <div className="form-div">
+        <label htmlFor="location" className="text-sm font-medium text-foreground">
+          Location
+        </label>
+        <input
+          id="location"
+          type="text"
+          value={personalDetails.location}
+          onChange={(e) => handleChange("location", e.target.value)}
+          placeholder="New York, NY"
+          maxLength={100}
+          className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+        />
+      </div>
 
       {/* Optional Links */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <FormInput
-          id="linkedin"
-          label="LinkedIn"
-          type="url"
-          value={personalDetails.linkedin || ""}
-          onChange={(value) => handleChange("linkedin", value)}
-          placeholder="linkedin.com/in/johndoe"
-          optional
-          validate={validateURL}
-          maxLength={200}
-        />
-        <FormInput
-          id="website"
-          label="Website"
-          type="url"
-          value={personalDetails.website || ""}
-          onChange={(value) => handleChange("website", value)}
-          placeholder="johndoe.com"
-          optional
-          validate={validateURL}
-          maxLength={200}
-        />
+        <div className="form-div">
+          <label htmlFor="linkedin" className="text-sm font-medium text-foreground">
+            LinkedIn
+          </label>
+          <input
+            id="linkedin"
+            type="url"
+            value={personalDetails.linkedin || ""}
+            onChange={(e) => handleChange("linkedin", e.target.value)}
+            placeholder="linkedin.com/in/johndoe"
+            maxLength={200}
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
+        <div className="form-div">
+          <label htmlFor="website" className="text-sm font-medium text-foreground">
+            Website
+          </label>
+          <input
+            id="website"
+            type="url"
+            value={personalDetails.website || ""}
+            onChange={(e) => handleChange("website", e.target.value)}
+            placeholder="johndoe.com"
+            maxLength={200}
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
       </div>
-
-      {/* Help Text */}
-      <div className="p-4 bg-muted border border-border rounded-lg">
-        <h4 className="text-sm font-medium text-foreground mb-2">Tips:</h4>
-        <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
-          <li>Use a professional email address</li>
-          <li>Include your city and state/country</li>
-          <li>Make sure your phone number is accurate</li>
-          <li>LinkedIn profile should be up to date if included</li>
-        </ul>
-      </div>
-    </div>
+    </form>
   );
 }
