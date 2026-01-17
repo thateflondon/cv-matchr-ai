@@ -29,8 +29,8 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
           <div 
             className="absolute w-2" 
             style={{ 
-              top: "2vw", 
-              height: "15vw", 
+              top: "3vw", 
+              height: "16vw", 
               backgroundColor: accentColor 
             }}
           ></div>
@@ -49,6 +49,7 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                 )}
               </div>
               
+              {/* Contact Info - Right side */}
               <div className="text-right text-sm">
                 <div className="flex">
                   {personalDetails?.email && (
@@ -65,7 +66,13 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                   {personalDetails?.linkedin && (
                     <p style={{ color: accentColor }}>{personalDetails.linkedin}</p>
                   )}
-                  {personalDetails?.linkedin && personalDetails?.location && (
+                  {personalDetails?.linkedin && personalDetails?.website && (
+                    <span style={{ color: accentColor }}>&nbsp;•&nbsp;</span>
+                  )}
+                  {personalDetails?.website && (
+                    <p style={{ color: accentColor }}>{personalDetails.website}</p>
+                  )}
+                  {personalDetails?.website && personalDetails?.location && (
                     <span style={{ color: accentColor }}>&nbsp;•&nbsp;</span>
                   )}
                   {personalDetails?.location && (
