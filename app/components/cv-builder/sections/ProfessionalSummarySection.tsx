@@ -27,7 +27,7 @@ export default function ProfessionalSummarySection({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col gap-4 mt-4 px-4">
       <div>
         <label className="block mb-2">
           Professional Summary
