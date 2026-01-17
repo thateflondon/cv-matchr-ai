@@ -1,7 +1,8 @@
-import type { CVData, CVCustomization } from "~/types/cv-builder";
-import { X, Camera, AlertTriangle } from "lucide-react";
+import type { CVData, CVCustomization, SocialLink } from "~/types/cv-builder";
+import { X, Camera, AlertTriangle, ChevronDown, ChevronUp, Plus, Trash2, GripVertical } from "lucide-react";
 import { useState, useRef } from "react";
-import { sanitizeInput } from "~/utils/formValidation";
+import { sanitizeInput, validateURL } from "~/utils/formValidation";
+import FormInput from "~/components/common/FormInput";
 
 interface PersonalDetailsSectionProps {
   data: CVData;
@@ -17,6 +18,8 @@ export default function PersonalDetailsSection({
   customization,
 }: PersonalDetailsSectionProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [showMoreDetails, setShowMoreDetails] = useState(false);
+  const [expandedLinks, setExpandedLinks] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleChange = (field: string, value: string) => {
@@ -43,6 +46,8 @@ export default function PersonalDetailsSection({
     website: "",
     photo: "",
   };
+
+  const socialLinks = data.socialLinks || [];
 
   const supportsPhoto = customization?.template?.hasPhoto ?? false;
 
@@ -109,6 +114,64 @@ export default function PersonalDetailsSection({
     if (supportsPhoto) {
       fileInputRef.current?.click();
     }
+  };
+
+  // Social Links handlers
+  const toggleLink = (id: string) => {
+    const newExpanded = new Set(expandedLinks);
+    if (newExpanded.has(id)) {
+      newExpanded.delete(id);
+    } else {
+      newExpanded.add(id);
+    }
+    setExpandedLinks(newExpanded);
+  };
+
+  const addLink = () => {
+    const newLink: SocialLink = {
+      id: Date.now().toString(),
+      label: "",
+      url: "",
+    };
+    onUpdate({
+      ...data,
+      socialLinks: [...socialLinks, newLink],
+    });
+    setExpandedLinks(new Set([...expandedLinks, newLink.id]));
+  };
+
+  const updateLink = (id: string, field: keyof SocialLink, value: string) => {
+    const updatedLinks = socialLinks.map((link) =>
+      link.id === id ? { ...link, [field]: value } : link
+    );
+    onUpdate({
+      ...data,
+      socialLinks: updatedLinks,
+    });
+  };
+
+  const deleteLink = (id: string) => {
+    const updatedLinks = socialLinks.filter((link) => link.id !== id);
+    onUpdate({
+      ...data,
+      socialLinks: updatedLinks,
+    });
+    const newExpanded = new Set(expandedLinks);
+    newExpanded.delete(id);
+    setExpandedLinks(newExpanded);
+  };
+
+  const getLinkTitle = (link: SocialLink) => {
+    if (link.label && link.url) {
+      return `${link.label} - ${link.url}`;
+    }
+    if (link.label) {
+      return link.label;
+    }
+    if (link.url) {
+      return link.url;
+    }
+    return "(Not specified)";
   };
 
   return (
@@ -213,7 +276,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Name Fields */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="form-div">
           <label htmlFor="firstName" className="text-sm font-medium text-foreground">
             First Name <span className="text-destructive">*</span>
@@ -264,7 +327,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Contact Information */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="form-div">
           <label htmlFor="email" className="text-sm font-medium text-foreground">
             Email <span className="text-destructive">*</span>
@@ -314,7 +377,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Optional Links */}
-      <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="form-div">
           <label htmlFor="linkedin" className="text-sm font-medium text-foreground">
             LinkedIn
@@ -344,6 +407,113 @@ export default function PersonalDetailsSection({
           />
         </div>
       </div>
+
+      {/* More Details Toggle Button */}
+      <div className="border-t border-gray-200 pt-4">
+        <button
+          type="button"
+          onClick={() => setShowMoreDetails(!showMoreDetails)}
+          className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium w-full justify-center py-2"
+        >
+          {showMoreDetails ? (
+            <>
+              <ChevronUp className="w-4 h-4" />
+              <span>Hide additional details</span>
+            </>
+          ) : (
+            <>
+              <ChevronDown className="w-4 h-4" />
+              <span>Show more details</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Websites & Social Links Section (Collapsible) */}
+      {showMoreDetails && (
+        <div className="space-y-4 border-t border-gray-200 pt-4">
+          <div>
+            <h3 className="text-sm font-medium text-foreground mb-2">
+              Websites & Social Links
+            </h3>
+            <p className="text-xs text-gray-600 mb-4">
+              You can add links to websites you want hiring managers to see! Perhaps it will be a link to your portfolio, LinkedIn profile, or personal website.
+            </p>
+          </div>
+
+          {/* Links List */}
+          <div className="space-y-3">
+            {socialLinks.map((link) => {
+              const isExpanded = expandedLinks.has(link.id);
+              return (
+                <div
+                  key={link.id}
+                  className="border border-border rounded-lg overflow-hidden bg-card"
+                >
+                  {/* Header */}
+                  <div className="flex items-center gap-2 p-4 bg-muted/50">
+                    <div className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground">
+                      <GripVertical className="w-5 h-5" />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => toggleLink(link.id)}
+                      className="flex-1 text-left font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      {getLinkTitle(link)}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => deleteLink(link.id)}
+                      className="p-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded transition-colors"
+                      aria-label="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  {isExpanded && (
+                    <div className="p-4 space-y-4">
+                      <FormInput
+                        id={`link-label-${link.id}`}
+                        label="Label"
+                        value={link.label}
+                        onChange={(value) => updateLink(link.id, "label", value)}
+                        placeholder="e.g., Portfolio, LinkedIn, GitHub"
+                        maxLength={50}
+                      />
+
+                      <FormInput
+                        id={`link-url-${link.id}`}
+                        label="Link"
+                        type="url"
+                        value={link.url}
+                        onChange={(value) => updateLink(link.id, "url", value)}
+                        placeholder="https://example.com"
+                        validate={validateURL}
+                        maxLength={200}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Add Button */}
+          <button
+            type="button"
+            onClick={addLink}
+            className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="text-sm font-medium">+ Add one more link</span>
+          </button>
+        </div>
+      )}
     </form>
   );
 }

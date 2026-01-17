@@ -1,37 +1,36 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { CVData, CVCustomization } from "~/types/cv-builder";
+import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import PersonalDetailsSection from "./sections/PersonalDetailsSection";
 import ProfessionalSummarySection from "./sections/ProfessionalSummarySection";
-import WebsitesAndSocialLinksSection from "./sections/WebsitesAndSocialLinksSection";
 import ProfessionalExperienceSection from "./sections/ProfessionalExperienceSection";
 import EducationSection from "./sections/EducationSection";
 import SkillsSection from "./sections/SkillsSection";
+import CertificationsSection from "./sections/CertificationsSection";
 import LanguagesSection from "./sections/LanguagesSection";
-import AdditionalSectionsManager from "./sections/AdditionalSectionsManager";
 import ResumeCompleteness from "./ResumeCompleteness";
 
 interface EditModeProps {
-  cvData: CVData;
-  onChange: (data: CVData) => void;
-  aiSuggestions?: any; // TODO: Define AI suggestions type
-  customization?: CVCustomization;
+  data: CVData;
+  onUpdate: (data: CVData) => void;
+  aiSuggestions?: any;
+  customization: CVCustomization;
 }
 
+// Section configuration - Removed "Websites & Social Links" as it's now integrated into Personal Details
 const sections = [
   { id: "personal", label: "Personal Details", component: PersonalDetailsSection },
   { id: "summary", label: "Professional Summary", component: ProfessionalSummarySection },
-  { id: "websites", label: "Websites & Social Links", component: WebsitesAndSocialLinksSection },
   { id: "experience", label: "Professional Experience", component: ProfessionalExperienceSection },
   { id: "education", label: "Education", component: EducationSection },
   { id: "skills", label: "Areas of Expertise", component: SkillsSection },
+  { id: "certifications", label: "Certifications", component: CertificationsSection },
   { id: "languages", label: "Languages", component: LanguagesSection },
-  { id: "additional", label: "Additional Sections", component: AdditionalSectionsManager },
 ];
 
 export default function EditMode({
-  cvData,
-  onChange,
+  data,
+  onUpdate,
   aiSuggestions,
   customization,
 }: EditModeProps) {
@@ -55,26 +54,26 @@ export default function EditMode({
     <div className="h-full flex flex-col">
       {/* Resume Completeness Badge */}
       <div className="mb-6">
-        <ResumeCompleteness cvData={cvData} />
+        <ResumeCompleteness cvData={data} />
       </div>
 
       {/* Section Title */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 px-4">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
         {currentSection.label}
       </h2>
 
       {/* Section Content */}
       <div className="flex-1 overflow-auto">
         <SectionComponent
-          data={cvData}
-          onUpdate={onChange}
+          data={data}
+          onUpdate={onUpdate}
           aiSuggestions={aiSuggestions}
           customization={customization}
         />
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center gap-[1vw] justify-center pt-6 border-t border-gray-200 mt-6 mb-6">
+      <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
         <button
           onClick={handleBack}
           disabled={currentSectionIndex === 0}
@@ -84,7 +83,7 @@ export default function EditMode({
               : "text-gray-700 hover:bg-gray-100"
           }`}
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronDown className="w-5 h-5" />
           <span className="font-medium hidden sm:inline">Back</span>
         </button>
 
@@ -122,7 +121,7 @@ export default function EditMode({
           <span className="font-medium sm:hidden">
             {currentSectionIndex === sections.length - 1 ? "Finish" : "Next"}
           </span>
-          <ChevronRight className="w-5 h-5" />
+          <ChevronUp className="w-5 h-5" />
         </button>
       </div>
     </div>
