@@ -243,7 +243,7 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                       {skillGroup.category}:{" "}
                     </strong>
                   )}
-                  <span>{skillGroup.items.join(", ")}</span>
+                  <span>{skillGroup.items?.join(", ") || ""}</span>
                 </div>
               ))}
             </div>

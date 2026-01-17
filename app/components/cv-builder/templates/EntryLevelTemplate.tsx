@@ -281,7 +281,7 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
                     </strong>
                   )}
                   <span style={{ color: "#444444" }}>
-                    {skillGroup.items.join(", ")}
+                    {skillGroup.items?.join(", ") || ""}
                   </span>
                 </div>
               ))}

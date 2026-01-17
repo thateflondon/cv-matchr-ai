@@ -158,7 +158,7 @@ const SpecialistTemplate = forwardRef<HTMLDivElement, SpecialistTemplateProps>(
                           lineHeight: "1.6",
                         }}
                       >
-                        {skillGroup.items.join(", ")}
+                        {skillGroup.items?.join(", ") || ""}
                       </div>
                     </div>
                   ))}
