@@ -27,9 +27,8 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
       <div
         ref={ref}
         data-cv-preview="true"
-        className="bg-white"
+        className="bg-white w-full"
         style={{
-          width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
           fontFamily: fonts.primary,
           lineHeight: `${spacing.lineHeight}%`,
