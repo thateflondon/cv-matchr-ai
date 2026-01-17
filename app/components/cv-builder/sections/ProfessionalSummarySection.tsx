@@ -27,9 +27,9 @@ export default function ProfessionalSummarySection({
   };
 
   return (
-    <div className="flex flex-col gap-4 mt-4 px-4">
-      <div className="form-div">
-        <label htmlFor="professional-summary" className="text-sm font-medium text-foreground">
+    <div className="space-y-6">
+      <div>
+        <label className="block mb-2">
           Professional Summary
           <span className="text-muted-foreground ml-1">(Optional)</span>
         </label>
@@ -53,7 +53,7 @@ export default function ProfessionalSummarySection({
 
       {/* AI Suggestion */}
       {aiSuggestions?.professionalSummary && (
-        <div className="p-4 bg-accent rounded-lg">
+        <div className="p-4 bg-accent border border-border rounded-lg">
           <div className="flex items-start gap-2 mb-3">
             <Sparkles className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
             <div className="flex-1">
@@ -75,7 +75,7 @@ export default function ProfessionalSummarySection({
       )}
 
       {/* Tips */}
-      <div className="p-4 bg-muted rounded-lg">
+      <div className="p-4 bg-muted border border-border rounded-lg">
         <h4 className="text-sm font-medium text-foreground mb-2">
           Writing Tips:
         </h4>
@@ -89,7 +89,7 @@ export default function ProfessionalSummarySection({
       </div>
 
       {/* Example */}
-      <div className="p-4 bg-accent rounded-lg">
+      <div className="p-4 bg-accent border border-border rounded-lg">
         <h4 className="text-sm font-medium text-foreground mb-2">Example:</h4>
         <p className="text-sm text-muted-foreground leading-relaxed italic">
           "Results-driven Senior Software Engineer with 7+ years of experience
