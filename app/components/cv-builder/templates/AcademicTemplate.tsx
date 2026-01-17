@@ -7,18 +7,14 @@ export interface AcademicTemplateProps {
 }
 
 /**
- * Academic Template - Single column with blue accent bar
- * Features: Name/contact header, summary, achievements, education, experience
- * Design: Blue vertical bar on left, clean professional layout
+ * Academic Template - Based on academic-template.jpg design
+ * Single column with blue left accent bar
  */
 const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fonts, spacing, fontSize, fontWeight } = customization;
+    const { primaryColor } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData, certifications } = data;
 
-    // A4 dimensions in pixels (at 72 DPI)
-    const a4Height = 842;
-    
     // Use primary color or default blue
     const accentColor = primaryColor || "#0A5F8C";
 
@@ -26,69 +22,35 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
       <div
         ref={ref}
         data-cv-preview="true"
-        className="bg-white w-full"
-        style={{
-          minHeight: `${a4Height}px`,
-          fontFamily: fonts.secondary,
-          lineHeight: `${spacing.lineHeight}%`,
-          fontSize: `${fontSize.body}px`,
-          fontWeight: fontWeight.body,
-          color: "#000000",
-        }}
+        className="bg-white w-full shadow-lg"
       >
-        <div style={{ position: "relative" }}>
-          {/* Blue left border accent */}
-          <div
-            style={{
-              position: "absolute",
-              top: "48px",
-              left: "0",
-              width: "8px",
-              height: "256px",
-              backgroundColor: accentColor,
+        {/* Blue left border */}
+        <div className="flex relative">
+          <div 
+            className="absolute w-2" 
+            style={{ 
+              top: "3vw", 
+              height: "16vw", 
+              backgroundColor: accentColor 
             }}
-          />
-
-          <div style={{ padding: "48px" }}>
-            {/* Header - Name and Contact */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "flex-start",
-                marginBottom: spacing.sections + "px",
-              }}
-            >
-              {/* Name and Title */}
+          ></div>
+          
+          <div className="flex-1 p-12">
+            {/* Header */}
+            <div className="flex justify-between items-start mb-6">
               <div>
-                <h1
-                  style={{
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.primaryHeading}px`,
-                    fontWeight: fontWeight.primaryHeading,
-                    color: accentColor,
-                    marginBottom: "8px",
-                  }}
-                >
+                <h1 className="text-4xl mb-2" style={{ color: accentColor }}>
                   {personalDetails?.firstName} {personalDetails?.lastName}
                 </h1>
                 {personalDetails?.jobTitle && (
-                  <p
-                    style={{
-                      fontFamily: fonts.primary,
-                      fontSize: `${fontSize.secondaryHeading - 4}px`,
-                      color: accentColor,
-                      fontWeight: fontWeight.body,
-                    }}
-                  >
+                  <p className="text-lg" style={{ color: accentColor }}>
                     {personalDetails.jobTitle}
                   </p>
                 )}
               </div>
-
-              {/* Contact Info - Right side */}
-              <div style={{ textAlign: "right", fontSize: `${fontSize.body - 2}px` }}>
-                <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "4px" }}>
+              
+              <div className="text-right text-sm">
+                <div className="flex">
                   {personalDetails?.email && (
                     <p style={{ color: accentColor }}>{personalDetails.email}</p>
                   )}
@@ -99,7 +61,7 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                     <p style={{ color: accentColor }}>{personalDetails.phone}</p>
                   )}
                 </div>
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div className="flex">
                   {personalDetails?.linkedin && (
                     <p style={{ color: accentColor }}>{personalDetails.linkedin}</p>
                   )}
@@ -113,47 +75,27 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
               </div>
             </div>
 
-            {/* Professional Summary */}
+            {/* Summary */}
             {professionalSummary && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <p
-                  style={{
-                    color: accentColor,
-                    lineHeight: "1.6",
-                  }}
-                >
+              <div className="mb-8">
+                <p className="leading-relaxed" style={{ color: accentColor }}>
                   {professionalSummary}
                 </p>
               </div>
             )}
 
-            {/* Selected Achievements / Skills as Achievements */}
+            {/* Selected Achievements */}
             {skillsData && skillsData.length > 0 && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <h2
-                  style={{
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.secondaryHeading}px`,
-                    fontWeight: fontWeight.secondaryHeading,
-                    color: accentColor,
-                    marginBottom: "16px",
-                  }}
-                >
+              <div className="mb-8">
+                <h2 className="text-2xl mb-4" style={{ color: accentColor }}>
                   Selected Achievements
                 </h2>
-                <ul style={{ listStyle: "none", padding: 0 }}>
+                <ul className="space-y-2">
                   {skillsData.map((skillGroup, groupIndex) =>
                     skillGroup.items?.map((item, itemIndex) => (
-                      <li
-                        key={`${groupIndex}-${itemIndex}`}
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          marginBottom: "8px",
-                        }}
-                      >
-                        <span style={{ color: "#4B5563", marginRight: "12px" }}>•</span>
-                        <span style={{ color: "#4B5563" }}>{item}</span>
+                      <li key={`${groupIndex}-${itemIndex}`} className="flex items-start">
+                        <span className="text-gray-700 mr-3">•</span>
+                        <span className="text-gray-700">{item}</span>
                       </li>
                     ))
                   )}
@@ -163,37 +105,18 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
 
             {/* Education and Credentials */}
             {education && education.length > 0 && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <h2
-                  style={{
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.secondaryHeading}px`,
-                    fontWeight: fontWeight.secondaryHeading,
-                    color: accentColor,
-                    marginBottom: "16px",
-                  }}
-                >
+              <div className="mb-8">
+                <h2 className="text-2xl mb-4" style={{ color: accentColor }}>
                   Education and Credentials
                 </h2>
+                
                 {education.map((edu, index) => (
-                  <div key={index} style={{ marginBottom: "16px" }}>
-                    <h3
-                      style={{
-                        fontFamily: fonts.primary,
-                        fontSize: `${fontSize.body}px`,
-                        color: accentColor,
-                        fontWeight: fontWeight.sectionHeading,
-                        marginBottom: "4px",
-                      }}
-                    >
+                  <div key={index} className="mb-4">
+                    <h3 style={{ color: accentColor }}>
                       {edu.degree}
+                      {edu.fieldOfStudy && ` in ${edu.fieldOfStudy}`}
                     </h3>
-                    <p
-                      style={{
-                        color: "#4B5563",
-                        marginLeft: "16px",
-                      }}
-                    >
+                    <p className="text-gray-700 ml-4">
                       {edu.institution}
                       {edu.location && `, ${edu.location}`}
                       {(edu.graduationDate || edu.endDate) && (
@@ -205,128 +128,65 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
 
                 {/* Certifications */}
                 {certifications && certifications.length > 0 && (
-                  <div style={{ marginTop: "16px" }}>
+                  <>
                     {certifications.map((cert, index) => (
-                      <div key={index} style={{ marginBottom: "16px" }}>
-                        <h3
-                          style={{
-                            fontFamily: fonts.primary,
-                            fontSize: `${fontSize.body}px`,
-                            color: accentColor,
-                            fontWeight: fontWeight.sectionHeading,
-                            marginBottom: "4px",
-                          }}
-                        >
-                          {cert.name}
-                        </h3>
-                        <p
-                          style={{
-                            color: "#4B5563",
-                            marginLeft: "16px",
-                          }}
-                        >
+                      <div key={index} className="mb-4">
+                        <h3 style={{ color: accentColor }}>{cert.name}</h3>
+                        <p className="text-gray-700 ml-4">
                           {cert.issuer}
                           {cert.date && ` (${cert.date})`}
                         </p>
                       </div>
                     ))}
-                  </div>
+                  </>
                 )}
               </div>
             )}
 
             {/* Professional Experience */}
             {professionalExperience && professionalExperience.length > 0 && (
-              <div style={{ marginBottom: spacing.sections + "px" }}>
-                <h2
-                  style={{
-                    fontFamily: fonts.primary,
-                    fontSize: `${fontSize.secondaryHeading}px`,
-                    fontWeight: fontWeight.secondaryHeading,
-                    color: accentColor,
-                    marginBottom: "16px",
-                  }}
-                >
+              <div className="mb-8">
+                <h2 className="text-2xl mb-4" style={{ color: accentColor }}>
                   Professional Experience
                 </h2>
-
+                
                 {professionalExperience.map((exp, index) => (
-                  <div key={index} style={{ marginBottom: spacing.items + "px" }}>
-                    {/* Job header */}
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "flex-start",
-                        marginBottom: "12px",
-                      }}
-                    >
+                  <div key={index} className="mb-6">
+                    <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3
-                          style={{
-                            fontFamily: fonts.primary,
-                            fontSize: `${fontSize.body}px`,
-                            color: accentColor,
-                            fontWeight: fontWeight.sectionHeading,
-                            marginBottom: "4px",
-                          }}
-                        >
+                        <h3 style={{ color: accentColor }}>
                           {exp.jobTitle}
                           {exp.company && `, ${exp.company}`}
                           {exp.location && `, ${exp.location}`}
                         </h3>
                         {exp.company && (
-                          <p
-                            style={{
-                              color: accentColor,
-                              marginLeft: "16px",
-                              fontSize: `${fontSize.body - 1}px`,
-                            }}
-                          >
+                          <p className="ml-4" style={{ color: accentColor }}>
                             {exp.company}
                             {(exp.startDate || exp.endDate) && (
-                              <span>
-                                {" "}
-                                ({exp.startDate} - {exp.endDate || "Present"})
-                              </span>
+                              <span> ({exp.startDate} - {exp.endDate || "Present"})</span>
                             )}
                           </p>
                         )}
                       </div>
                       {(exp.startDate || exp.endDate) && (
-                        <p style={{ color: accentColor, fontSize: `${fontSize.body - 1}px` }}>
+                        <p style={{ color: accentColor }}>
                           {exp.startDate} - {exp.endDate || "Present"}
                         </p>
                       )}
                     </div>
-
-                    {/* Description */}
+                    
                     {exp.description && (
-                      <p
-                        style={{
-                          color: "#4B5563",
-                          marginBottom: "12px",
-                          lineHeight: "1.6",
-                        }}
-                      >
+                      <p className="text-gray-700 mb-3">
                         {exp.description}
                       </p>
                     )}
-
-                    {/* Achievements */}
+                    
                     {exp.achievements && exp.achievements.length > 0 && (
-                      <ul style={{ listStyle: "none", padding: 0, marginBottom: "12px" }}>
+                      <ul className="space-y-2 mb-3">
                         {exp.achievements.map((achievement, i) => (
-                          <li
-                            key={i}
-                            style={{
-                              display: "flex",
-                              alignItems: "flex-start",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            <span style={{ color: "#4B5563", marginRight: "12px" }}>•</span>
-                            <span style={{ color: "#4B5563" }}>{achievement}</span>
+                          <li key={i} className="flex items-start">
+                            <span className="text-gray-700 mr-3">•</span>
+                            <span className="text-gray-700">{achievement}</span>
                           </li>
                         ))}
                       </ul>
@@ -336,8 +196,8 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
               </div>
             )}
 
-            {/* Page number - Only show if it makes sense */}
-            {/* <div style={{ textAlign: "right", fontSize: `${fontSize.body - 2}px`, color: accentColor, marginTop: "32px" }}>
+            {/* Page number - commented out as in original */}
+            {/* <div className="text-right text-sm mt-8" style={{ color: accentColor }}>
               Page 1 | 1
             </div> */}
           </div>
