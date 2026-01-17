@@ -60,13 +60,18 @@ Return a JSON object with this EXACT structure:
 
 CRITICAL INSTRUCTIONS:
 - Extract EVERY piece of information from the resume EXACTLY as it appears
-- For professional summary: Remove any prefix like "Profil:", "Profile:", "Summary:" etc. Extract only the actual summary text
+- For professional summary: Remove any prefix like "Profil:", "Profile:", "Summary:", "Résumé:" etc. Extract only the actual summary text
 - For professional experience: 
-  * DO NOT use the "description" field
-  * Put ALL bullet points/responsibilities in the "achievements" array
-  * Extract each bullet point as a separate array item WITHOUT the bullet symbol (-, *, •)
-  * Preserve the exact text of each bullet point as written in the resume
-  * Keep the same order as in the original resume
+  * DO NOT use the "description" field at all
+  * Identify ALL list items/bullet points by looking for these markers at the start of lines:
+    • Bullets: -, •, ◦, ▪, ▫, *, ✓, ✔, ★
+    • Arrows: →, ➔, ➜, ➤, ⇒, ►, ▶, ‣
+    • Dashes: –, —, ~
+    • Any other visual list marker or indented lines
+  * Extract EACH bullet point/list item as a SEPARATE item in the "achievements" array
+  * Remove the marker symbol but keep the EXACT text of each point
+  * Preserve the original order from the resume
+  * If text is in paragraph form without markers, try to split logical achievements into separate items
 - For dates: Use MM/YYYY format (e.g., "01/2020", "06/2015")
 - For current positions/studies: Use "Present" as endDate
 - For education achievements: Extract honors, awards, achievements as array items

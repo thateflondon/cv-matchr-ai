@@ -119,7 +119,37 @@ export async function extractTextFromPdf(
       const page = await pdf.getPage(pageNum);
       const textContent = await page.getTextContent();
       const textItems = textContent.items;
-      const pageText = textItems.map((item: any) => item.str).join(" ");
+      
+      // Preserve line breaks by tracking vertical position
+      let lastY = -1;
+      const pageLines: string[] = [];
+      let currentLine = "";
+      
+      textItems.forEach((item: any) => {
+        const y = item.transform[5]; // Y position
+        const str = item.str;
+        
+        // If Y position changed significantly, it's a new line
+        if (lastY !== -1 && Math.abs(y - lastY) > 2) {
+          if (currentLine.trim()) {
+            pageLines.push(currentLine.trim());
+          }
+          currentLine = str;
+        } else {
+          // Same line, add a space if needed
+          currentLine += (currentLine && str ? " " : "") + str;
+        }
+        
+        lastY = y;
+      });
+      
+      // Add the last line
+      if (currentLine.trim()) {
+        pageLines.push(currentLine.trim());
+      }
+      
+      // Join lines with proper line breaks
+      const pageText = pageLines.join("\n");
       fullText += pageText + "\n\n";
     }
 
