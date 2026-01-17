@@ -19,7 +19,7 @@ import {
   convertFeedbackToSuggestions,
 } from "~/utils/cvDataExtractor";
 import { exportCVToPDF } from "~/utils/pdfExport";
-import { toast } from "sonner";
+import { toast } from "sonner@2.0.3";
 import {
   saveResumeToPuter,
   updateResumeInPuter,
@@ -269,7 +269,13 @@ export default function BuilderTab({
       <CVBuilderNavbar
         activeMode={activeMode}
         onModeChange={setActiveMode}
-        onBack={onBack}
+        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={setSelectedLanguage}
+        onSave={handleSave}
+        onExport={handleExport}
+        resumeName={resume?.name || "Untitled Resume"}
+        isSaving={isSaving}
         hasUnsavedChanges={hasUnsavedChanges}
       />
 
@@ -288,14 +294,12 @@ export default function BuilderTab({
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto flex justify-center">
-              <div className="w-full h-full flex justify-center">
-                <CVPreview
-                  ref={previewRef}
-                  data={cvData}
-                  customization={customization}
-                />
-              </div>
+            <div className="w-1/2 bg-gray-50 overflow-y-auto p-8 flex justify-center">
+              <CVPreview
+                ref={previewRef}
+                data={cvData}
+                customization={customization}
+              />
             </div>
           </>
         ) : (
@@ -309,14 +313,12 @@ export default function BuilderTab({
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto flex justify-center">
-              <div className="w-full h-full flex justify-center">
-                <CVPreview
-                  ref={previewRef}
-                  data={cvData}
-                  customization={customization}
-                />
-              </div>
+            <div className="w-1/2 bg-gray-50 overflow-y-auto p-8 flex justify-center">
+              <CVPreview
+                ref={previewRef}
+                data={cvData}
+                customization={customization}
+              />
             </div>
           </>
         )}

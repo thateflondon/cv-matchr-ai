@@ -7,6 +7,9 @@ export async function exportCVToPDF(
   previewElement: HTMLElement,
   fileName: string = "resume.pdf"
 ): Promise<void> {
+  // Find the actual CV preview element
+  const cvPreview = previewElement.querySelector('[data-cv-preview="true"]') || previewElement;
+  
   // Create a new window for printing
   const printWindow = window.open("", "_blank");
   
@@ -14,10 +17,24 @@ export async function exportCVToPDF(
     throw new Error("Failed to open print window. Please allow popups.");
   }
 
-  // Clone the preview element
-  const clonedElement = previewElement.cloneNode(true) as HTMLElement;
+  // Clone the CV element
+  const clonedElement = cvPreview.cloneNode(true) as HTMLElement;
 
-  // Create print-friendly HTML
+  // Get computed styles from the original element
+  const styles = Array.from(document.styleSheets)
+    .map((styleSheet) => {
+      try {
+        return Array.from(styleSheet.cssRules)
+          .map((rule) => rule.cssText)
+          .join('\n');
+      } catch (e) {
+        console.warn('Could not access stylesheet:', e);
+        return '';
+      }
+    })
+    .join('\n');
+
+  // Create print-friendly HTML with all styles
   const printHTML = `
     <!DOCTYPE html>
     <html>
@@ -52,10 +69,13 @@ export async function exportCVToPDF(
               display: none !important;
             }
           }
+
+          /* Include all page styles */
+          ${styles}
         </style>
       </head>
       <body>
-        ${clonedElement.innerHTML}
+        ${clonedElement.outerHTML}
       </body>
     </html>
   `;
@@ -66,8 +86,12 @@ export async function exportCVToPDF(
 
   // Wait for content to load
   await new Promise((resolve) => {
-    printWindow.onload = resolve;
-    setTimeout(resolve, 500); // Fallback timeout
+    printWindow.onload = () => {
+      // Give extra time for fonts and styles to load
+      setTimeout(resolve, 500);
+    };
+    // Fallback timeout in case onload doesn't fire
+    setTimeout(resolve, 1000);
   });
 
   // Trigger print dialog
