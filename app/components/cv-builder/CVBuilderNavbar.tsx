@@ -15,10 +15,10 @@ interface CVBuilderNavbarProps {
 }
 
 const languages = [
-  { code: "en", label: "English" },
-  { code: "fr", label: "Français" },
-  { code: "es", label: "Español" },
-  { code: "de", label: "Deutsch" },
+  { code: "en", label: "English", flag: "/icons/lang_uk.svg" },
+  { code: "fr", label: "Français", flag: "/icons/lang_fr.svg" },
+  { code: "es", label: "Español", flag: "/icons/lang_es.svg" },
+  { code: "de", label: "Deutsch", flag: "/icons/lang_de.svg" },
 ];
 
 export default function CVBuilderNavbar({
@@ -61,6 +61,11 @@ export default function CVBuilderNavbar({
             onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
             className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
           >
+            <img
+              src={languages.find((lang) => lang.code === selectedLanguage)?.flag}
+              alt={languages.find((lang) => lang.code === selectedLanguage)?.label}
+              className="w-5 h-5"
+            />
             <span className="text-sm font-medium text-gray-700">
               {languages.find((lang) => lang.code === selectedLanguage)?.label}
             </span>
@@ -81,12 +86,17 @@ export default function CVBuilderNavbar({
                       onLanguageChange(lang.code);
                       setLanguageDropdownOpen(false);
                     }}
-                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg ${
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 first:rounded-t-lg last:rounded-b-lg flex items-center gap-2 ${
                       selectedLanguage === lang.code
                         ? "bg-blue-50 text-blue-700 font-medium"
                         : "text-gray-700"
                     }`}
                   >
+                    <img
+                      src={lang.flag}
+                      alt={lang.label}
+                      className="w-5 h-5"
+                    />
                     {lang.label}
                   </button>
                 ))}
