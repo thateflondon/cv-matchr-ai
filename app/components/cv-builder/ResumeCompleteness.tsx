@@ -120,7 +120,7 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
   return (
     <div className="w-full space-y-3">
       {/* Progress Bar Section */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4">
+      <div className="bg-white rounded-xl p-4">
         {/* Header with Score */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
