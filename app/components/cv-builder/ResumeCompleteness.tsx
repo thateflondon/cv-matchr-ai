@@ -1,5 +1,5 @@
-import type { CVData } from "types/cv-builder";
-import { CheckCircle2, AlertCircle } from "lucide-react";
+import type { CVData } from "~/types/cv-builder";
+import { Sparkles } from "lucide-react";
 
 interface ResumeCompletenessProps {
   cvData: CVData;
@@ -117,47 +117,52 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
 
   const suggestions = getSuggestions();
 
+  // Determine progress bar color
+  const getProgressColor = () => {
+    if (completeness === 100) return "#10b981"; // green-500
+    if (completeness >= 80) return "#3b82f6"; // blue-500
+    if (completeness >= 50) return "#f59e0b"; // amber-500
+    return "#ef4444"; // red-500
+  };
+
   return (
-    <div className="w-full">
-      {/* Completeness Badge */}
-      <div
-        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-          isComplete
-            ? "bg-green-500/10 text-green-700 border border-green-500/20"
-            : isAlmostComplete
-            ? "bg-blue-500/10 text-blue-700 border border-blue-500/20"
-            : "bg-orange-500/10 text-orange-700 border border-orange-500/20"
-        }`}
-      >
-        {isComplete ? (
-          <CheckCircle2 className="w-5 h-5" />
-        ) : (
-          <AlertCircle className="w-5 h-5" />
-        )}
-        <div className="flex-1">
-          <span className="font-medium">
-            {completeness}% Resume Completeness
-          </span>
+    <div className="w-full space-y-3">
+      {/* Progress Bar Section */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4">
+        {/* Header with Score */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <div className="text-2xl font-bold text-primary">{completeness}</div>
+            <p className="text-sm font-medium text-gray-600">Resume completeness</p>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full transition-all duration-500 ease-out"
+            style={{
+              width: `${completeness}%`,
+              backgroundColor: getProgressColor(),
+            }}
+          />
         </div>
       </div>
 
-      {/* Suggestions */}
+      {/* Suggestions with Sparkles Icon */}
       {!isComplete && suggestions.length > 0 && (
-        <div className="mt-3 p-3 bg-muted rounded-lg">
-          <p className="text-sm font-medium text-foreground mb-2">
-            To reach 100%:
-          </p>
-          <ul className="space-y-1">
-            {suggestions.map((suggestion, index) => (
-              <li
-                key={index}
-                className="text-sm text-muted-foreground flex items-start gap-2"
-              >
-                <span className="text-primary mt-0.5">•</span>
-                <span>{suggestion}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="space-y-2">
+          {suggestions.slice(0, 3).map((suggestion, index) => (
+            <div
+              key={index}
+              className="flex items-start gap-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100/50 hover:border-blue-200/70 transition-colors"
+            >
+              <div className="flex-shrink-0 w-8 h-5 bg-blue-100 rounded flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-blue-600" />
+              </div>
+              <span className="text-sm text-gray-700 font-medium">{suggestion}</span>
+            </div>
+          ))}
         </div>
       )}
     </div>
