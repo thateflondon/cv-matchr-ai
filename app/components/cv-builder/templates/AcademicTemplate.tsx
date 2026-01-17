@@ -29,8 +29,8 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
           <div 
             className="absolute w-2" 
             style={{ 
-              top: "3vw", 
-              height: "16vw", 
+              top: "2vw", 
+              height: "15vw", 
               backgroundColor: accentColor 
             }}
           ></div>
