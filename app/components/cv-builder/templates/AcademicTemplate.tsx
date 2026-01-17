@@ -7,13 +7,14 @@ export interface AcademicTemplateProps {
 }
 
 /**
- * Academic Template - Traditional academic CV format
- * Features: Single column, formal layout, emphasis on publications and research
+ * Academic Template - Two-column layout with photo
+ * Left: Photo, Contact, Skills, Languages
+ * Right: Name, Job Title, Profile, Experience, Education, Certifications
  */
 const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
   ({ data, customization }, ref) => {
     const { primaryColor, fonts, spacing, fontSize, fontWeight } = customization;
-    const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
+    const { personalDetails, professionalSummary, professionalExperience, education, skillsData, languages, certifications } = data;
 
     // A4 dimensions in pixels (at 72 DPI)
     const a4Height = 842;
@@ -30,225 +31,339 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
           fontSize: `${fontSize.body}px`,
           fontWeight: fontWeight.body,
           color: "#000000",
-          padding: "60px 50px",
+          padding: "40px",
+          display: "flex",
+          gap: "30px",
         }}
       >
-        {/* Header - Centered Name and Contact */}
-        <div style={{ textAlign: "center", marginBottom: spacing.sections + "px" }}>
-          <h1
-            style={{
-              fontFamily: fonts.primary,
-              fontSize: `${fontSize.primaryHeading + 4}px`,
-              fontWeight: fontWeight.primaryHeading,
-              marginBottom: "12px",
-              color: "#000000",
-              letterSpacing: "0.5px",
-            }}
-          >
-            {personalDetails?.firstName} {personalDetails?.lastName}
-          </h1>
+        {/* Left Column - Sidebar */}
+        <div style={{ width: "35%", flexShrink: 0 }}>
+          {/* Photo */}
+          {personalDetails?.photoUrl && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <img
+                src={personalDetails.photoUrl}
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  aspectRatio: "1",
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                }}
+              />
+            </div>
+          )}
 
-          {/* Contact Info - Centered */}
-          <div
-            style={{
-              fontSize: `${fontSize.body - 1}px`,
-              color: "#333333",
-              lineHeight: "1.6",
-            }}
-          >
-            {personalDetails?.email && <div>{personalDetails.email}</div>}
-            {personalDetails?.phone && <div>{personalDetails.phone}</div>}
-            {personalDetails?.location && <div>{personalDetails.location}</div>}
-            {personalDetails?.linkedin && <div>{personalDetails.linkedin}</div>}
+          {/* Contact */}
+          <div style={{ marginBottom: spacing.sections + "px" }}>
+            <h2
+              style={{
+                fontFamily: fonts.primary,
+                fontSize: `${fontSize.secondaryHeading}px`,
+                fontWeight: fontWeight.secondaryHeading,
+                marginBottom: "12px",
+                color: "#000000",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Contact
+            </h2>
+            <div
+              style={{
+                fontSize: `${fontSize.body - 1}px`,
+                color: "#333333",
+                lineHeight: "1.8",
+              }}
+            >
+              {personalDetails?.email && (
+                <div style={{ marginBottom: "6px", wordBreak: "break-word" }}>
+                  {personalDetails.email}
+                </div>
+              )}
+              {personalDetails?.phone && (
+                <div style={{ marginBottom: "6px" }}>{personalDetails.phone}</div>
+              )}
+              {personalDetails?.location && (
+                <div style={{ marginBottom: "6px" }}>{personalDetails.location}</div>
+              )}
+              {personalDetails?.linkedin && (
+                <div style={{ marginBottom: "6px", wordBreak: "break-word" }}>
+                  {personalDetails.linkedin}
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* Skills */}
+          {skillsData && skillsData.length > 0 && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <h2
+                style={{
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  marginBottom: "12px",
+                  color: "#000000",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Skills
+              </h2>
+              <div>
+                {skillsData.map((skillGroup, index) => (
+                  <div key={index} style={{ marginBottom: "12px" }}>
+                    {skillGroup.category && (
+                      <div
+                        style={{
+                          fontWeight: fontWeight.sectionHeading,
+                          color: "#000000",
+                          marginBottom: "4px",
+                          fontSize: `${fontSize.body - 1}px`,
+                        }}
+                      >
+                        {skillGroup.category}
+                      </div>
+                    )}
+                    <div
+                      style={{
+                        color: "#555555",
+                        fontSize: `${fontSize.body - 1}px`,
+                        lineHeight: "1.6",
+                      }}
+                    >
+                      {skillGroup.items?.map((item, i) => (
+                        <div key={i}>{item}</div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Languages */}
+          {languages && languages.length > 0 && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <h2
+                style={{
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  marginBottom: "12px",
+                  color: "#000000",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Languages
+              </h2>
+              <div style={{ fontSize: `${fontSize.body - 1}px`, color: "#555555" }}>
+                {languages.map((lang, index) => (
+                  <div key={index} style={{ marginBottom: "6px" }}>
+                    {lang.language}
+                    {lang.proficiency && (
+                      <span style={{ color: "#777777" }}> - {lang.proficiency}</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Professional Summary */}
-        {professionalSummary && (
+        {/* Right Column - Main Content */}
+        <div style={{ flex: 1 }}>
+          {/* Header - Name and Job Title */}
           <div style={{ marginBottom: spacing.sections + "px" }}>
-            <h2
+            <h1
               style={{
                 fontFamily: fonts.primary,
-                fontSize: `${fontSize.secondaryHeading}px`,
-                fontWeight: fontWeight.secondaryHeading,
-                marginBottom: "12px",
+                fontSize: `${fontSize.primaryHeading}px`,
+                fontWeight: fontWeight.primaryHeading,
+                marginBottom: "8px",
                 color: "#000000",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                borderBottom: "1px solid #000000",
-                paddingBottom: "4px",
+                letterSpacing: "0.5px",
               }}
             >
-              Research Interests
-            </h2>
-            <div style={{ marginTop: "12px" }}>{professionalSummary}</div>
-          </div>
-        )}
-
-        {/* Education */}
-        {education && education.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
-            <h2
-              style={{
-                fontFamily: fonts.primary,
-                fontSize: `${fontSize.secondaryHeading}px`,
-                fontWeight: fontWeight.secondaryHeading,
-                marginBottom: "12px",
-                color: "#000000",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                borderBottom: "1px solid #000000",
-                paddingBottom: "4px",
-              }}
-            >
-              Education
-            </h2>
-            {education.map((edu, index) => (
+              {personalDetails?.firstName} {personalDetails?.lastName}
+            </h1>
+            {personalDetails?.jobTitle && (
               <div
-                key={index}
                 style={{
-                  marginBottom: spacing.items + "px",
-                  marginTop: "12px",
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  color: "#444444",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "4px",
-                  }}
-                >
-                  <div>
-                    <strong
-                      style={{
-                        fontFamily: fonts.primary,
-                        fontSize: `${fontSize.body}px`,
-                        fontWeight: fontWeight.sectionHeading,
-                      }}
-                    >
-                      {edu.degree}
-                    </strong>
-                    {edu.institution && (
-                      <span style={{ color: "#333333" }}>
-                        {" "}
-                        - {edu.institution}
-                      </span>
-                    )}
-                  </div>
-                  {(edu.startDate || edu.endDate) && (
-                    <div style={{ color: "#666666", fontSize: `${fontSize.body - 1}px` }}>
-                      {edu.startDate} {edu.endDate && `- ${edu.endDate}`}
-                    </div>
-                  )}
-                </div>
-                {edu.description && (
-                  <div style={{ color: "#333333", marginTop: "6px" }}>
-                    {edu.description}
-                  </div>
-                )}
+                {personalDetails.jobTitle}
               </div>
-            ))}
+            )}
           </div>
-        )}
 
-        {/* Professional Experience */}
-        {professionalExperience && professionalExperience.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
-            <h2
-              style={{
-                fontFamily: fonts.primary,
-                fontSize: `${fontSize.secondaryHeading}px`,
-                fontWeight: fontWeight.secondaryHeading,
-                marginBottom: "12px",
-                color: "#000000",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                borderBottom: "1px solid #000000",
-                paddingBottom: "4px",
-              }}
-            >
-              Research & Teaching Experience
-            </h2>
-            {professionalExperience.map((exp, index) => (
-              <div
-                key={index}
+          {/* Profile / Summary */}
+          {professionalSummary && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <h2
                 style={{
-                  marginBottom: spacing.items + "px",
-                  marginTop: "12px",
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  marginBottom: "12px",
+                  color: "#000000",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
                 }}
               >
+                Profile
+              </h2>
+              <div style={{ color: "#333333" }}>{professionalSummary}</div>
+            </div>
+          )}
+
+          {/* Professional Experience */}
+          {professionalExperience && professionalExperience.length > 0 && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <h2
+                style={{
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  marginBottom: "12px",
+                  color: "#000000",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Experience
+              </h2>
+              {professionalExperience.map((exp, index) => (
                 <div
+                  key={index}
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    marginBottom: "4px",
+                    marginBottom: spacing.items + "px",
                   }}
                 >
-                  <div>
+                  <div style={{ marginBottom: "4px" }}>
                     <strong
                       style={{
                         fontFamily: fonts.primary,
                         fontSize: `${fontSize.body}px`,
                         fontWeight: fontWeight.sectionHeading,
+                        color: "#000000",
+                        display: "block",
                       }}
                     >
+                      {exp.company}
+                    </strong>
+                    <div style={{ color: "#555555", fontSize: `${fontSize.body - 1}px` }}>
                       {exp.jobTitle}
-                    </strong>
-                    {exp.company && (
-                      <span style={{ color: "#333333" }}>
-                        {" "}
-                        - {exp.company}
-                      </span>
+                    </div>
+                    {(exp.startDate || exp.endDate) && (
+                      <div style={{ color: "#777777", fontSize: `${fontSize.body - 1}px`, fontStyle: "italic" }}>
+                        {exp.startDate} {exp.endDate && `- ${exp.endDate}`}
+                      </div>
                     )}
                   </div>
-                  {(exp.startDate || exp.endDate) && (
-                    <div style={{ color: "#666666", fontSize: `${fontSize.body - 1}px` }}>
-                      {exp.startDate} {exp.endDate && `- ${exp.endDate}`}
+                  {exp.achievements && exp.achievements.length > 0 && (
+                    <ul style={{ paddingLeft: "20px", margin: "6px 0", color: "#444444" }}>
+                      {exp.achievements.map((achievement, i) => (
+                        <li key={i} style={{ marginBottom: "4px" }}>
+                          {achievement}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                    <div style={{ color: "#444444", marginTop: "6px" }}>
+                      {exp.description}
                     </div>
                   )}
-                </div>
-                {exp.description && (
-                  <div style={{ color: "#333333", marginTop: "6px" }}>
-                    {exp.description}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Skills */}
-        {skillsData && skillsData.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
-            <h2
-              style={{
-                fontFamily: fonts.primary,
-                fontSize: `${fontSize.secondaryHeading}px`,
-                fontWeight: fontWeight.secondaryHeading,
-                marginBottom: "12px",
-                color: "#000000",
-                textTransform: "uppercase",
-                letterSpacing: "1px",
-                borderBottom: "1px solid #000000",
-                paddingBottom: "4px",
-              }}
-            >
-              Skills & Competencies
-            </h2>
-            <div style={{ marginTop: "12px" }}>
-              {skillsData.map((skillGroup, index) => (
-                <div key={index} style={{ marginBottom: "8px" }}>
-                  {skillGroup.category && (
-                    <strong style={{ fontWeight: fontWeight.sectionHeading }}>
-                      {skillGroup.category}:{" "}
-                    </strong>
-                  )}
-                  <span>{skillGroup.items?.join(", ") || ""}</span>
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Education */}
+          {education && education.length > 0 && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <h2
+                style={{
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  marginBottom: "12px",
+                  color: "#000000",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Education
+              </h2>
+              {education.map((edu, index) => (
+                <div
+                  key={index}
+                  style={{
+                    marginBottom: spacing.items + "px",
+                  }}
+                >
+                  <strong
+                    style={{
+                      fontFamily: fonts.primary,
+                      fontSize: `${fontSize.body}px`,
+                      fontWeight: fontWeight.sectionHeading,
+                      color: "#000000",
+                      display: "block",
+                      marginBottom: "2px",
+                    }}
+                  >
+                    {edu.institution}
+                  </strong>
+                  {edu.degree && (
+                    <div style={{ color: "#555555", fontSize: `${fontSize.body - 1}px` }}>
+                      {edu.degree}
+                    </div>
+                  )}
+                  {(edu.startDate || edu.endDate || edu.graduationDate) && (
+                    <div style={{ color: "#777777", fontSize: `${fontSize.body - 1}px`, fontStyle: "italic" }}>
+                      {edu.graduationDate || `${edu.startDate} - ${edu.endDate}`}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Certifications (optional) */}
+          {certifications && certifications.length > 0 && (
+            <div style={{ marginBottom: spacing.sections + "px" }}>
+              <h2
+                style={{
+                  fontFamily: fonts.primary,
+                  fontSize: `${fontSize.secondaryHeading}px`,
+                  fontWeight: fontWeight.secondaryHeading,
+                  marginBottom: "12px",
+                  color: "#000000",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                }}
+              >
+                Certifications
+              </h2>
+              <div style={{ fontSize: `${fontSize.body - 1}px`, color: "#555555" }}>
+                {certifications.map((cert, index) => (
+                  <div key={index} style={{ marginBottom: "6px" }}>
+                    {cert.name}
+                    {cert.issuer && <span> - {cert.issuer}</span>}
+                    {cert.date && <span style={{ color: "#777777" }}> ({cert.date})</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

@@ -7,8 +7,8 @@ export interface EntryLevelTemplateProps {
 }
 
 /**
- * Entry Level Template - Clean and simple format for early career professionals
- * Features: Single column, modern and minimal, easy to read
+ * Entry Level Template - Clean single-column format for early career professionals
+ * Simple layout: Name, Job Title, Contact inline, Profile, Experience, Education, Skills (inline)
  */
 const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
   ({ data, customization }, ref) => {
@@ -33,15 +33,15 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
           padding: "50px 45px",
         }}
       >
-        {/* Header - Name and Contact */}
-        <div style={{ marginBottom: spacing.sections + "px" }}>
+        {/* Header - Name, Job Title, Contact inline */}
+        <div style={{ marginBottom: spacing.sections + "px", borderBottom: "2px solid #e5e7eb", paddingBottom: "20px" }}>
           <h1
             style={{
               fontFamily: fonts.primary,
-              fontSize: `${fontSize.primaryHeading + 6}px`,
+              fontSize: `${fontSize.primaryHeading}px`,
               fontWeight: fontWeight.primaryHeading,
               marginBottom: "8px",
-              color: primaryColor,
+              color: "#000000",
               letterSpacing: "0px",
             }}
           >
@@ -52,34 +52,37 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
             <div
               style={{
                 fontFamily: fonts.primary,
-                fontSize: `${fontSize.secondaryHeading}px`,
-                fontWeight: fontWeight.secondaryHeading,
+                fontSize: `${fontSize.secondaryHeading - 2}px`,
+                fontWeight: fontWeight.body,
                 marginBottom: "12px",
-                color: "#444444",
+                color: "#555555",
               }}
             >
               {personalDetails.jobTitle}
             </div>
           )}
 
-          {/* Contact Info - Inline */}
+          {/* Contact Info - Inline with bullets */}
           <div
             style={{
               fontSize: `${fontSize.body - 1}px`,
               color: "#666666",
               display: "flex",
               flexWrap: "wrap",
-              gap: "16px",
+              gap: "4px",
             }}
           >
-            {personalDetails?.email && <div>{personalDetails.email}</div>}
-            {personalDetails?.phone && <div>{personalDetails.phone}</div>}
-            {personalDetails?.location && <div>{personalDetails.location}</div>}
-            {personalDetails?.linkedin && <div>{personalDetails.linkedin}</div>}
+            {personalDetails?.location && <span>{personalDetails.location}</span>}
+            {personalDetails?.location && (personalDetails?.email || personalDetails?.phone || personalDetails?.linkedin) && <span> • </span>}
+            {personalDetails?.email && <span>{personalDetails.email}</span>}
+            {personalDetails?.email && (personalDetails?.phone || personalDetails?.linkedin) && <span> • </span>}
+            {personalDetails?.phone && <span>{personalDetails.phone}</span>}
+            {personalDetails?.phone && personalDetails?.linkedin && <span> • </span>}
+            {personalDetails?.linkedin && <span>{personalDetails.linkedin}</span>}
           </div>
         </div>
 
-        {/* Professional Summary */}
+        {/* Profile / Summary */}
         {professionalSummary && (
           <div style={{ marginBottom: spacing.sections + "px" }}>
             <h2
@@ -88,16 +91,79 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
                 fontSize: `${fontSize.secondaryHeading}px`,
                 fontWeight: fontWeight.secondaryHeading,
                 marginBottom: "10px",
-                color: primaryColor,
-                paddingBottom: "6px",
-                borderBottom: `2px solid ${primaryColor}`,
+                color: "#000000",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
-              Summary
+              Profile
             </h2>
-            <div style={{ marginTop: "12px", color: "#333333" }}>
+            <div style={{ color: "#333333" }}>
               {professionalSummary}
             </div>
+          </div>
+        )}
+
+        {/* Experience */}
+        {professionalExperience && professionalExperience.length > 0 && (
+          <div style={{ marginBottom: spacing.sections + "px" }}>
+            <h2
+              style={{
+                fontFamily: fonts.primary,
+                fontSize: `${fontSize.secondaryHeading}px`,
+                fontWeight: fontWeight.secondaryHeading,
+                marginBottom: "10px",
+                color: "#000000",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Experience
+            </h2>
+            {professionalExperience.map((exp, index) => (
+              <div
+                key={index}
+                style={{
+                  marginBottom: spacing.items + "px",
+                }}
+              >
+                <div style={{ marginBottom: "4px" }}>
+                  <strong
+                    style={{
+                      fontFamily: fonts.primary,
+                      fontSize: `${fontSize.body}px`,
+                      fontWeight: fontWeight.sectionHeading,
+                      color: "#000000",
+                      display: "block",
+                    }}
+                  >
+                    {exp.company}
+                  </strong>
+                  <div style={{ color: "#555555", fontSize: `${fontSize.body - 1}px` }}>
+                    {exp.jobTitle}
+                  </div>
+                  {(exp.startDate || exp.endDate) && (
+                    <div style={{ color: "#777777", fontSize: `${fontSize.body - 1}px`, fontStyle: "italic" }}>
+                      {exp.startDate} {exp.endDate && `- ${exp.endDate}`}
+                    </div>
+                  )}
+                </div>
+                {exp.achievements && exp.achievements.length > 0 && (
+                  <ul style={{ paddingLeft: "20px", margin: "6px 0", color: "#444444" }}>
+                    {exp.achievements.map((achievement, i) => (
+                      <li key={i} style={{ marginBottom: "4px" }}>
+                        {achievement}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                  <div style={{ color: "#444444", marginTop: "6px" }}>
+                    {exp.description}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
 
@@ -110,9 +176,9 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
                 fontSize: `${fontSize.secondaryHeading}px`,
                 fontWeight: fontWeight.secondaryHeading,
                 marginBottom: "10px",
-                color: primaryColor,
-                paddingBottom: "6px",
-                borderBottom: `2px solid ${primaryColor}`,
+                color: "#000000",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               Education
@@ -122,53 +188,28 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
                 key={index}
                 style={{
                   marginBottom: spacing.items + "px",
-                  marginTop: "12px",
                 }}
               >
-                <div
+                <strong
                   style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "baseline",
-                    marginBottom: "4px",
+                    fontFamily: fonts.primary,
+                    fontSize: `${fontSize.body}px`,
+                    fontWeight: fontWeight.sectionHeading,
+                    color: "#000000",
+                    display: "block",
+                    marginBottom: "2px",
                   }}
                 >
-                  <strong
-                    style={{
-                      fontFamily: fonts.primary,
-                      fontSize: `${fontSize.body}px`,
-                      fontWeight: fontWeight.sectionHeading,
-                      color: "#000000",
-                    }}
-                  >
+                  {edu.institution}
+                </strong>
+                {edu.degree && (
+                  <div style={{ color: "#555555", fontSize: `${fontSize.body - 1}px` }}>
                     {edu.degree}
-                  </strong>
-                  {(edu.startDate || edu.endDate) && (
-                    <div
-                      style={{
-                        color: "#666666",
-                        fontSize: `${fontSize.body - 1}px`,
-                        fontStyle: "italic",
-                      }}
-                    >
-                      {edu.startDate} {edu.endDate && `- ${edu.endDate}`}
-                    </div>
-                  )}
-                </div>
-                {edu.institution && (
-                  <div
-                    style={{
-                      color: "#444444",
-                      marginBottom: "4px",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {edu.institution}
                   </div>
                 )}
-                {edu.description && (
-                  <div style={{ color: "#555555", marginTop: "6px" }}>
-                    {edu.description}
+                {(edu.startDate || edu.endDate || edu.graduationDate) && (
+                  <div style={{ color: "#777777", fontSize: `${fontSize.body - 1}px`, fontStyle: "italic" }}>
+                    {edu.graduationDate || `${edu.startDate} - ${edu.endDate}`}
                   </div>
                 )}
               </div>
@@ -176,82 +217,7 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
           </div>
         )}
 
-        {/* Professional Experience */}
-        {professionalExperience && professionalExperience.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
-            <h2
-              style={{
-                fontFamily: fonts.primary,
-                fontSize: `${fontSize.secondaryHeading}px`,
-                fontWeight: fontWeight.secondaryHeading,
-                marginBottom: "10px",
-                color: primaryColor,
-                paddingBottom: "6px",
-                borderBottom: `2px solid ${primaryColor}`,
-              }}
-            >
-              Experience
-            </h2>
-            {professionalExperience.map((exp, index) => (
-              <div
-                key={index}
-                style={{
-                  marginBottom: spacing.items + "px",
-                  marginTop: "12px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "baseline",
-                    marginBottom: "4px",
-                  }}
-                >
-                  <strong
-                    style={{
-                      fontFamily: fonts.primary,
-                      fontSize: `${fontSize.body}px`,
-                      fontWeight: fontWeight.sectionHeading,
-                      color: "#000000",
-                    }}
-                  >
-                    {exp.jobTitle}
-                  </strong>
-                  {(exp.startDate || exp.endDate) && (
-                    <div
-                      style={{
-                        color: "#666666",
-                        fontSize: `${fontSize.body - 1}px`,
-                        fontStyle: "italic",
-                      }}
-                    >
-                      {exp.startDate} {exp.endDate && `- ${exp.endDate}`}
-                    </div>
-                  )}
-                </div>
-                {exp.company && (
-                  <div
-                    style={{
-                      color: "#444444",
-                      marginBottom: "4px",
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {exp.company}
-                  </div>
-                )}
-                {exp.description && (
-                  <div style={{ color: "#555555", marginTop: "6px" }}>
-                    {exp.description}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Skills */}
+        {/* Skills - Inline list */}
         {skillsData && skillsData.length > 0 && (
           <div style={{ marginBottom: spacing.sections + "px" }}>
             <h2
@@ -260,30 +226,19 @@ const EntryLevelTemplate = forwardRef<HTMLDivElement, EntryLevelTemplateProps>(
                 fontSize: `${fontSize.secondaryHeading}px`,
                 fontWeight: fontWeight.secondaryHeading,
                 marginBottom: "10px",
-                color: primaryColor,
-                paddingBottom: "6px",
-                borderBottom: `2px solid ${primaryColor}`,
+                color: "#000000",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
               }}
             >
               Skills
             </h2>
-            <div style={{ marginTop: "12px" }}>
-              {skillsData.map((skillGroup, index) => (
-                <div key={index} style={{ marginBottom: "10px" }}>
-                  {skillGroup.category && (
-                    <strong
-                      style={{
-                        fontWeight: fontWeight.sectionHeading,
-                        color: "#000000",
-                      }}
-                    >
-                      {skillGroup.category}:{" "}
-                    </strong>
-                  )}
-                  <span style={{ color: "#444444" }}>
-                    {skillGroup.items?.join(", ") || ""}
-                  </span>
-                </div>
+            <div style={{ color: "#444444" }}>
+              {skillsData.map((skillGroup, groupIndex) => (
+                <span key={groupIndex}>
+                  {skillGroup.items?.join(", ")}
+                  {groupIndex < skillsData.length - 1 && ", "}
+                </span>
               ))}
             </div>
           </div>
