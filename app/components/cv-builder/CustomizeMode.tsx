@@ -28,9 +28,6 @@ export default function CustomizeMode({
     <div className="h-full flex flex-col">
       {/* Panel Selector */}
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 mb-4">
-          Customize Your Resume
-        </h2>
         <div className="flex flex-wrap gap-2">
           {panels.map((panel) => {
             const Icon = panel.icon;

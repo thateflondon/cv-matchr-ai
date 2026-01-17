@@ -1,7 +1,7 @@
-import { X } from "lucide-react";
 import { useEffect } from "react";
+import { X } from "lucide-react";
+import type { CVCustomization } from "~/types/cv-builder";
 import CustomizeMode from "./CustomizeMode";
-import type { CVCustomization } from "types/cv-builder";
 
 interface CustomizeSlidePanelProps {
   isOpen: boolean;
@@ -51,10 +51,7 @@ export default function CustomizeSlidePanel({
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Customize Your Resume
-          </h2>
+        <div className="flex items-center justify-end px-4 py-3 border-b border-gray-200">
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors touch-manipulation"
