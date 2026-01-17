@@ -213,7 +213,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Name Fields */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="form-div">
           <label htmlFor="firstName" className="text-sm font-medium text-foreground">
             First Name <span className="text-destructive">*</span>
@@ -226,7 +226,7 @@ export default function PersonalDetailsSection({
             placeholder="John"
             maxLength={50}
             required
-            className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
         <div className="form-div">
@@ -241,30 +241,46 @@ export default function PersonalDetailsSection({
             placeholder="Doe"
             maxLength={50}
             required
-            className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
       </div>
 
-      {/* Job Title */}
-      <div className="form-div">
-        <label htmlFor="jobTitle" className="text-sm font-medium text-foreground">
-          Job Title <span className="text-destructive">*</span>
-        </label>
-        <input
-          id="jobTitle"
-          type="text"
-          value={personalDetails.jobTitle}
-          onChange={(e) => handleChange("jobTitle", e.target.value)}
-          placeholder="Senior Software Engineer"
-          maxLength={100}
-          required
-          className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-        />
+      {/* Job Title & Location */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="form-div">
+          <label htmlFor="jobTitle" className="text-sm font-medium text-foreground">
+            Job Title <span className="text-destructive">*</span>
+          </label>
+          <input
+            id="jobTitle"
+            type="text"
+            value={personalDetails.jobTitle}
+            onChange={(e) => handleChange("jobTitle", e.target.value)}
+            placeholder="Senior Software Engineer"
+            maxLength={100}
+            required
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
+        <div className="form-div">
+          <label htmlFor="location" className="text-sm font-medium text-foreground">
+            Location
+          </label>
+          <input
+            id="location"
+            type="text"
+            value={personalDetails.location}
+            onChange={(e) => handleChange("location", e.target.value)}
+            placeholder="New York, NY"
+            maxLength={100}
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+          />
+        </div>
       </div>
 
       {/* Contact Information */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="form-div">
           <label htmlFor="email" className="text-sm font-medium text-foreground">
             Email <span className="text-destructive">*</span>
@@ -277,7 +293,7 @@ export default function PersonalDetailsSection({
             placeholder="john.doe@email.com"
             maxLength={254}
             required
-            className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
         <div className="form-div">
@@ -292,29 +308,13 @@ export default function PersonalDetailsSection({
             placeholder="+1 (555) 123-4567"
             maxLength={20}
             required
-            className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
       </div>
 
-      {/* Location */}
-      <div className="form-div">
-        <label htmlFor="location" className="text-sm font-medium text-foreground">
-          Location
-        </label>
-        <input
-          id="location"
-          type="text"
-          value={personalDetails.location}
-          onChange={(e) => handleChange("location", e.target.value)}
-          placeholder="New York, NY"
-          maxLength={100}
-          className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-        />
-      </div>
-
       {/* Optional Links */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="form-div">
           <label htmlFor="linkedin" className="text-sm font-medium text-foreground">
             LinkedIn
@@ -326,7 +326,7 @@ export default function PersonalDetailsSection({
             onChange={(e) => handleChange("linkedin", e.target.value)}
             placeholder="linkedin.com/in/johndoe"
             maxLength={200}
-            className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
         <div className="form-div">
@@ -340,7 +340,7 @@ export default function PersonalDetailsSection({
             onChange={(e) => handleChange("website", e.target.value)}
             placeholder="johndoe.com"
             maxLength={200}
-            className="w-full px-3 py-2.5 bg-white rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2.5 bg-white border border-gray-300 rounded-lg shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
       </div>
