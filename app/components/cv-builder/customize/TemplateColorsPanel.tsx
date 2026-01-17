@@ -172,10 +172,10 @@ export default function TemplateColorsPanel({
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${\
-                selectedCategory === category.id\
-                  ? "primary-gradient text-white shadow-sm"\
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"\
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
+                selectedCategory === category.id
+                  ? "primary-gradient text-white shadow-sm"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
               {category.label}
@@ -189,18 +189,18 @@ export default function TemplateColorsPanel({
             <button
               key={template.id}
               onClick={() => handleTemplateChange(template)}
-              className={`p-4 border-2 rounded-lg text-left transition-all ${\
-                customization.template.id === template.id\
-                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"\
-                  : "border-gray-200 hover:border-gray-400"\
+              className={`p-4 border-2 rounded-lg text-left transition-all ${
+                customization.template.id === template.id
+                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                  : "border-gray-200 hover:border-gray-400"
               }`}
             >
               {/* Template Preview */}
               <div
-                className={`w-full h-32 rounded mb-3 overflow-hidden ${\
-                  customization.template.id === template.id\
-                    ? "ring-2 ring-primary"\
-                    : ""\
+                className={`w-full h-32 rounded mb-3 overflow-hidden ${
+                  customization.template.id === template.id
+                    ? "ring-2 ring-primary"
+                    : ""
                 }`}
               >
                 {template.thumbnail ? (

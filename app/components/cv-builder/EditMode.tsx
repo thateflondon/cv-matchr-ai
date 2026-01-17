@@ -93,12 +93,12 @@ export default function EditMode({
             <button
               key={section.id}
               onClick={() => setCurrentSectionIndex(index)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all touch-manipulation ${\
-                index === currentSectionIndex\
-                  ? "primary-gradient w-6 sm:w-8 shadow-sm"\
-                  : index < currentSectionIndex\
-                  ? "bg-primary/40"\
-                  : "bg-gray-300"\
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all touch-manipulation ${
+                index === currentSectionIndex
+                  ? "primary-gradient w-6 sm:w-8 shadow-sm"
+                  : index < currentSectionIndex
+                  ? "bg-primary/40"
+                  : "bg-gray-300"
               }`}
               aria-label={`Go to ${section.label}`}
             />
@@ -108,10 +108,10 @@ export default function EditMode({
         <button
           onClick={handleNext}
           disabled={currentSectionIndex === sections.length - 1}
-          className={`flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg transition-all touch-manipulation ${\
-            currentSectionIndex === sections.length - 1\
-              ? "text-gray-400 cursor-not-allowed"\
-              : "text-white primary-gradient hover:opacity-90 shadow-sm"\
+          className={`flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg transition-all touch-manipulation ${
+            currentSectionIndex === sections.length - 1
+              ? "text-gray-400 cursor-not-allowed"
+              : "text-white primary-gradient hover:opacity-90 shadow-sm"
           }`}
         >
           <span className="font-medium hidden sm:inline">

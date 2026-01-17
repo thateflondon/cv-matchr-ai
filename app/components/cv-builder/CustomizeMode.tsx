@@ -37,10 +37,10 @@ export default function CustomizeMode({
               <button
                 key={panel.id}
                 onClick={() => setActivePanel(panel.id as any)}
-                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg border transition-all flex-1 sm:flex-initial justify-center sm:justify-start min-w-0 ${\
-                  isActive\
-                    ? "primary-gradient text-white border-transparent shadow-sm"\
-                    : "bg-white text-gray-700 border-gray-300 hover:border-primary"\
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg border transition-all flex-1 sm:flex-initial justify-center sm:justify-start min-w-0 ${
+                  isActive
+                    ? "primary-gradient text-white border-transparent shadow-sm"
+                    : "bg-white text-gray-700 border-gray-300 hover:border-primary"
                 }`}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
