@@ -1,6 +1,6 @@
 import type { CVCustomization, CVTemplate } from "~/types/cv-builder";
 import { Check, Search } from "lucide-react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { getTemplatesByCategory } from "~/constants/templates";
 
 interface TemplateColorsPanelProps {
@@ -8,7 +8,7 @@ interface TemplateColorsPanelProps {
   onUpdate: (customization: CVCustomization) => void;
 }
 
-const colorPresets = [
+const baseColorPresets = [
   { name: "Blue", value: "#2563eb" },
   { name: "Green", value: "#059669" },
   { name: "Purple", value: "#7c3aed" },
@@ -33,6 +33,27 @@ export default function TemplateColorsPanel({
 }: TemplateColorsPanelProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Build dynamic color presets with template's default color as first preset
+  const colorPresets = useMemo(() => {
+    const templateColor = customization.template.defaultColor;
+    
+    // If template has a default color
+    if (templateColor) {
+      // Check if it's already in base presets
+      const existsInBase = baseColorPresets.some(p => p.value.toLowerCase() === templateColor.toLowerCase());
+      
+      if (!existsInBase) {
+        // Add template color as first preset
+        return [
+          { name: `${customization.template.name} Default`, value: templateColor },
+          ...baseColorPresets,
+        ];
+      }
+    }
+    
+    return baseColorPresets;
+  }, [customization.template.defaultColor, customization.template.name]);
 
   const filteredTemplates = getTemplatesByCategory(selectedCategory).filter(
     (template) =>
@@ -63,11 +84,14 @@ export default function TemplateColorsPanel({
     console.log("🎯 Template change requested:");
     console.log("  From:", customization.template.id);
     console.log("  To:", template.id);
+    console.log("  Template default color:", template.defaultColor);
     console.log("  onUpdate function:", typeof onUpdate);
     
     const newCustomization = {
       ...customization,
       template,
+      // Auto-apply template's default color if it has one
+      primaryColor: template.defaultColor || customization.primaryColor,
     };
     
     console.log("  New customization:", newCustomization);

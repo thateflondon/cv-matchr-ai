@@ -10,11 +10,10 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "ATS-optimized template with clean, professional layout",
     thumbnail: "/templates/helsinki-template.jpg",
+    defaultColor: "#D4AF37", // Golden accent for Prime ATS
     supportsColorCustomization: false, // Uses fixed golden accents
     supportsFontCustomization: true,
     supportsLayoutCustomization: true,
-    supportsPDF: true,
-    supportsDOCX: true,
   },
   {
     id: "template-seoul",
@@ -24,11 +23,10 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "Minimalist ATS-friendly design for maximum compatibility",
     thumbnail: "/templates/seoul-template.jpg",
+    defaultColor: "#2563eb", // Blue for Pure ATS
     supportsColorCustomization: true,
     supportsFontCustomization: true,
     supportsLayoutCustomization: true,
-    supportsPDF: true,
-    supportsDOCX: true,
   },
   {
     id: "template-athens",
@@ -37,8 +35,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Simple and straightforward ATS-compatible format",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#000000", // Black for Simple ATS
   },
   {
     id: "template-prague",
@@ -47,8 +44,11 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Precise formatting for ATS systems",
-    supportsPDF: true,
-    supportsDOCX: true,
+    thumbnail: "/templates/prague-template.jpg",
+    defaultColor: "#2563eb", // Blue for Precision ATS
+    supportsColorCustomization: true,
+    supportsFontCustomization: true,
+    supportsLayoutCustomization: true,
   },
   {
     id: "template-brussels",
@@ -57,8 +57,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 2,
     description: "Two-column layout optimized for ATS",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#000000", // Black for Two column ATS
   },
   {
     id: "template-shanghai",
@@ -67,8 +66,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "ATS-friendly with prominent header section",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#000000", // Black for Header ATS
   },
 
   // Classic/Traditional Templates
@@ -79,8 +77,11 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Timeless classic design",
-    supportsPDF: true,
-    supportsDOCX: true,
+    thumbnail: "/templates/london-template.jpg",
+    defaultColor: "#1e40af", // Deep blue for Classic
+    supportsColorCustomization: true,
+    supportsFontCustomization: true,
+    supportsLayoutCustomization: true,
   },
   {
     id: "template-santiago",
@@ -89,8 +90,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Traditional professional layout",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#000000", // Black for Traditional
   },
   {
     id: "template-dublin",
@@ -99,8 +99,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Professional and polished appearance",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#1f2937", // Dark gray for Professional
   },
   {
     id: "template-berlin",
@@ -109,7 +108,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Clean and organized layout",
-    supportsPDF: true,
+    defaultColor: "#000000", // Black for Clean
   },
   {
     id: "template-vienna",
@@ -118,8 +117,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Clear and easy to read",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#000000", // Black for Clear
   },
   {
     id: "template-stockholm",
@@ -128,8 +126,7 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Essential elements, nothing more",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#000000", // Black for Essential
   },
 
   // Modern Templates
@@ -140,7 +137,10 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 1,
     description: "Contemporary modern design",
-    supportsPDF: true,
+    thumbnail: "/templates/tokyo-template.jpg",
+    supportsColorCustomization: true,
+    supportsFontCustomization: true,
+    supportsLayoutCustomization: true,
   },
   {
     id: "template-sydney",
@@ -149,8 +149,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Balanced modern layout",
-    supportsPDF: true,
-    supportsDOCX: true,
   },
   {
     id: "template-paris",
@@ -159,7 +157,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Polished modern aesthetic",
-    supportsPDF: true,
   },
   {
     id: "template-madrid",
@@ -168,7 +165,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Vivid and vibrant design",
-    supportsPDF: true,
   },
   {
     id: "template-singapore",
@@ -177,7 +173,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Minimalist modern approach",
-    supportsPDF: true,
   },
 
   // Creative Templates
@@ -188,7 +183,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Creative and unique layout",
-    supportsPDF: true,
   },
   {
     id: "template-rome",
@@ -197,7 +191,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Elegant calligraphic style",
-    supportsPDF: true,
   },
   {
     id: "template-milan",
@@ -206,7 +199,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Harmonious color-coordinated design",
-    supportsPDF: true,
   },
   {
     id: "template-oslo",
@@ -215,7 +207,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Bold and impactful design",
-    supportsPDF: true,
   },
   {
     id: "template-moscow",
@@ -224,7 +215,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Soft pastel color scheme",
-    supportsPDF: true,
   },
   {
     id: "template-rio",
@@ -233,7 +223,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Visionary creative layout",
-    supportsPDF: true,
   },
   {
     id: "template-vancouver",
@@ -242,8 +231,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Playful confetti-inspired design",
-    supportsPDF: true,
-    isFree: true,
   },
   {
     id: "template-cape_town",
@@ -252,8 +239,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Colorful splash design",
-    supportsPDF: true,
-    isFree: true,
   },
 
   // Two-Column Templates
@@ -264,8 +249,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Two-column with half-tone styling",
-    supportsPDF: true,
-    isFree: true,
   },
   {
     id: "template-amsterdam",
@@ -274,7 +257,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 2,
     description: "Industrial two-column design",
-    supportsPDF: true,
   },
   {
     id: "template-barcelona",
@@ -283,7 +265,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 2,
     description: "Elegant two-column layout",
-    supportsPDF: true,
   },
 
   // Professional Templates
@@ -294,8 +275,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Corporate professional style",
-    supportsPDF: true,
-    supportsDOCX: true,
   },
   {
     id: "template-toronto",
@@ -304,7 +283,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Well-defined professional sections",
-    supportsPDF: true,
   },
   {
     id: "template-chicago",
@@ -313,7 +291,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Authoritative professional design",
-    supportsPDF: true,
   },
   {
     id: "template-boston",
@@ -322,8 +299,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Executive-level professional template",
-    supportsPDF: true,
-    isFree: true,
   },
   {
     id: "template-geneva",
@@ -332,8 +307,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: false,
     columns: 1,
     description: "Makes a strong professional statement",
-    supportsPDF: true,
-    isFree: true,
   },
 
   // Specialist Templates
@@ -345,8 +318,6 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "Specialist professional template",
     thumbnail: "/templates/specialist_traditional1-template.jpg",
-    supportsPDF: true,
-    supportsDOCX: true,
   },
   {
     id: "template-rirekisho",
@@ -355,7 +326,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 1,
     description: "Japanese Rirekisho format",
-    supportsPDF: true,
   },
   {
     id: "template-shokumukeirekisho",
@@ -364,7 +334,6 @@ export const TEMPLATES: CVTemplate[] = [
     hasPhoto: true,
     columns: 1,
     description: "Japanese Shokumukeirekisho format",
-    supportsPDF: true,
   },
   {
     id: "template-academic",
@@ -374,8 +343,10 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "Academic CV format",
     thumbnail: "/templates/academic-template.jpg",
-    supportsPDF: true,
-    supportsDOCX: true,
+    defaultColor: "#0A5F8C", // Academic blue
+    supportsColorCustomization: true,
+    supportsFontCustomization: true,
+    supportsLayoutCustomization: true,
   },
   {
     id: "template-entry_level",
@@ -385,8 +356,6 @@ export const TEMPLATES: CVTemplate[] = [
     columns: 1,
     description: "Entry-level focused template",
     thumbnail: "/templates/entry_level-template.jpg",
-    supportsPDF: true,
-    supportsDOCX: true,
   },
 ];
 
