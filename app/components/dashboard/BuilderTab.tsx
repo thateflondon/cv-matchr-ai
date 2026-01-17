@@ -294,7 +294,7 @@ export default function BuilderTab({
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto p-8 flex justify-center">
+            <div className="w-1/2 bg-gray-50 overflow-y-auto flex justify-center">
               <CVPreview
                 ref={previewRef}
                 data={cvData}
@@ -313,7 +313,7 @@ export default function BuilderTab({
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto p-8 flex justify-center">
+            <div className="w-1/2 bg-gray-50 overflow-y-auto flex justify-center">
               <CVPreview
                 ref={previewRef}
                 data={cvData}
