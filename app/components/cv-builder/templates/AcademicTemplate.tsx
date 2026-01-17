@@ -51,6 +51,7 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
               
               {/* Contact Info - Right side */}
               <div className="text-right text-sm">
+                {/* Line 1: Email • Phone */}
                 <div className="flex">
                   {personalDetails?.email && (
                     <p style={{ color: accentColor }}>{personalDetails.email}</p>
@@ -62,23 +63,42 @@ const AcademicTemplate = forwardRef<HTMLDivElement, AcademicTemplateProps>(
                     <p style={{ color: accentColor }}>{personalDetails.phone}</p>
                   )}
                 </div>
-                <div className="flex">
-                  {personalDetails?.linkedin && (
-                    <p style={{ color: accentColor }}>{personalDetails.linkedin}</p>
-                  )}
-                  {personalDetails?.linkedin && personalDetails?.website && (
-                    <span style={{ color: accentColor }}>&nbsp;•&nbsp;</span>
-                  )}
-                  {personalDetails?.website && (
+                
+                {/* Line 2: LinkedIn • Website OR LinkedIn • Location (if no website) */}
+                {personalDetails?.website ? (
+                  // Si website existe: LinkedIn • Website
+                  <div className="flex">
+                    {personalDetails?.linkedin && (
+                      <p style={{ color: accentColor }}>{personalDetails.linkedin}</p>
+                    )}
+                    {personalDetails?.linkedin && personalDetails?.website && (
+                      <span style={{ color: accentColor }}>&nbsp;•&nbsp;</span>
+                    )}
                     <p style={{ color: accentColor }}>{personalDetails.website}</p>
-                  )}
-                  {personalDetails?.website && personalDetails?.location && (
-                    <span style={{ color: accentColor }}>&nbsp;•&nbsp;</span>
-                  )}
-                  {personalDetails?.location && (
+                  </div>
+                ) : (
+                  // Si pas de website: LinkedIn • Location
+                  (personalDetails?.linkedin || personalDetails?.location) && (
+                    <div className="flex">
+                      {personalDetails?.linkedin && (
+                        <p style={{ color: accentColor }}>{personalDetails.linkedin}</p>
+                      )}
+                      {personalDetails?.linkedin && personalDetails?.location && (
+                        <span style={{ color: accentColor }}>&nbsp;•&nbsp;</span>
+                      )}
+                      {personalDetails?.location && (
+                        <p style={{ color: accentColor }}>{personalDetails.location}</p>
+                      )}
+                    </div>
+                  )
+                )}
+                
+                {/* Line 3: Location (only if website exists) */}
+                {personalDetails?.website && personalDetails?.location && (
+                  <div className="flex">
                     <p style={{ color: accentColor }}>{personalDetails.location}</p>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
 
