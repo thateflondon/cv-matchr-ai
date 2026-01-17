@@ -34,10 +34,10 @@ Return a JSON object with this EXACT structure:
       "location": "San Francisco, CA",
       "startDate": "01/2020",
       "endDate": "Present",
-      "description": "Led development of microservices...",
       "achievements": [
         "Increased system performance by 40%",
-        "Mentored 5 junior developers"
+        "Mentored 5 junior developers",
+        "Led development of microservices architecture"
       ]
     }
   ],
@@ -59,14 +59,21 @@ Return a JSON object with this EXACT structure:
 }
 
 CRITICAL INSTRUCTIONS:
-- Extract EVERY piece of information from the resume
+- Extract EVERY piece of information from the resume EXACTLY as it appears
+- For professional summary: Remove any prefix like "Profil:", "Profile:", "Summary:" etc. Extract only the actual summary text
+- For professional experience: 
+  * DO NOT use the "description" field
+  * Put ALL bullet points/responsibilities in the "achievements" array
+  * Extract each bullet point as a separate array item WITHOUT the bullet symbol (-, *, •)
+  * Preserve the exact text of each bullet point as written in the resume
+  * Keep the same order as in the original resume
 - For dates: Use MM/YYYY format (e.g., "01/2020", "06/2015")
 - For current positions/studies: Use "Present" as endDate
-- For achievements: Extract bullet points as array items
-- For skills: Extract ALL skills mentioned anywhere in the resume
+- For education achievements: Extract honors, awards, achievements as array items
+- For skills: Extract ALL skills mentioned anywhere in the resume as individual items
 - If a field is not found, use empty string "" or empty array []
 - Preserve exact company names, job titles, and locations as written
-- Return ONLY the JSON object, no additional text`;
+- Return ONLY the JSON object, no additional text, no markdown formatting`;
 
     // Use Puter AI to parse the resume
     const response = await aiService.chat([
@@ -95,13 +102,6 @@ CRITICAL INSTRUCTIONS:
     }
 
     const parsedData = JSON.parse(cleanedContent) as CVData;
-
-    // Sanitize professional summary to remove "Profil:" or "Profile:" prefix
-    if (parsedData.professionalSummary) {
-      parsedData.professionalSummary = parsedData.professionalSummary
-        .replace(/^(Profil|Profile)\s*:\s*/i, '')
-        .trim();
-    }
 
     return parsedData;
   } catch (error) {
