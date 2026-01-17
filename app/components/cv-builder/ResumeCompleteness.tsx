@@ -125,7 +125,7 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <div className="text-2xl font-bold text-primary">{completeness}%</div>
-            <p className="text-sm font-medium text-gray-600">{completeness}% complete</p>
+            <p className="text-sm font-medium text-gray-600">complete</p>
           </div>
         </div>
 
