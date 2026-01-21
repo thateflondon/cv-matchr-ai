@@ -15,6 +15,13 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
     const { primaryColor, fonts, spacing, fontSize, fontWeight, template } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
+    // Debug: Log additional sections data
+    console.log('🔍 BaseTemplate - Additional Data:', {
+      accomplishments: data.accomplishments,
+      additionalSections: data.additionalSections,
+      languages: data.languages,
+    });
+
     // A4 dimensions in pixels (at 72 DPI)
     const a4Width = 595;
     const a4Height = 842;
@@ -272,6 +279,100 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
               ))}
             </div>
           </div>
+        )}
+
+        {/* Languages */}
+        {data.languages && data.languages.length > 0 && (
+          <div style={{ marginBottom: spacing.sections + "px" }}>
+            <h2
+              style={{
+                fontFamily: fonts.primary,
+                fontSize: `${fontSize.sectionTitles}px`,
+                fontWeight: fontWeight.sectionTitles,
+                color: primaryColor,
+                marginBottom: "12px",
+                paddingBottom: "4px",
+                borderBottom: `2px solid ${primaryColor}`,
+              }}
+            >
+              Languages
+            </h2>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
+              {data.languages.map((lang) => (
+                <div key={lang.id}>
+                  <strong>{lang.language}</strong>
+                  {lang.level && (
+                    <span style={{ color: "#666666", marginLeft: "8px" }}>
+                      {lang.level}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Accomplishments */}
+        {data.accomplishments && data.accomplishments.length > 0 && (
+          <div style={{ marginBottom: spacing.sections + "px" }}>
+            <h2
+              style={{
+                fontFamily: fonts.primary,
+                fontSize: `${fontSize.sectionTitles}px`,
+                fontWeight: fontWeight.sectionTitles,
+                color: primaryColor,
+                marginBottom: "12px",
+                paddingBottom: "4px",
+                borderBottom: `2px solid ${primaryColor}`,
+              }}
+            >
+              Accomplishments
+            </h2>
+
+            <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
+              {data.accomplishments.map((accomplishment, index) => (
+                <li key={index} style={{ marginBottom: "4px" }}>
+                  {accomplishment}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Additional Sections */}
+        {data.additionalSections && data.additionalSections.length > 0 && (
+          <>
+            {data.additionalSections.map((section) => (
+              <div key={section.id} style={{ marginBottom: spacing.sections + "px" }}>
+                <h2
+                  style={{
+                    fontFamily: fonts.primary,
+                    fontSize: `${fontSize.sectionTitles}px`,
+                    fontWeight: fontWeight.sectionTitles,
+                    color: primaryColor,
+                    marginBottom: "12px",
+                    paddingBottom: "4px",
+                    borderBottom: `2px solid ${primaryColor}`,
+                  }}
+                >
+                  {section.title}
+                </h2>
+
+                {Array.isArray(section.content) ? (
+                  <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
+                    {section.content.map((item, index) => (
+                      <li key={index} style={{ marginBottom: "4px" }}>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p style={{ textAlign: "justify" }}>{section.content}</p>
+                )}
+              </div>
+            ))}
+          </>
         )}
       </div>
     );
