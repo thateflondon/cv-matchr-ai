@@ -1,10 +1,7 @@
 /**
- * Exports a CV to PDF by rendering HTML to canvas and converting to PDF
- * Uses html2canvas and jspdf for high-quality PDF generation
+ * Exports a CV to PDF by rendering HTML and converting it to PDF
+ * Uses the browser's print functionality for client-side PDF generation
  */
-
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
 
 export async function exportCVToPDF(
   previewElement: HTMLElement,
@@ -13,75 +10,168 @@ export async function exportCVToPDF(
   // Find the actual CV preview element
   const cvPreview = previewElement.querySelector('[data-cv-preview="true"]') || previewElement;
   
-  try {
-    // A4 dimensions in mm and pixels (at 72 DPI)
-    const a4WidthMm = 210;
-    const a4HeightMm = 297;
-    const a4WidthPx = 595;
-    const a4HeightPx = 842;
-
-    // Render the HTML element to canvas with high quality
-    const canvas = await html2canvas(cvPreview as HTMLElement, {
-      scale: 2, // Higher scale for better quality
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-      windowWidth: a4WidthPx,
-      windowHeight: cvPreview.scrollHeight,
-    });
-
-    // Create PDF
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    });
-
-    // Calculate dimensions
-    const imgWidth = a4WidthMm;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    
-    // If content fits on one page
-    if (imgHeight <= a4HeightMm) {
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    } else {
-      // Multi-page handling
-      let position = 0;
-      const pageHeight = (canvas.width * a4HeightMm) / imgWidth;
-      
-      while (position < canvas.height) {
-        if (position > 0) {
-          pdf.addPage();
-        }
-        
-        const pageCanvas = document.createElement('canvas');
-        pageCanvas.width = canvas.width;
-        pageCanvas.height = Math.min(pageHeight, canvas.height - position);
-        
-        const ctx = pageCanvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(
-            canvas,
-            0, position,
-            canvas.width, pageCanvas.height,
-            0, 0,
-            canvas.width, pageCanvas.height
-          );
-          
-          const pageImgData = pageCanvas.toDataURL('image/png');
-          const currentPageHeight = (pageCanvas.height * imgWidth) / pageCanvas.width;
-          pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, currentPageHeight);
-        }
-        
-        position += pageHeight;
-      }
-    }
-
-    // Save the PDF
-    pdf.save(fileName);
-  } catch (error) {
-    console.error('PDF export error:', error);
-    throw new Error('Failed to export PDF. Please try again.');
+  // Create a new window for printing
+  const printWindow = window.open("", "_blank");
+  
+  if (!printWindow) {
+    throw new Error("Failed to open print window. Please allow popups.");
   }
+
+  // Clone the CV element
+  const clonedElement = cvPreview.cloneNode(true) as HTMLElement;
+
+  // Get computed styles from the original element
+  const styles = Array.from(document.styleSheets)
+    .map((styleSheet) => {
+      try {
+        return Array.from(styleSheet.cssRules)
+          .map((rule) => rule.cssText)
+          .join('\n');
+      } catch (e) {
+        console.warn('Could not access stylesheet:', e);
+        return '';
+      }
+    })
+    .join('\n');
+
+  // Create print-friendly HTML with all styles
+  const printHTML = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>${fileName}</title>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          
+          @page {
+            size: A4;
+            margin: 0;
+          }
+          
+          body {
+            margin: 0;
+            padding: 0;
+            background: white;
+          }
+          
+          @media print {
+            body {
+              margin: 0;
+              padding: 0;
+            }
+            
+            .no-print {
+              display: none !important;
+            }
+          }
+
+          /* Include all page styles */
+          ${styles}
+        </style>
+      </head>
+      <body>
+        ${clonedElement.outerHTML}
+      </body>
+    </html>
+  `;
+
+  // Write HTML to print window
+  printWindow.document.write(printHTML);
+  printWindow.document.close();
+
+  // Wait for content to load
+  await new Promise((resolve) => {
+    printWindow.onload = () => {
+      // Give extra time for fonts and styles to load
+      setTimeout(resolve, 500);
+    };
+    // Fallback timeout in case onload doesn't fire
+    setTimeout(resolve, 1000);
+  });
+
+  // Trigger print dialog
+  printWindow.print();
+
+  // Close the window after printing (user may cancel, so delay it)
+  setTimeout(() => {
+    printWindow.close();
+  }, 100);
+}
+
+/**
+ * Alternative method: Download as HTML (can be saved as PDF using browser's save as PDF)
+ */
+export function downloadAsHTML(
+  previewElement: HTMLElement,
+  fileName: string = "resume.html"
+): void {
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Resume</title>
+        <style>
+          * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+          }
+          
+          body {
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+          }
+          
+          .resume-container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 20mm;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+          }
+          
+          @media print {
+            body {
+              background: white;
+              padding: 0;
+            }
+            
+            .resume-container {
+              box-shadow: none;
+              padding: 0;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="resume-container">
+          ${previewElement.innerHTML}
+        </div>
+      </body>
+    </html>
+  `;
+
+  const blob = new Blob([html], { type: "text/html" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Helper to get the preview element from the component
+ */
+export function getPreviewElement(): HTMLElement | null {
+  // This would be called from the component with a ref
+  return document.querySelector('[data-cv-preview="true"]');
 }
