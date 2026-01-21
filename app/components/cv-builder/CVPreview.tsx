@@ -11,9 +11,10 @@ const CVPreview = forwardRef<HTMLDivElement, CVPreviewProps>(({
   data,
   customization,
 }, ref) => {
-  // A4 dimensions in pixels at 72 DPI (standard for screen)
-  const A4_WIDTH = 595;
-  const A4_HEIGHT = 842;
+  // A4 dimensions scaled for better preview quality (at ~96 DPI)
+  // Original A4 at 72 DPI: 595x842, scaled to ~96 DPI: 952x1346
+  const A4_WIDTH = 952;
+  const A4_HEIGHT = 1346;
 
   return (
     <div className="w-full h-full overflow-auto bg-gray-100">
