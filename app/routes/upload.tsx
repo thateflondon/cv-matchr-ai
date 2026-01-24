@@ -3,10 +3,11 @@ import Navbar from "~/components/Navbar";
 import FileUploader from "~/components/FileUploader";
 import { usePuterStore } from "~/lib/puter";
 import { useNavigate } from "react-router";
-import { convertPdfToImage } from "~/lib/pdf2img";
+import { convertPdfToImage, extractTextFromPdf } from "~/lib/pdf2img";
 import { generateUUID } from "~/lib/utils";
 import { prepareInstructions } from "~/constants";
 import Footer from "~/components/Footer";
+import { parseResumeTextWithAI } from "~/utils/pdfDataExtractor";
 
 const Upload = () => {
   const { auth, isLoading, fs, ai, kv } = usePuterStore();
@@ -31,21 +32,41 @@ const Upload = () => {
     file: File;
   }) => {
     setIsProcessing(true);
+    
+    // Extract text from PDF first
+    setStatustext("Extracting text from PDF...");
+    const extractedText = await extractTextFromPdf(file);
+    if (extractedText.error) {
+      console.warn("Text extraction failed:", extractedText.error);
+    }
+
+    // Parse resume text with AI to get structured data
+    let parsedResumeData = null;
+    if (extractedText.text && extractedText.text.length > 0) {
+      setStatustext("Parsing resume data with AI...");
+      parsedResumeData = await parseResumeTextWithAI(extractedText.text, ai);
+      console.log("Parsed resume data:", parsedResumeData);
+    }
+    
     // File upload
     setStatustext("Uploading the file...");
     const uploadedFile = await fs.upload([file]);
-    if (!uploadedFile) return setStatustext("Error: Failed to upload file");
+    if (!uploadedFile)
+      return setStatustext("Error: Failed to upload file");
 
     // File conversion to image
     setStatustext("Converting file to image...");
     const imageFile = await convertPdfToImage(file);
     if (!imageFile.file)
-      return setStatustext("Error: Failed to convert PDF to image");
+      return setStatustext(
+        "Error: Failed to convert PDF to image",
+      );
 
     // Image upload
     setStatustext("Uploading the image...");
     const uploadedImage = await fs.upload([imageFile.file]);
-    if (!uploadedImage) return setStatustext("Error: Failed to upload image");
+    if (!uploadedImage)
+      return setStatustext("Error: Failed to upload image");
 
     // Data analysis
     setStatustext("Preparing data...");
@@ -58,6 +79,8 @@ const Upload = () => {
       jobTitle,
       jobDescription,
       feedback: "",
+      extractedText: extractedText.text || "",
+      parsedData: parsedResumeData || null,
     };
 
     await kv.set(`resume:${uuid}`, JSON.stringify(data));
@@ -66,9 +89,10 @@ const Upload = () => {
 
     const feedback = await ai.feedback(
       uploadedFile.path,
-      prepareInstructions({ jobTitle, jobDescription })
+      prepareInstructions({ jobTitle, jobDescription }),
     );
-    if (!feedback) return setStatustext("Error: Failed to analyse resume");
+    if (!feedback)
+      return setStatustext("Error: Failed to analyse resume");
 
     const feedbackText =
       typeof feedback.message.content === "string"
@@ -90,17 +114,27 @@ const Upload = () => {
 
     const companyName = formData.get("company-name") as string;
     const jobTitle = formData.get("job-title") as string;
-    const jobDescription = formData.get("job-description") as string;
+    const jobDescription = formData.get(
+      "job-description",
+    ) as string;
 
     if (!file) return;
-    handleAnalyze({ companyName, jobTitle, jobDescription, file });
+    handleAnalyze({
+      companyName,
+      jobTitle,
+      jobDescription,
+      file,
+    });
   };
 
   const userName = auth.user?.username;
 
   return (
     <>
-      <main id="app" className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+      <main
+        id="app"
+        className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
+      >
         <div className="app-container">
           <Navbar userName={userName} />
           <section className="main-section">
@@ -109,10 +143,16 @@ const Upload = () => {
               {isProcessing ? (
                 <>
                   <h2>{statusText}</h2>
-                  <img src="/images/resume-scan.gif" className="w-full" />
+                  <img
+                    src="/images/resume-scan.gif"
+                    className="w-full"
+                  />
                 </>
               ) : (
-                <h2>Drop your resume for an ATS score and improvement tips</h2>
+                <h2>
+                  Drop your resume for an ATS score and
+                  improvement tips
+                </h2>
               )}
               {!isProcessing && (
                 <form
@@ -121,7 +161,9 @@ const Upload = () => {
                   className="flex flex-col gap-4 mt-8 px-4"
                 >
                   <div className="form-div">
-                    <label htmlFor="company-name">Company Name</label>
+                    <label htmlFor="company-name">
+                      Company Name
+                    </label>
                     <input
                       type="text"
                       name="company-name"
@@ -139,7 +181,9 @@ const Upload = () => {
                     />
                   </div>
                   <div className="form-div">
-                    <label htmlFor="job-description">Job Description</label>
+                    <label htmlFor="job-description">
+                      Job Description
+                    </label>
                     <textarea
                       rows={5}
                       name="job-description"
@@ -148,10 +192,17 @@ const Upload = () => {
                     />
                   </div>
                   <div className="form-div">
-                    <label htmlFor="uploader">Upload Resume</label>
-                    <FileUploader onFileSelect={handleFileSelect} />
+                    <label htmlFor="uploader">
+                      Upload Resume
+                    </label>
+                    <FileUploader
+                      onFileSelect={handleFileSelect}
+                    />
                   </div>
-                  <button className="primary-button" type="submit">
+                  <button
+                    className="primary-button"
+                    type="submit"
+                  >
                     Analyze Resume
                   </button>
                 </form>

@@ -43,9 +43,9 @@ const Navbar = ({ userName, onAuthRequired }: UserProps) => {
           </Link>
           {auth.isAuthenticated && (
             <>
-              <Link to="/dashboard">
-                <div className="dashboard cursor-pointer hover:text-purple-600 transition-colors">Dashboard</div>
-              </Link>
+            <Link to="/dashboard">
+              <div className="dashboard">Dashboard</div>
+            </Link>
               {userName ? (
                 <div className="username-container">
                   Welcome <span className="username-content">{userName}</span>

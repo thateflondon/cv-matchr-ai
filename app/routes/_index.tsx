@@ -11,10 +11,14 @@ import AuthModal from "~/components/AuthModal";
 
 export const meta = () => [
   { title: "CVMatch | AI-Powered Resume Analysis" },
-  { name: "description", content: "Optimize your resume for ATS systems and land more interviews with AI-powered feedback" },
+  {
+    name: "description",
+    content:
+      "Optimize your resume for ATS systems and land more interviews with AI-powered feedback",
+  },
 ];
 
-const Auth = () => {
+const Index = () => {
   const { isLoading, auth } = usePuterStore();
   const location = useLocation();
   const navigate = useNavigate();
@@ -81,4 +85,4 @@ const Auth = () => {
   );
 };
 
-export default Auth;
+export default Index;

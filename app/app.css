@@ -169,20 +169,12 @@ form {
         @apply flex items-center justify-between w-[100px];
     }
 
-    .app-logo {
-        /* @apply bg-[url('/icons/check.svg')] bg-red-500; */
-    }
-
     .logo-text {
         @apply bg-transparent text-[#606beb] translate-x-[-17px] pt-[5px] text-[20px] bg-gradient-to-r from-[#4DA3FF] via-[#4F7CFF] via-[65%] to-[#9B5CFF] bg-clip-text text-transparent;
     }
 
     .menu-right {
         @apply flex items-center gap-5;
-    }
-
-    .username-container {
-        /* @apply pl-4; */
     }
 
     .username-content {
@@ -207,7 +199,6 @@ form {
     }
     }
     
-
     /* Hamburger Menu Styles */
     .hamburger-button {
         @apply z-50 p-2 rounded-lg hover:bg-gray-100 transition-colors;

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { CVData } from "~/types/cv-builder";
+import type { CVData, CVCustomization } from "~/types/cv-builder";
 import PersonalDetailsSection from "./sections/PersonalDetailsSection";
 import ProfessionalSummarySection from "./sections/ProfessionalSummarySection";
+import SelectedAchievementsSection from "./sections/SelectedAchievementsSection";
 import WebsitesAndSocialLinksSection from "./sections/WebsitesAndSocialLinksSection";
 import ProfessionalExperienceSection from "./sections/ProfessionalExperienceSection";
 import EducationSection from "./sections/EducationSection";
@@ -15,24 +16,43 @@ interface EditModeProps {
   cvData: CVData;
   onChange: (data: CVData) => void;
   aiSuggestions?: any; // TODO: Define AI suggestions type
+  customization?: CVCustomization;
 }
-
-const sections = [
-  { id: "personal", label: "Personal Details", component: PersonalDetailsSection },
-  { id: "summary", label: "Professional Summary", component: ProfessionalSummarySection },
-  { id: "websites", label: "Websites & Social Links", component: WebsitesAndSocialLinksSection },
-  { id: "experience", label: "Professional Experience", component: ProfessionalExperienceSection },
-  { id: "education", label: "Education", component: EducationSection },
-  { id: "skills", label: "Areas of Expertise", component: SkillsSection },
-  { id: "languages", label: "Languages", component: LanguagesSection },
-  { id: "additional", label: "Additional Sections", component: AdditionalSectionsManager },
-];
 
 export default function EditMode({
   cvData,
   onChange,
   aiSuggestions,
+  customization,
 }: EditModeProps) {
+  // Build sections array dynamically based on template
+  const isAcademicTemplate = customization?.template.id === "template-academic";
+  
+  const baseSections = [
+    { id: "personal", label: "Personal Details", component: PersonalDetailsSection },
+    { id: "summary", label: "Professional Summary", component: ProfessionalSummarySection },
+  ];
+  
+  // Add Selected Achievements section only for Academic template
+  if (isAcademicTemplate) {
+    baseSections.push({
+      id: "achievements",
+      label: "Selected Achievements",
+      component: SelectedAchievementsSection,
+    });
+  }
+  
+  // Add remaining sections
+  const sections = [
+    ...baseSections,
+    { id: "websites", label: "Websites & Social Links", component: WebsitesAndSocialLinksSection },
+    { id: "experience", label: "Professional Experience", component: ProfessionalExperienceSection },
+    { id: "education", label: "Education", component: EducationSection },
+    { id: "skills", label: "Areas of Expertise", component: SkillsSection },
+    { id: "languages", label: "Languages", component: LanguagesSection },
+    { id: "additional", label: "Additional Sections", component: AdditionalSectionsManager },
+  ];
+
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
   const currentSection = sections[currentSectionIndex];
   const SectionComponent = currentSection.component;
@@ -57,7 +77,7 @@ export default function EditMode({
       </div>
 
       {/* Section Title */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 px-4">
         {currentSection.label}
       </h2>
 
@@ -67,6 +87,7 @@ export default function EditMode({
           data={cvData}
           onUpdate={onChange}
           aiSuggestions={aiSuggestions}
+          customization={customization}
         />
       </div>
 
@@ -90,11 +111,11 @@ export default function EditMode({
             <button
               key={section.id}
               onClick={() => setCurrentSectionIndex(index)}
-              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-colors touch-manipulation ${
+              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all touch-manipulation ${
                 index === currentSectionIndex
-                  ? "bg-blue-600 w-6 sm:w-8"
+                  ? "primary-gradient w-6 sm:w-8 shadow-sm"
                   : index < currentSectionIndex
-                  ? "bg-blue-300"
+                  ? "bg-primary/40"
                   : "bg-gray-300"
               }`}
               aria-label={`Go to ${section.label}`}
@@ -105,10 +126,10 @@ export default function EditMode({
         <button
           onClick={handleNext}
           disabled={currentSectionIndex === sections.length - 1}
-          className={`flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg transition-colors touch-manipulation ${
+          className={`flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg transition-all touch-manipulation ${
             currentSectionIndex === sections.length - 1
               ? "text-gray-400 cursor-not-allowed"
-              : "text-white bg-blue-600 hover:bg-blue-700"
+              : "text-white primary-gradient hover:opacity-90 shadow-sm"
           }`}
         >
           <span className="font-medium hidden sm:inline">
