@@ -104,9 +104,11 @@ const Navbar = ({ userName, onAuthRequired }: UserProps) => {
 
               {auth.isAuthenticated && (
                 <>
-                  <div className="mobile-menu-item">
-                    <div className="dashboard">Dashboard</div>
-                  </div>
+                  <Link to="/dashboard" onClick={toggleMenu}>
+                    <div className="mobile-menu-item">
+                      <div className="dashboard cursor-pointer hover:text-purple-600 transition-colors">Dashboard</div>
+                    </div>
+                  </Link>
 
                   <div className="mobile-menu-item">
                     {userName ? (
