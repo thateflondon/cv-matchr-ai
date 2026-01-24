@@ -6,5 +6,4 @@ export default [
     route("/dashboard", "routes/dashboard.tsx"),
     route("/resume/:id", "routes/resume.tsx"),
     route('delete', 'routes/delete.tsx'),
-    route('/dashboard', 'routes/dashboard.tsx'),
 ] satisfies RouteConfig;
