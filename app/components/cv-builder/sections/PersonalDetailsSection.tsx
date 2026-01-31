@@ -175,7 +175,7 @@ export default function PersonalDetailsSection({
   };
 
   return (
-    <form className="flex flex-col gap-4 mt-4 px-4">
+    <form className="flex flex-col gap-4 mt-4 max-w-[initial]!">
       {/* Photo Upload Section */}
       <div className="form-div">
         <label htmlFor="photo-upload" className="text-sm font-medium text-foreground">
@@ -276,7 +276,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Name Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <div className="form-div">
           <label htmlFor="firstName" className="text-sm font-medium text-foreground">
             First Name <span className="text-destructive">*</span>
@@ -327,7 +327,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Contact Information */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <div className="form-div">
           <label htmlFor="email" className="text-sm font-medium text-foreground">
             Email <span className="text-destructive">*</span>
@@ -377,7 +377,7 @@ export default function PersonalDetailsSection({
       </div>
 
       {/* Optional Links */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
         <div className="form-div">
           <label htmlFor="linkedin" className="text-sm font-medium text-foreground">
             LinkedIn
