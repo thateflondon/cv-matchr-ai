@@ -253,7 +253,7 @@ export default function LanguagesSection({
         className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
         <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">+ Add one more language</span>
+        <span className="text-sm font-medium">Add one more language</span>
       </button>
     </div>
   );
