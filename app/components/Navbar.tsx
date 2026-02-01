@@ -28,57 +28,59 @@ const Navbar = ({ userName, onAuthRequired }: UserProps) => {
 
   return (
     <>
-      <nav className="navbar">
-        <Link to="/">
-          <div className="logo-wrapper">
-            <img className="app-logo" src="/icons/logo.png" alt="logo" />
-            <p className="logo-text w-fit">atch</p>
-          </div>
-        </Link>
-
-        {/* Desktop Menu */}
-        <div className="menu-right max-md:hidden">
-          <Link to="/upload" onClick={handleUploadClick}>
-            <p className="primary-button w-fit">Upload Resume</p>
+      <header className="h-[120px] flex justify-center items-center fixed top-0 left-0 right-0 z-50 backdrop-blur-sm">
+        <nav className="navbar">
+          <Link to="/">
+            <div className="logo-wrapper">
+              <img className="app-logo" src="/icons/logo.png" alt="logo" />
+              <p className="logo-text w-fit">atch</p>
+            </div>
           </Link>
-          {auth.isAuthenticated && (
-            <>
-            <Link to="/dashboard">
-              <div className="dashboard">Dashboard</div>
+
+          {/* Desktop Menu */}
+          <div className="menu-right max-md:hidden">
+            <Link to="/upload" onClick={handleUploadClick}>
+              <p className="primary-button w-fit">Upload Resume</p>
             </Link>
-              {userName ? (
-                <div className="username-container">
-                  Welcome <span className="username-content">{userName}</span>
-                </div>
-              ) : (
-                <div className="username-container">
-                  Welcome <span className="username-content">guest</span>
-                </div>
-              )}
-            </>
-          )}
-          {/*Hidden before app translation is made */}
-          <div className="language-selection">
-            <span className="language-choice">
-              <img src="/icons/lang_fr.svg" alt="english" />
-            </span>
-            <span className="language-choice">
-              <img src="/icons/lang_uk.svg" alt="english" />
-            </span>
+            {auth.isAuthenticated && (
+              <>
+                <Link to="/dashboard">
+                  <div className="dashboard">Dashboard</div>
+                </Link>
+                {userName ? (
+                  <div className="username-container">
+                    Welcome <span className="username-content">{userName}</span>
+                  </div>
+                ) : (
+                  <div className="username-container">
+                    Welcome <span className="username-content">guest</span>
+                  </div>
+                )}
+              </>
+            )}
+            {/*Hidden before app translation is made */}
+            <div className="language-selection">
+              <span className="language-choice">
+                <img src="/icons/lang_fr.svg" alt="english" />
+              </span>
+              <span className="language-choice">
+                <img src="/icons/lang_uk.svg" alt="english" />
+              </span>
+            </div>
           </div>
-        </div>
 
-        {/* Hamburger Icon */}
-        <button
-          className="hamburger-button md:hidden"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-      </nav>
+          {/* Hamburger Icon */}
+          <button
+            className="hamburger-button md:hidden"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
+        </nav>
+      </header>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu Overlay - Outside header to avoid stacking context issues */}
       {isMenuOpen && (
         <div className="mobile-menu-overlay" onClick={toggleMenu}>
           <div

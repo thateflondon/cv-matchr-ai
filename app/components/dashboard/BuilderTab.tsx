@@ -4,8 +4,8 @@ import CustomizeMode from "../cv-builder/CustomizeMode";
 import CVPreview from "../cv-builder/CVPreview";
 import CVBuilderNavbar from "../cv-builder/CVBuilderNavbar";
 import BottomActionBar from "../cv-builder/BottomActionBar";
-import CustomizeSlidePanel from "../cv-builder/CustomizeSlidePanel";
 import MigrationBanner from "../cv-builder/MigrationBanner";
+import ErrorBoundary from "~/components/common/ErrorBoundary";
 import type { CVData, CVCustomization } from "~/types/cv-builder";
 import { defaultCVData, defaultCustomization } from "~/types/cv-builder";
 import {
@@ -19,6 +19,7 @@ import {
   convertFeedbackToSuggestions,
 } from "~/utils/cvDataExtractor";
 import { exportCVToPDF } from "~/utils/pdfExport";
+import { exportCVToDocx } from "~/utils/docxExport";
 import { toast } from "sonner";
 import {
   saveResumeToPuter,
@@ -63,10 +64,6 @@ export default function BuilderTab({
     const storedData = loadCVData(resume?.id || null);
     const storedCustomization = loadCVCustomization(resume?.id || null);
 
-    console.log("🔍 BuilderTab - Loading resume:", resume?.id);
-    console.log("🔍 BuilderTab - Stored data:", storedData);
-    console.log("🔍 BuilderTab - Resume parsedData:", resume?.parsedData);
-
     if (resume) {
       // Check if stored data is meaningful (has personal details or experience)
       const hasStoredContent = storedData && (
@@ -75,25 +72,17 @@ export default function BuilderTab({
         storedData.education?.length > 0
       );
 
-      console.log("🔍 BuilderTab - hasStoredContent:", hasStoredContent);
-      console.log("🔍 BuilderTab - Deciding which data to use...");
-
       // Priority 1: Use stored data if it has meaningful content (user has edited)
       if (hasStoredContent) {
-        console.log("✅ Loading from localStorage (user has edited)");
-        console.log("✅ Data loaded:", storedData);
         setCvData(storedData);
       }
       // Priority 2: Use parsed data from AI if available (most complete)
       else if (resume.parsedData) {
-        console.log("✅ Loading parsed data from AI:", resume.parsedData);
         setCvData(resume.parsedData);
       }
       // Priority 3: Extract what we can from resume object (fallback)
       else {
-        console.log("⚠️ Fallback: Extracting from resume object");
         const extractedData = extractCVDataFromResume(resume);
-        console.log("⚠️ Extracted data:", extractedData);
         setCvData(extractedData);
       }
       
@@ -157,17 +146,14 @@ export default function BuilderTab({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       // Only save if we have meaningful content
-      const hasContent = 
+      const hasContent =
         cvData.personalDetails?.firstName ||
         cvData.professionalExperience?.length > 0 ||
         cvData.education?.length > 0 ||
         cvData.professionalSummary;
-      
+
       if (hasContent) {
-        console.log("💾 Auto-saving to localStorage...");
         saveCVData(resume?.id || null, cvData);
-      } else {
-        console.log("⏭️ Skipping auto-save (no meaningful content yet)");
       }
     }, 500); // Debounce 500ms
 
@@ -219,10 +205,22 @@ export default function BuilderTab({
       try {
         const fileName = `${cvData.personalDetails?.firstName || 'Resume'}_${cvData.personalDetails?.lastName || ''}_CV.pdf`.trim();
         await exportCVToPDF(previewRef.current, fileName);
+        toast.success("PDF exported successfully!");
       } catch (error) {
         console.error("Failed to export PDF:", error);
-        alert("Failed to export PDF. Please try again.");
+        toast.error("Failed to export PDF. Please try again.");
       }
+    }
+  };
+
+  const handleExportDocx = async () => {
+    try {
+      const fileName = `${cvData.personalDetails?.firstName || 'Resume'}_${cvData.personalDetails?.lastName || ''}_CV.docx`.trim();
+      await exportCVToDocx(cvData, fileName);
+      toast.success("DOCX exported successfully!");
+    } catch (error) {
+      console.error("Failed to export DOCX:", error);
+      toast.error("Failed to export DOCX. Please try again.");
     }
   };
 
@@ -258,6 +256,9 @@ export default function BuilderTab({
     }
   };
 
+  // Mobile view toggle between editor and preview
+  const [mobileView, setMobileView] = useState<"editor" | "preview">("editor");
+
   return (
     <div className="h-screen flex flex-col bg-white">
       {/* Migration Banner */}
@@ -269,32 +270,58 @@ export default function BuilderTab({
       <CVBuilderNavbar
         activeMode={activeMode}
         onModeChange={setActiveMode}
-        onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
         selectedLanguage={selectedLanguage}
         onLanguageChange={setSelectedLanguage}
-        onSave={handleSave}
         onExport={handleExport}
-        resumeName={resume?.name || "Untitled Resume"}
-        isSaving={isSaving}
-        hasUnsavedChanges={hasUnsavedChanges}
+        onExportDocx={handleExportDocx}
       />
+
+      {/* Mobile View Toggle - Only visible on mobile/tablet */}
+      <div className="lg:hidden flex border-b border-gray-200">
+        <button
+          onClick={() => setMobileView("editor")}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${
+            mobileView === "editor"
+              ? "text-primary border-b-2 border-primary bg-primary/5"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
+        >
+          {activeMode === "edit" ? "Edit" : "Customize"}
+        </button>
+        <button
+          onClick={() => setMobileView("preview")}
+          className={`flex-1 py-3 text-sm font-medium transition-colors ${
+            mobileView === "preview"
+              ? "text-primary border-b-2 border-primary bg-primary/5"
+              : "text-gray-600 hover:text-gray-900"
+          }`}
+        >
+          Preview
+        </button>
+      </div>
 
       {/* Main Content Area */}
       <div className="flex-1 flex overflow-hidden">
         {activeMode === "edit" ? (
           <>
             {/* Edit Mode - Left Panel */}
-            <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
-              <EditMode
-                cvData={cvData}
-                onChange={setCvData}
-                aiSuggestions={aiSuggestions}
-                customization={customization}
-              />
+            <div className={`lg:w-1/2 w-full border-r border-gray-200 overflow-y-auto ${
+              mobileView === "editor" ? "block" : "hidden lg:block"
+            }`}>
+              <ErrorBoundary>
+                <EditMode
+                  cvData={cvData}
+                  onChange={setCvData}
+                  aiSuggestions={aiSuggestions}
+                  customization={customization}
+                />
+              </ErrorBoundary>
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto flex justify-center">
+            <div className={`lg:w-1/2 w-full bg-gray-50 overflow-y-auto flex justify-center ${
+              mobileView === "preview" ? "block" : "hidden lg:block"
+            }`}>
               <CVPreview
                 ref={previewRef}
                 data={cvData}
@@ -305,15 +332,21 @@ export default function BuilderTab({
         ) : (
           <>
             {/* Customize Mode - Left Panel */}
-            <div className="w-1/2 border-r border-gray-200 overflow-y-auto">
-              <CustomizeMode
-                customization={customization}
-                onChange={setCustomization}
-              />
+            <div className={`lg:w-1/2 w-full border-r border-gray-200 overflow-y-auto ${
+              mobileView === "editor" ? "block" : "hidden lg:block"
+            }`}>
+              <ErrorBoundary>
+                <CustomizeMode
+                  customization={customization}
+                  onChange={setCustomization}
+                />
+              </ErrorBoundary>
             </div>
 
             {/* Preview - Right Panel */}
-            <div className="w-1/2 bg-gray-50 overflow-y-auto flex justify-center">
+            <div className={`lg:w-1/2 w-full bg-gray-50 overflow-y-auto flex justify-center ${
+              mobileView === "preview" ? "block" : "hidden lg:block"
+            }`}>
               <CVPreview
                 ref={previewRef}
                 data={cvData}

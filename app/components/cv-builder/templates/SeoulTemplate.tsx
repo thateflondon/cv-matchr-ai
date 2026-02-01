@@ -1,319 +1,355 @@
 import { forwardRef } from "react";
 import type { BaseTemplateProps } from "./BaseTemplate";
+import { formatDate } from "~/utils/dateFormatter";
 
 /**
  * Seoul Template (Pure ATS)
- * - Split header: Name left, contact info right
- * - Job title below name
- * - Thick black horizontal lines under section titles
- * - Diamond bullet points (♦)
- * - Technical Proficiencies with indented subsections
- * - Pure ATS-friendly format
+ * - Photo top-left with name beside it
+ * - Contact info inline with | separators
+ * - Gray section header underlines
+ * - Minimal, clean design
+ * - Italic dates, serif-style headings
+ * - Single column, lots of whitespace
  */
 const SeoulTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fontSize, fontWeight, spacing, fonts } = customization;
+    const { fontSize, fontWeight, spacing, fonts, dateFormat, margins } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
     // A4 dimensions
-    const a4Width = 595;
     const a4Height = 842;
+
+    // Extract margin values with fallbacks
+    const topBottomMargin = (margins?.topBottom ?? 0.6) * 72;
+    const leftRightMargin = (margins?.leftRight ?? 0.6) * 72;
+    const sectionSpacing = margins?.betweenSections ?? 24;
+    const contentBlockSpacing = margins?.betweenContentBlocks ?? 16;
 
     return (
       <div
         ref={ref}
         data-cv-preview="true"
+        className="bg-white w-full"
         style={{
-          width: `${a4Width}px`,
           minHeight: `${a4Height}px`,
-          fontFamily: fonts.secondary, // Body text uses secondary font
+          fontFamily: fonts.secondary,
           lineHeight: `${spacing.lineHeight}%`,
           fontSize: `${fontSize.body}px`,
+          fontWeight: fontWeight.body,
           color: "#000000",
+          paddingTop: `${topBottomMargin}px`,
+          paddingBottom: `${topBottomMargin}px`,
+          paddingLeft: `${leftRightMargin}px`,
+          paddingRight: `${leftRightMargin}px`,
         }}
       >
-        {/* Content Container */}
-        <div style={{ padding: "48px 56px" }}>
-          {/* Header - Name Centered */}
-          <div className="text-center mb-6">
+        {/* Header - Photo left, Name right */}
+        <div style={{ display: "flex", alignItems: "flex-start", gap: "20px", marginBottom: `${sectionSpacing}px` }}>
+          {/* Photo */}
+          {personalDetails?.photo && (
+            <div
+              style={{
+                width: "90px",
+                height: "90px",
+                flexShrink: 0,
+              }}
+            >
+              <img
+                src={personalDetails.photo}
+                alt="Profile"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+              />
+            </div>
+          )}
+
+          {/* Name and Contact */}
+          <div style={{ flex: 1 }}>
             <h1
               style={{
-                fontFamily: fonts.primary, // Primary font for main heading
-                fontSize: `${fontSize.primaryHeading}px`,
-                fontWeight: fontWeight.primaryHeading,
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: `${fontSize.primaryHeading + 6}px`,
+                fontWeight: "700",
                 color: "#000000",
-                marginBottom: "6px",
+                marginBottom: "8px",
               }}
             >
               {personalDetails?.firstName} {personalDetails?.lastName}
             </h1>
-            
-            {personalDetails?.jobTitle && (
-              <div
-                style={{
-                  fontSize: `${fontSize.secondaryHeading}px`,
-                  fontWeight: fontWeight.secondaryHeading,
-                  color: "#000000",
-                }}
-              >
-                {personalDetails.jobTitle}
-              </div>
-            )}
-          </div>
 
-          {/* Contact Info */}
-          <div
-            style={{
-              textAlign: "center",
-              fontSize: `${fontSize.body - 1}px`,
-              color: "#000000",
-            }}
-          >
-            {personalDetails?.location && (
-              <div>{personalDetails.location}</div>
-            )}
-            {personalDetails?.phone && (
-              <div>{personalDetails.phone}</div>
-            )}
-            {personalDetails?.email && (
-              <div>{personalDetails.email}</div>
-            )}
-            {personalDetails?.linkedin && (
-              <div>{personalDetails.linkedin}</div>
-            )}
-          </div>
-
-          {/* Professional Summary */}
-          {professionalSummary && (
-            <div className="mb-5">
-              <p style={{ textAlign: "justify" }}>{professionalSummary}</p>
+            {/* Contact Info - Single Line with | separators */}
+            <div
+              style={{
+                fontSize: `${fontSize.body}px`,
+                color: "#333333",
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+              }}
+            >
+              {personalDetails?.location && <span>{personalDetails.location}</span>}
+              {personalDetails?.location && (personalDetails?.email || personalDetails?.phone || personalDetails?.linkedin) && (
+                <span style={{ margin: "0 8px", color: "#666666" }}>|</span>
+              )}
+              {personalDetails?.email && <span>{personalDetails.email}</span>}
+              {personalDetails?.email && (personalDetails?.phone || personalDetails?.linkedin) && (
+                <span style={{ margin: "0 8px", color: "#666666" }}>|</span>
+              )}
+              {personalDetails?.phone && <span>{personalDetails.phone}</span>}
+              {personalDetails?.phone && personalDetails?.linkedin && (
+                <span style={{ margin: "0 8px", color: "#666666" }}>|</span>
+              )}
+              {personalDetails?.linkedin && <span>{personalDetails.linkedin}</span>}
             </div>
-          )}
+          </div>
+        </div>
 
-          {/* Technical Proficiencies */}
-          {data.skillGroups && data.skillGroups.length > 0 && (
-            <div className="mb-5">
-              <div
-                style={{
-                  borderBottom: "2px solid #000000",
-                  paddingBottom: "3px",
-                  marginBottom: "8px",
-                }}
-              >
-                <h2
-                  style={{
-                    fontFamily: fonts.primary, // Primary font for section titles
-                    fontSize: `${fontSize.sectionTitles}px`,
-                    fontWeight: fontWeight.sectionTitles,
-                    color: "#000000",
-                  }}
-                >
-                  Technical Proficiencies
-                </h2>
-              </div>
-              
-              <div style={{ marginLeft: "0" }}>
-                {data.skillGroups.map((group, index) => (
-                  <div key={index} style={{ marginBottom: "8px" }}>
-                    <div className="flex gap-8">
-                      <div
-                        style={{
-                          fontWeight: "700",
-                          minWidth: "140px",
-                          flexShrink: 0,
-                        }}
-                      >
-                        {group.title}:
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        {group.skills.join(", ")}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+        {/* Professional Summary */}
+        {professionalSummary && (
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
+            <h2
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: `${fontSize.sectionTitles + 2}px`,
+                fontWeight: "400",
+                fontStyle: "italic",
+                color: "#000000",
+                marginBottom: "8px",
+                paddingBottom: "6px",
+                borderBottom: "1px solid #cccccc",
+              }}
+            >
+              Professional Summary
+            </h2>
+            <p style={{ color: "#333333", textAlign: "justify", lineHeight: "1.6" }}>
+              {professionalSummary}
+            </p>
+          </div>
+        )}
 
-          {/* Professional Experience */}
-          {professionalExperience && professionalExperience.length > 0 && (
-            <div className="mb-5">
-              <div
-                style={{
-                  borderBottom: "2px solid #000000",
-                  paddingBottom: "3px",
-                  marginBottom: "8px",
-                }}
-              >
-                <h2
-                  style={{
-                    fontFamily: fonts.primary, // Primary font for section titles
-                    fontSize: `${fontSize.sectionTitles}px`,
-                    fontWeight: fontWeight.sectionTitles,
-                    color: "#000000",
-                  }}
-                >
-                  Professional Experience
-                </h2>
-              </div>
-              
-              {professionalExperience.map((exp, index) => (
-                <div key={index} className="mb-4">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <div>
-                      <strong style={{ fontSize: `${fontSize.body}px` }}>
-                        {exp.company}, {exp.location || ""}
-                      </strong>
-                    </div>
-                    <div
+        {/* Professional Experience */}
+        {professionalExperience && professionalExperience.length > 0 && (
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
+            <h2
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: `${fontSize.sectionTitles + 2}px`,
+                fontWeight: "400",
+                fontStyle: "italic",
+                color: "#000000",
+                marginBottom: "12px",
+                paddingBottom: "6px",
+                borderBottom: "1px solid #cccccc",
+              }}
+            >
+              Professional Experience
+            </h2>
+
+            {professionalExperience.map((exp, index) => {
+              const formattedStartDate = formatDate(exp.startDate, dateFormat);
+              const formattedEndDate = exp.endDate ? formatDate(exp.endDate, dateFormat) : "Present";
+              const dateString = `${formattedStartDate} – ${formattedEndDate}`;
+
+              return (
+                <div key={index} style={{ marginBottom: `${contentBlockSpacing}px` }}>
+                  {/* Company, Position, Location */}
+                  <div style={{ marginBottom: "2px" }}>
+                    <strong
                       style={{
-                        fontSize: `${fontSize.body - 1}px`,
+                        fontFamily: "'Georgia', 'Times New Roman', serif",
+                        fontSize: `${fontSize.body + 1}px`,
+                        fontWeight: "700",
                         color: "#000000",
-                        whiteSpace: "nowrap",
-                        marginLeft: "16px",
                       }}
                     >
-                      {exp.startDate} – {exp.endDate || "Present"}
+                      {exp.company}, {exp.jobTitle}
+                      {exp.location && `, ${exp.location}`}
+                    </strong>
+                  </div>
+
+                  {/* Date in italic */}
+                  {(exp.startDate || exp.endDate) && (
+                    <div
+                      style={{
+                        fontSize: `${fontSize.body}px`,
+                        fontStyle: "italic",
+                        color: "#666666",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      {dateString}
                     </div>
-                  </div>
-                  
-                  <div
-                    style={{
-                      fontSize: `${fontSize.body}px`,
-                      fontWeight: "600",
-                      marginBottom: "6px",
-                    }}
-                  >
-                    {exp.jobTitle}
-                  </div>
-                  
-                  {/* Achievements/Responsibilities with diamond bullets */}
+                  )}
+
+                  {/* Achievements/Responsibilities with bullet points */}
                   {exp.achievements && exp.achievements.length > 0 && (
-                    <div style={{ marginLeft: "20px" }}>
+                    <ul style={{ paddingLeft: "18px", margin: "0", color: "#333333" }}>
                       {exp.achievements.map((achievement, i) => (
-                        <div key={i} style={{ marginBottom: "4px", display: "flex", gap: "8px" }}>
-                          <span style={{ flexShrink: 0 }}>♦</span>
-                          <span style={{ flex: 1 }}>{achievement}</span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {/* Fallback: Show description if no achievements (for backward compatibility) */}
-                  {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
-                    <p style={{ marginBottom: "6px" }}>{exp.description}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Education */}
-          {education && education.length > 0 && (
-            <div className="mb-5">
-              <div
-                style={{
-                  borderBottom: "2px solid #000000",
-                  paddingBottom: "3px",
-                  marginBottom: "8px",
-                }}
-              >
-                <h2
-                  style={{
-                    fontFamily: fonts.primary, // Primary font for section titles
-                    fontSize: `${fontSize.sectionTitles}px`,
-                    fontWeight: fontWeight.sectionTitles,
-                    color: "#000000",
-                  }}
-                >
-                  Education
-                </h2>
-              </div>
-              
-              {education.map((edu, index) => (
-                <div key={index} className="mb-3">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <div>
-                      <strong style={{ fontSize: `${fontSize.body}px` }}>
-                        {edu.institution}
-                        {edu.location && `, ${edu.location}`}
-                      </strong>
-                    </div>
-                    <div
-                      style={{
-                        fontSize: `${fontSize.body - 1}px`,
-                        color: "#000000",
-                        whiteSpace: "nowrap",
-                        marginLeft: "16px",
-                      }}
-                    >
-                      {edu.graduationDate}
-                    </div>
-                  </div>
-                  
-                  <div style={{ fontSize: `${fontSize.body}px` }}>
-                    {edu.degree}
-                  </div>
-                  
-                  {edu.gpa && (
-                    <div style={{ fontSize: `${fontSize.body - 1}px`, marginTop: "2px" }}>
-                      GPA: {edu.gpa}
-                    </div>
-                  )}
-                  
-                  {edu.achievements && edu.achievements.length > 0 && (
-                    <ul style={{ paddingLeft: "20px", margin: "4px 0" }}>
-                      {edu.achievements.map((achievement, i) => (
-                        <li key={i} style={{ marginBottom: "2px" }}>
+                        <li key={i} style={{ marginBottom: "4px", lineHeight: "1.5" }}>
                           {achievement}
                         </li>
                       ))}
                     </ul>
                   )}
-                </div>
-              ))}
-            </div>
-          )}
 
-          {/* Skills (if not using skillGroups) */}
-          {skillsData && skillsData.length > 0 && (!data.skillGroups || data.skillGroups.length === 0) && (
-            <div className="mb-5">
-              <div
-                style={{
-                  borderBottom: "2px solid #000000",
-                  paddingBottom: "3px",
-                  marginBottom: "8px",
-                }}
-              >
+                  {/* Fallback: Show description if no achievements */}
+                  {(!exp.achievements || exp.achievements.length === 0) && exp.description && (
+                    <p style={{ color: "#333333", lineHeight: "1.5" }}>{exp.description}</p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Consultancy Section (if there are additional sections) */}
+        {data.additionalSections && data.additionalSections.length > 0 && (
+          <>
+            {data.additionalSections.map((section) => (
+              <div key={section.id} style={{ marginBottom: `${sectionSpacing}px` }}>
                 <h2
                   style={{
-                    fontFamily: fonts.primary, // Primary font for section titles
-                    fontSize: `${fontSize.sectionTitles}px`,
-                    fontWeight: fontWeight.sectionTitles,
+                    fontFamily: "'Georgia', 'Times New Roman', serif",
+                    fontSize: `${fontSize.sectionTitles + 2}px`,
+                    fontWeight: "400",
+                    fontStyle: "italic",
                     color: "#000000",
+                    marginBottom: "12px",
+                    paddingBottom: "6px",
+                    borderBottom: "1px solid #cccccc",
                   }}
                 >
-                  Skills
+                  {section.title}
                 </h2>
-              </div>
-              
-              <div>{skillsData.map((skill) => skill.name).join(", ")}</div>
-            </div>
-          )}
 
-          {/* Page Number */}
-          <div
-            style={{
-              position: "absolute",
-              bottom: "32px",
-              right: "56px",
-              fontSize: `${fontSize.body - 2}px`,
-              color: "#000000",
-            }}
-          >
-            1
+                {Array.isArray(section.content) ? (
+                  <ul style={{ paddingLeft: "18px", margin: "0", color: "#333333" }}>
+                    {section.content.map((item, index) => (
+                      <li key={index} style={{ marginBottom: "4px", lineHeight: "1.5" }}>
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p style={{ color: "#333333", lineHeight: "1.5" }}>{section.content}</p>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+
+        {/* Education */}
+        {education && education.length > 0 && (
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
+            <h2
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: `${fontSize.sectionTitles + 2}px`,
+                fontWeight: "400",
+                fontStyle: "italic",
+                color: "#000000",
+                marginBottom: "12px",
+                paddingBottom: "6px",
+                borderBottom: "1px solid #cccccc",
+              }}
+            >
+              Education
+            </h2>
+
+            {education.map((edu, index) => (
+              <div key={index} style={{ marginBottom: `${contentBlockSpacing - 4}px` }}>
+                <strong
+                  style={{
+                    fontFamily: "'Georgia', 'Times New Roman', serif",
+                    fontSize: `${fontSize.body + 1}px`,
+                    fontWeight: "700",
+                    color: "#000000",
+                    display: "block",
+                  }}
+                >
+                  {edu.degree}, {edu.institution}
+                </strong>
+                {edu.graduationDate && (
+                  <div
+                    style={{
+                      fontSize: `${fontSize.body}px`,
+                      fontStyle: "italic",
+                      color: "#666666",
+                    }}
+                  >
+                    {formatDate(edu.graduationDate, dateFormat)}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+
+        {/* Expert-Level Skills */}
+        {((skillsData && skillsData.length > 0) || (data.skillGroups && data.skillGroups.length > 0)) && (
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
+            <h2
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: `${fontSize.sectionTitles + 2}px`,
+                fontWeight: "400",
+                fontStyle: "italic",
+                color: "#000000",
+                marginBottom: "12px",
+                paddingBottom: "6px",
+                borderBottom: "1px solid #cccccc",
+              }}
+            >
+              Expert-Level Skills
+            </h2>
+
+            {/* Skill Groups with labels */}
+            {data.skillGroups && data.skillGroups.length > 0 ? (
+              <div style={{ color: "#333333" }}>
+                {data.skillGroups.map((group, index) => (
+                  <div key={index} style={{ marginBottom: "6px", lineHeight: "1.5" }}>
+                    {group.title && (
+                      <strong style={{ color: "#000000" }}>{group.title}: </strong>
+                    )}
+                    <span>{group.skills.join(", ")}</span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              /* Fallback to skills list */
+              <div style={{ color: "#333333", lineHeight: "1.5" }}>
+                {skillsData?.map((skill) => skill.name).join(", ")}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Languages */}
+        {data.languages && data.languages.length > 0 && (
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
+            <h2
+              style={{
+                fontFamily: "'Georgia', 'Times New Roman', serif",
+                fontSize: `${fontSize.sectionTitles + 2}px`,
+                fontWeight: "400",
+                fontStyle: "italic",
+                color: "#000000",
+                marginBottom: "12px",
+                paddingBottom: "6px",
+                borderBottom: "1px solid #cccccc",
+              }}
+            >
+              Languages
+            </h2>
+
+            <div style={{ color: "#333333", lineHeight: "1.5" }}>
+              {data.languages.map((lang) => (lang.level ? `${lang.language} (${lang.level})` : lang.language)).join(", ")}
+            </div>
+          </div>
+        )}
       </div>
     );
   }

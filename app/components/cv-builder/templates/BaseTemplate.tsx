@@ -12,23 +12,21 @@ export interface BaseTemplateProps {
  */
 const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
   ({ data, customization }, ref) => {
-    const { primaryColor, fonts, spacing, fontSize, fontWeight, template } = customization;
+    const { primaryColor, fonts, spacing, fontSize, fontWeight, template, margins } = customization;
     const { personalDetails, professionalSummary, professionalExperience, education, skillsData } = data;
 
-    // Debug: Log additional sections data
-    console.log('🔍 BaseTemplate - Additional Data:', {
-      accomplishments: data.accomplishments,
-      additionalSections: data.additionalSections,
-      languages: data.languages,
-    });
-
     // A4 dimensions in pixels (at 72 DPI)
-    const a4Width = 595;
     const a4Height = 842;
 
+    // Convert inch margins to pixels (72 DPI)
+    const topBottomMargin = (margins?.topBottom ?? 0.75) * 72;
+    const leftRightMargin = (margins?.leftRight ?? 0.75) * 72;
+    const sectionSpacing = margins?.betweenSections ?? 24;
+    const titleContentSpacing = margins?.betweenTitleContent ?? 8;
+    const contentBlockSpacing = margins?.betweenContentBlocks ?? 12;
+
     // Determine layout based on template config
-    const isOneColumn = template.columns === 1;
-    const hasPhoto = template.hasPhoto && personalDetails?.photoUrl;
+    const hasPhoto = template.hasPhoto && personalDetails?.photo;
 
     return (
       <div
@@ -42,17 +40,20 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
           fontSize: `${fontSize.body}px`,
           fontWeight: fontWeight.body,
           color: "#000000",
-          padding: "40px",
+          paddingTop: `${topBottomMargin}px`,
+          paddingBottom: `${topBottomMargin}px`,
+          paddingLeft: `${leftRightMargin}px`,
+          paddingRight: `${leftRightMargin}px`,
         }}
       >
         {/* Header Section */}
-        <div style={{ marginBottom: spacing.sections + "px" }}>
+        <div style={{ marginBottom: `${sectionSpacing}px` }}>
           <div style={{ display: "flex", alignItems: "flex-start", gap: "20px" }}>
             {/* Photo (if supported) */}
             {hasPhoto && (
               <div style={{ flexShrink: 0 }}>
                 <img
-                  src={personalDetails.photoUrl}
+                  src={personalDetails.photo}
                   alt="Profile"
                   style={{
                     width: "100px",
@@ -111,14 +112,14 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
 
         {/* Professional Summary */}
         {professionalSummary && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
             <h2
               style={{
                 fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
-                marginBottom: "12px",
+                marginBottom: `${titleContentSpacing}px`,
                 paddingBottom: "4px",
                 borderBottom: `2px solid ${primaryColor}`,
               }}
@@ -131,14 +132,14 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
 
         {/* Professional Experience */}
         {professionalExperience && professionalExperience.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
             <h2
               style={{
                 fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
-                marginBottom: "12px",
+                marginBottom: `${titleContentSpacing}px`,
                 paddingBottom: "4px",
                 borderBottom: `2px solid ${primaryColor}`,
               }}
@@ -193,14 +194,14 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
 
         {/* Education */}
         {education && education.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
             <h2
               style={{
                 fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
-                marginBottom: "12px",
+                marginBottom: `${titleContentSpacing}px`,
                 paddingBottom: "4px",
                 borderBottom: `2px solid ${primaryColor}`,
               }}
@@ -255,14 +256,14 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
 
         {/* Skills */}
         {skillsData && skillsData.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
             <h2
               style={{
                 fontFamily: fonts.primary, // Primary font for section titles
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
-                marginBottom: "12px",
+                marginBottom: `${titleContentSpacing}px`,
                 paddingBottom: "4px",
                 borderBottom: `2px solid ${primaryColor}`,
               }}
@@ -283,14 +284,14 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
 
         {/* Languages */}
         {data.languages && data.languages.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
             <h2
               style={{
                 fontFamily: fonts.primary,
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
-                marginBottom: "12px",
+                marginBottom: `${titleContentSpacing}px`,
                 paddingBottom: "4px",
                 borderBottom: `2px solid ${primaryColor}`,
               }}
@@ -315,14 +316,14 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
 
         {/* Accomplishments */}
         {data.accomplishments && data.accomplishments.length > 0 && (
-          <div style={{ marginBottom: spacing.sections + "px" }}>
+          <div style={{ marginBottom: `${sectionSpacing}px` }}>
             <h2
               style={{
                 fontFamily: fonts.primary,
                 fontSize: `${fontSize.sectionTitles}px`,
                 fontWeight: fontWeight.sectionTitles,
                 color: primaryColor,
-                marginBottom: "12px",
+                marginBottom: `${titleContentSpacing}px`,
                 paddingBottom: "4px",
                 borderBottom: `2px solid ${primaryColor}`,
               }}
@@ -344,7 +345,7 @@ const BaseTemplate = forwardRef<HTMLDivElement, BaseTemplateProps>(
         {data.additionalSections && data.additionalSections.length > 0 && (
           <>
             {data.additionalSections.map((section) => (
-              <div key={section.id} style={{ marginBottom: spacing.sections + "px" }}>
+              <div key={section.id} style={{ marginBottom: `${sectionSpacing}px` }}>
                 <h2
                   style={{
                     fontFamily: fonts.primary,

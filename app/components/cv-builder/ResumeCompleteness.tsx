@@ -1,5 +1,4 @@
 import type { CVData } from "~/types/cv-builder";
-import { Sparkles } from "lucide-react";
 
 interface ResumeCompletenessProps {
   cvData: CVData;
@@ -9,7 +8,6 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
   // Calculate completeness score
   const calculateCompleteness = (): number => {
     let score = 0;
-    let totalFields = 7; // Total number of sections
 
     // Personal Details (weight: 20%)
     if (
@@ -86,41 +84,11 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
   };
 
   const completeness = calculateCompleteness();
-  const isComplete = completeness === 100;
-  const isAlmostComplete = completeness >= 80;
-
-  // Get suggestions for improvement
-  const getSuggestions = (): string[] => {
-    const suggestions: string[] = [];
-
-    if (!cvData.personalDetails?.firstName || !cvData.personalDetails?.lastName) {
-      suggestions.push("Add your full name");
-    }
-    if (!cvData.personalDetails?.email || !cvData.personalDetails?.phone) {
-      suggestions.push("Add contact information");
-    }
-    if (!cvData.professionalSummary || cvData.professionalSummary.replace(/<[^>]*>/g, "").length < 150) {
-      suggestions.push("Write a professional summary (150+ characters)");
-    }
-    if (!cvData.professionalExperience || cvData.professionalExperience.length === 0) {
-      suggestions.push("Add work experience");
-    }
-    if (!cvData.education || cvData.education.length === 0) {
-      suggestions.push("Add education");
-    }
-    if (!cvData.skills || cvData.skills.length < 5) {
-      suggestions.push("Add at least 5 skills");
-    }
-
-    return suggestions;
-  };
-
-  const suggestions = getSuggestions();
 
   return (
-    <div className="w-full space-y-3">
+    <div className="w-full">
       {/* Progress Bar Section */}
-      <div className="bg-white rounded-xl p-4">
+      <div className="bg-white rounded-xl">
         {/* Header with Score */}
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
@@ -139,23 +107,6 @@ export default function ResumeCompleteness({ cvData }: ResumeCompletenessProps) 
           />
         </div>
       </div>
-
-      {/* Suggestions with Sparkles Icon */}
-      {!isComplete && suggestions.length > 0 && (
-        <div className="space-y-2">
-          {suggestions.slice(0, 3).map((suggestion, index) => (
-            <div
-              key={index}
-              className="flex items-start gap-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100/50 hover:border-blue-200/70 transition-colors"
-            >
-              <div className="flex-shrink-0 w-8 h-5 bg-blue-100 rounded flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-blue-600" />
-              </div>
-              <span className="text-sm text-gray-700 font-medium">{suggestion}</span>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

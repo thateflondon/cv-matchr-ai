@@ -1,17 +1,13 @@
-import { Menu, ChevronDown, Save, Download, Loader2, Settings, Sparkles } from "lucide-react";
+import { ChevronDown, Download, Globe } from "lucide-react";
 import { useState } from "react";
 
 interface CVBuilderNavbarProps {
-  onToggleSidebar: () => void;
-  activeMode: "edit" | "customize" | "ai-review" | "tailor";
-  onModeChange: (mode: "edit" | "customize" | "ai-review" | "tailor") => void;
+  activeMode: "edit" | "customize";
+  onModeChange: (mode: "edit" | "customize") => void;
   selectedLanguage: string;
   onLanguageChange: (language: string) => void;
-  onSave: () => void | Promise<void>;
   onExport: () => void | Promise<void>;
-  resumeName?: string;
-  isSaving?: boolean;
-  hasUnsavedChanges?: boolean;
+  onExportDocx?: () => void | Promise<void>;
 }
 
 const languages = [
@@ -20,29 +16,22 @@ const languages = [
 ];
 
 export default function CVBuilderNavbar({
-  onToggleSidebar,
   activeMode,
   onModeChange,
   selectedLanguage,
   onLanguageChange,
-  onSave,
   onExport,
-  resumeName = "Untitled Resume",
-  isSaving = false,
-  hasUnsavedChanges = false,
+  onExportDocx,
 }: CVBuilderNavbarProps) {
   const [languageDropdownOpen, setLanguageDropdownOpen] = useState(false);
   const [downloadDropdownOpen, setDownloadDropdownOpen] = useState(false);
 
   // Default to English if no language is selected
   const currentLang = languages.find((lang) => lang.code === selectedLanguage) || languages[0];
-  const availableLanguages = languages.filter((lang) => lang.code !== currentLang.code);
 
   const modes = [
     { id: "edit", label: "Edit" },
     { id: "customize", label: "Customize" },
-    { id: "ai-review", label: "AI Review" },
-    { id: "tailor", label: "Tailor", badge: "NEW" },
   ];
 
   return (
@@ -53,17 +42,20 @@ export default function CVBuilderNavbar({
         <div className="relative">
           <button
             onClick={() => setLanguageDropdownOpen(!languageDropdownOpen)}
-            className="flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
+            className="flex items-center gap-3 px-4 py-2.5 bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl hover:from-gray-100 hover:to-gray-150 hover:border-gray-300 transition-all duration-200 shadow-sm"
           >
-            <img
-              src={currentLang.flag}
-              alt={currentLang.label}
-              className="w-5 h-2.5 object-cover flex-shrink-0"
-            />
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-gray-500" />
+              <img
+                src={currentLang.flag}
+                alt={currentLang.label}
+                className="w-6 h-4 object-cover rounded-sm shadow-sm"
+              />
+            </div>
             <span className="text-sm font-medium text-gray-700">
               {currentLang.label}
             </span>
-            <ChevronDown className="w-4 h-4 text-gray-500" />
+            <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${languageDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
           {languageDropdownOpen && (
@@ -72,24 +64,38 @@ export default function CVBuilderNavbar({
                 className="fixed inset-0 z-10"
                 onClick={() => setLanguageDropdownOpen(false)}
               />
-              <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-20">
-                {availableLanguages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      onLanguageChange(lang.code);
-                      setLanguageDropdownOpen(false);
-                    }}
-                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-lg flex items-center gap-2 text-gray-700"
-                  >
-                    <img
-                      src={lang.flag}
-                      alt={lang.label}
-                      className="w-5 h-2.5 object-cover flex-shrink-0"
-                    />
-                    {lang.label}
-                  </button>
-                ))}
+              <div className="absolute top-full left-0 mt-2 w-48 bg-white border border-gray-200 rounded-xl shadow-xl z-20 overflow-hidden">
+                <div className="p-2">
+                  <div className="px-3 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                    Select Language
+                  </div>
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        onLanguageChange(lang.code);
+                        setLanguageDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2.5 text-sm rounded-lg flex items-center gap-3 transition-colors ${
+                        currentLang.code === lang.code
+                          ? 'bg-primary/10 text-primary font-medium'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      <img
+                        src={lang.flag}
+                        alt={lang.label}
+                        className="w-6 h-4 object-cover rounded-sm shadow-sm"
+                      />
+                      <span>{lang.label}</span>
+                      {currentLang.code === lang.code && (
+                        <svg className="w-4 h-4 ml-auto text-primary" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
               </div>
             </>
           )}
@@ -101,19 +107,14 @@ export default function CVBuilderNavbar({
         {modes.map((mode) => (
           <button
             key={mode.id}
-            onClick={() => onModeChange(mode.id as any)}
-            className={`relative px-4 py-2 text-sm font-medium transition-colors ${
+            onClick={() => onModeChange(mode.id as "edit" | "customize")}
+            className={`px-4 py-2 text-sm font-medium transition-colors rounded-lg ${
               activeMode === mode.id
-                ? "text-primary border-b-2 border-primary"
-                : "text-gray-600 hover:text-gray-900"
+                ? "text-primary bg-primary/10"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             }`}
           >
             {mode.label}
-            {mode.badge && (
-              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 primary-gradient text-white text-xs rounded-full shadow-sm">
-                {mode.badge}
-              </span>
-            )}
           </button>
         ))}
 
@@ -146,7 +147,7 @@ export default function CVBuilderNavbar({
                 </button>
                 <button
                   onClick={() => {
-                    // TODO: Implement DOCX export
+                    onExportDocx?.();
                     setDownloadDropdownOpen(false);
                   }}
                   className="w-full text-left px-4 py-2 text-sm hover:bg-gray-50 rounded-b-lg"
@@ -158,13 +159,6 @@ export default function CVBuilderNavbar({
           )}
         </div>
 
-        {/* Settings Button */}
-        <button
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors ml-1"
-          aria-label="Settings"
-        >
-          <Settings className="w-5 h-5 text-gray-600" />
-        </button>
       </div>
 
       {/* Right Section - removed, content moved to center */}

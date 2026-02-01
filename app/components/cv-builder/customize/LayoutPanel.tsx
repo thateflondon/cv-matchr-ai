@@ -1,10 +1,30 @@
-import type { CVCustomization } from "~/types/cv-builder";
+import type { CVCustomization, CVMargins } from "~/types/cv-builder";
 import { AlignLeft, AlignCenter, AlignRight, Minus, Plus } from "lucide-react";
 
 interface LayoutPanelProps {
   customization: CVCustomization;
   onUpdate: (customization: CVCustomization) => void;
 }
+
+type MarginField = keyof CVMargins;
+
+interface MarginConfig {
+  label: string;
+  field: MarginField;
+  min: number;
+  max: number;
+  step: number;
+  unit: string;
+}
+
+const marginConfigs: MarginConfig[] = [
+  { label: "Header & Footer", field: "headerFooter", min: 0, max: 2, step: 0.1, unit: "in" },
+  { label: "Top & bottom", field: "topBottom", min: 0, max: 2, step: 0.1, unit: "in" },
+  { label: "Left & right", field: "leftRight", min: 0, max: 2, step: 0.1, unit: "in" },
+  { label: "Between sections", field: "betweenSections", min: 0, max: 48, step: 1, unit: "pt" },
+  { label: "Between Titles & Content", field: "betweenTitleContent", min: 0, max: 24, step: 1, unit: "pt" },
+  { label: "Between Content blocks", field: "betweenContentBlocks", min: 0, max: 24, step: 1, unit: "pt" },
+];
 
 export default function LayoutPanel({
   customization,
@@ -25,14 +45,43 @@ export default function LayoutPanel({
     { value: "year", label: "2020" },
   ];
 
-  const educationLayouts = [
-    { value: "institution-degree", label: "Institution name + Degree" },
-    { value: "degree-institution", label: "Degree + Institution name" },
-  ];
+  const handleMarginChange = (field: MarginField, value: number) => {
+    onUpdate({
+      ...customization,
+      margins: {
+        ...customization.margins,
+        [field]: value,
+      },
+    });
+  };
 
-  const handleMarginChange = (field: string, value: number) => {
-    // In a real implementation, this would update margin values
-    console.log(`Update ${field} to ${value}`);
+  const handleSkillsLayoutChange = (layout: "comma" | "columns" | "categories") => {
+    onUpdate({
+      ...customization,
+      skillsLayout: layout,
+    });
+  };
+
+  const handleSkillsColumnsChange = (delta: number) => {
+    const newValue = Math.max(1, Math.min(6, customization.skillsColumns + delta));
+    onUpdate({
+      ...customization,
+      skillsColumns: newValue,
+    });
+  };
+
+  const handleEducationLayoutChange = (layout: "stacked" | "inline") => {
+    onUpdate({
+      ...customization,
+      educationLayout: layout,
+    });
+  };
+
+  const handleEducationOrderChange = (order: "institution" | "degree") => {
+    onUpdate({
+      ...customization,
+      educationOrder: order,
+    });
   };
 
   return (
@@ -53,7 +102,8 @@ export default function LayoutPanel({
         </label>
         <select
           value="a4"
-          className="w-full px-3 py-2.5 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors bg-input-background"
+          disabled={layoutCustomizationDisabled}
+          className="w-full px-3 py-2.5 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors bg-input-background disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {formats.map((format) => (
             <option key={format.value} value={format.value}>
@@ -69,37 +119,33 @@ export default function LayoutPanel({
           MARGINS & PADDINGS
         </h3>
         <div className="space-y-4">
-          {[
-            { label: "Header & Footer", value: 0.5 },
-            { label: "Top & bottom", value: 1.0 },
-            { label: "Left & right", value: 1.0 },
-            { label: "Between sections", value: 24 },
-            { label: "Between Titles & Content", value: 24 },
-            { label: "Between Content blocks", value: 12 },
-          ].map((item) => (
-            <div key={item.label}>
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-foreground">
-                  {item.label}
-                </label>
-                <span className="text-sm text-muted-foreground">
-                  {item.value}
-                  {item.value < 10 ? " in" : " pt"}
-                </span>
+          {marginConfigs.map((config) => {
+            const value = customization.margins?.[config.field] ?? 0;
+            return (
+              <div key={config.field}>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-foreground">
+                    {config.label}
+                  </label>
+                  <span className="text-sm text-muted-foreground">
+                    {value.toFixed(config.unit === "in" ? 1 : 0)} {config.unit}
+                  </span>
+                </div>
+                <input
+                  type="range"
+                  min={config.min}
+                  max={config.max}
+                  step={config.step}
+                  value={value}
+                  disabled={layoutCustomizationDisabled}
+                  onChange={(e) =>
+                    handleMarginChange(config.field, parseFloat(e.target.value))
+                  }
+                  className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer slider disabled:opacity-50 disabled:cursor-not-allowed"
+                />
               </div>
-              <input
-                type="range"
-                min={0}
-                max={item.value < 10 ? 2 : 48}
-                step={item.value < 10 ? 0.1 : 1}
-                value={item.value}
-                onChange={(e) =>
-                  handleMarginChange(item.label, parseFloat(e.target.value))
-                }
-                className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer slider"
-              />
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -110,13 +156,14 @@ export default function LayoutPanel({
         </label>
         <select
           value={customization.dateFormat}
+          disabled={layoutCustomizationDisabled}
           onChange={(e) =>
             onUpdate({
               ...customization,
-              dateFormat: e.target.value as any,
+              dateFormat: e.target.value as CVCustomization["dateFormat"],
             })
           }
-          className="w-full px-3 py-2.5 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors bg-input-background"
+          className="w-full px-3 py-2.5 border border-border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-colors bg-input-background disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {dateFormats.map((format) => (
             <option key={format.value} value={format.value}>
@@ -142,13 +189,14 @@ export default function LayoutPanel({
             return (
               <button
                 key={option.value}
+                disabled={layoutCustomizationDisabled}
                 onClick={() =>
                   onUpdate({
                     ...customization,
-                    headerAlignment: option.value as any,
+                    headerAlignment: option.value as CVCustomization["headerAlignment"],
                   })
                 }
-                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-colors ${
+                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   isActive
                     ? "border-primary bg-primary/5 text-primary"
                     : "border-border bg-card hover:bg-muted"
@@ -176,13 +224,14 @@ export default function LayoutPanel({
             return (
               <button
                 key={option.value}
+                disabled={layoutCustomizationDisabled}
                 onClick={() =>
                   onUpdate({
                     ...customization,
-                    dateAlignment: option.value as any,
+                    dateAlignment: option.value as CVCustomization["dateAlignment"],
                   })
                 }
-                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-colors ${
+                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   isActive
                     ? "border-primary bg-primary/5 text-primary"
                     : "border-border bg-card hover:bg-muted"
@@ -205,15 +254,25 @@ export default function LayoutPanel({
         </h3>
         <div className="space-y-3">
           {/* Comma */}
-          <div className="p-3 border border-border rounded-lg">
+          <div
+            className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+              customization.skillsLayout === "comma"
+                ? "border-primary bg-primary/5"
+                : "border-border hover:bg-muted"
+            } ${layoutCustomizationDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !layoutCustomizationDisabled && handleSkillsLayoutChange("comma")}
+          >
             <div className="flex items-center gap-2 mb-2">
               <input
                 type="radio"
                 id="skills-comma"
                 name="skills-layout"
+                checked={customization.skillsLayout === "comma"}
+                onChange={() => handleSkillsLayoutChange("comma")}
+                disabled={layoutCustomizationDisabled}
                 className="w-4 h-4 text-primary"
               />
-              <label htmlFor="skills-comma" className="text-sm font-medium">
+              <label htmlFor="skills-comma" className="text-sm font-medium cursor-pointer">
                 Comma
               </label>
             </div>
@@ -223,50 +282,81 @@ export default function LayoutPanel({
           </div>
 
           {/* Columns */}
-          <div className="p-3 border border-border rounded-lg">
+          <div
+            className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+              customization.skillsLayout === "columns"
+                ? "border-primary bg-primary/5"
+                : "border-border hover:bg-muted"
+            } ${layoutCustomizationDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !layoutCustomizationDisabled && handleSkillsLayoutChange("columns")}
+          >
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <input
                   type="radio"
                   id="skills-columns"
                   name="skills-layout"
-                  defaultChecked
+                  checked={customization.skillsLayout === "columns"}
+                  onChange={() => handleSkillsLayoutChange("columns")}
+                  disabled={layoutCustomizationDisabled}
                   className="w-4 h-4 text-primary"
                 />
-                <label htmlFor="skills-columns" className="text-sm font-medium">
+                <label htmlFor="skills-columns" className="text-sm font-medium cursor-pointer">
                   Columns
                 </label>
               </div>
-              <div className="flex items-center gap-2">
-                <button className="p-1 hover:bg-muted rounded">
+              <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                <button
+                  className="p-1 hover:bg-muted rounded disabled:opacity-50"
+                  onClick={() => handleSkillsColumnsChange(-1)}
+                  disabled={layoutCustomizationDisabled || customization.skillsColumns <= 1}
+                >
                   <Minus className="w-4 h-4" />
                 </button>
-                <span className="text-sm font-medium w-8 text-center">4</span>
-                <button className="p-1 hover:bg-muted rounded">
+                <span className="text-sm font-medium w-8 text-center">
+                  {customization.skillsColumns}
+                </span>
+                <button
+                  className="p-1 hover:bg-muted rounded disabled:opacity-50"
+                  onClick={() => handleSkillsColumnsChange(1)}
+                  disabled={layoutCustomizationDisabled || customization.skillsColumns >= 6}
+                >
                   <Plus className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">
-              <div>Skill 1</div>
-              <div>Skill 2</div>
-              <div>Skill 3</div>
-              <div>Skill 4</div>
+            <div
+              className="grid gap-2 text-xs text-muted-foreground"
+              style={{ gridTemplateColumns: `repeat(${Math.min(customization.skillsColumns, 4)}, 1fr)` }}
+            >
+              {Array.from({ length: Math.min(customization.skillsColumns, 4) }).map((_, i) => (
+                <div key={i}>Skill {i + 1}</div>
+              ))}
             </div>
           </div>
 
           {/* Categories */}
-          <div className="p-3 border border-border rounded-lg">
+          <div
+            className={`p-3 border rounded-lg cursor-pointer transition-colors ${
+              customization.skillsLayout === "categories"
+                ? "border-primary bg-primary/5"
+                : "border-border hover:bg-muted"
+            } ${layoutCustomizationDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={() => !layoutCustomizationDisabled && handleSkillsLayoutChange("categories")}
+          >
             <div className="flex items-center gap-2 mb-2">
               <input
                 type="radio"
                 id="skills-categories"
                 name="skills-layout"
+                checked={customization.skillsLayout === "categories"}
+                onChange={() => handleSkillsLayoutChange("categories")}
+                disabled={layoutCustomizationDisabled}
                 className="w-4 h-4 text-primary"
               />
               <label
                 htmlFor="skills-categories"
-                className="text-sm font-medium"
+                className="text-sm font-medium cursor-pointer"
               >
                 Categories
               </label>
@@ -285,19 +375,28 @@ export default function LayoutPanel({
         </h3>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { label: "Institution name", value: "institution", year: "2020" },
-            { label: "Degree", value: "degree", year: "2020" },
-          ].map((option) => (
-            <button
-              key={option.value}
-              className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border bg-card hover:bg-muted transition-colors"
-            >
-              <span className="text-xs font-medium">{option.label}</span>
-              <span className="text-xs text-muted-foreground">
-                {option.year}
-              </span>
-            </button>
-          ))}
+            { label: "Institution name", value: "institution" as const, year: "2020" },
+            { label: "Degree", value: "degree" as const, year: "2020" },
+          ].map((option) => {
+            const isActive = customization.educationOrder === option.value;
+            return (
+              <button
+                key={option.value}
+                disabled={layoutCustomizationDisabled}
+                onClick={() => handleEducationOrderChange(option.value)}
+                className={`flex flex-col items-center gap-2 p-3 rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isActive
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border bg-card hover:bg-muted"
+                }`}
+              >
+                <span className="text-xs font-medium">{option.label}</span>
+                <span className="text-xs text-muted-foreground">
+                  {option.year}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -307,18 +406,23 @@ export default function LayoutPanel({
           EDUCATION LAYOUT
         </h3>
         <div className="grid grid-cols-2 gap-2">
-          {["Stacked", "Inline"].map((layout) => {
-            const isActive = layout === "Stacked";
+          {[
+            { value: "stacked" as const, label: "Stacked" },
+            { value: "inline" as const, label: "Inline" },
+          ].map((layout) => {
+            const isActive = customization.educationLayout === layout.value;
             return (
               <button
-                key={layout}
-                className={`p-3 rounded-lg border transition-colors ${
+                key={layout.value}
+                disabled={layoutCustomizationDisabled}
+                onClick={() => handleEducationLayoutChange(layout.value)}
+                className={`p-3 rounded-lg border transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                   isActive
                     ? "border-primary bg-primary/5 text-primary"
                     : "border-border bg-card hover:bg-muted"
                 }`}
               >
-                <span className="text-sm font-medium">{layout}</span>
+                <span className="text-sm font-medium">{layout.label}</span>
               </button>
             );
           })}

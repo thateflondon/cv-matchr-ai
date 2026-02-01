@@ -70,14 +70,14 @@ export default function EditMode({
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full flex flex-col px-4 pt-4">
       {/* Resume Completeness Badge */}
       <div className="mb-6">
         <ResumeCompleteness cvData={cvData} />
       </div>
 
       {/* Section Title */}
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 px-4">
+      <h2 className="text-2xl font-bold text-gray-900 mb-6">
         {currentSection.label}
       </h2>
 
@@ -92,11 +92,11 @@ export default function EditMode({
       </div>
 
       {/* Navigation Buttons */}
-      <div className="flex items-center justify-between pt-6 border-t border-gray-200 mt-6">
+      <div className="flex items-center justify-center py-6 border-t border-gray-200 mt-6 gap-[1rem]">
         <button
           onClick={handleBack}
           disabled={currentSectionIndex === 0}
-          className={`flex items-center gap-2 px-4 py-2.5 sm:py-2 rounded-lg transition-colors touch-manipulation ${
+          className={`flex items-center gap-2 py-2.5 sm:py-2 rounded-lg transition-colors touch-manipulation ${
             currentSectionIndex === 0
               ? "text-gray-400 cursor-not-allowed"
               : "text-gray-700 hover:bg-gray-100"
@@ -135,7 +135,8 @@ export default function EditMode({
           <span className="font-medium hidden sm:inline">
             {currentSectionIndex === sections.length - 1
               ? "Finish"
-              : `Next: ${sections[currentSectionIndex + 1].label}`}
+              : sections[currentSectionIndex + 1].label
+              }
           </span>
           <span className="font-medium sm:hidden">
             {currentSectionIndex === sections.length - 1 ? "Finish" : "Next"}

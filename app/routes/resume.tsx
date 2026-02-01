@@ -6,13 +6,10 @@ import ATS from "~/components/ATS";
 import Details from "~/components/Details";
 import Navbar from "~/components/Navbar";
 import Footer from "~/components/Footer";
-import ResumeBreadcrumb from "~/components/ResumeBreadcrumb";
-import ResumeActionCTA from "~/components/ResumeActionCTA";
-import ResumeScoreHero from "~/components/ResumeScoreHero";
-import ResumeStats from "~/components/ResumeStats";
+import Breadcrumb, { resumeAnalysisBreadcrumb } from "~/components/Breadcrumb";
 import ResumeTimeline from "~/components/ResumeTimeline";
-import ResumeNextSteps from "~/components/ResumeNextSteps";
 import FloatingActionButton from "~/components/FloatingActionButton";
+import ErrorBoundary from "~/components/common/ErrorBoundary";
 
 export const meta = () => [
   { title: "Resume Match | Resume Analysis" },
@@ -130,41 +127,42 @@ const Resume = () => {
     if (resumeData) {
       // Store resume data in sessionStorage to pass to dashboard
       sessionStorage.setItem('improveResume', JSON.stringify(resumeData));
-      // Navigate to dashboard with builder tab
-      navigate('/dashboard?tab=builder&resume=' + id);
+      // Navigate to dashboard builder tab
+      navigate('/dashboard/builder?resume=' + id);
     }
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <main
         id="app"
-        className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
+        className="relative bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 min-h-screen"
       >
-        <div className="app-container">
-          <Navbar userName={userName} />
+        <Navbar userName={userName} />
+        <div className="app-container pt-[120px]">
 
           {/* Breadcrumb Navigation */}
-          <ResumeBreadcrumb resumeId={id} />
+          <Breadcrumb items={resumeAnalysisBreadcrumb} />
 
           <div className="flex flex-row w-full max-lg:flex-col-reverse">
             {/* PDF Preview Section - Sticky on desktop */}
-            <section className="feedback-section bg-cover lg:h-[100vh] lg:sticky lg:top-0 items-center justify-center max-lg:py-6">
+            <section className="feedback-section bg-cover lg:self-start lg:sticky lg:top-[120px] max-lg:py-6">
               {imageUrl && resumeUrl ? (
-                <div className="animate-in fade-in duration-1000 gradient-border h-[400px] sm:h-[500px] lg:h-[90%] w-full lg:w-fit">
-                  <a
-                    href={resumeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                <a
+                  href={resumeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block w-full animate-in fade-in duration-1000"
+                >
+                  <div className="gradient-border w-full">
                     <img
                       src={imageUrl}
-                      className="w-full h-full object-contain rounded-2xl"
+                      className="w-full h-auto rounded-2xl"
                       alt="Resume preview"
                       title="Click to view full resume"
                     />
-                  </a>
-                </div>
+                  </div>
+                </a>
               ) : (
                 <div className="gradient-border h-[400px] sm:h-[500px] flex items-center justify-center">
                   <div className="text-center">
@@ -178,185 +176,68 @@ const Resume = () => {
             </section>
 
             {/* Feedback Section */}
-            <section className="feedback-section">
-              <h2 className="max-sm:text-2xl max-md:text-3xl text-4xl !text-black mb-6">
+            <section className="feedback-section analysis">
+              <h2 className="max-sm:text-2xl max-md:text-3xl text-4xl !text-black mb-6 text-center">
                 Resume Analysis
               </h2>
 
               {feedback ? (
-                <div className="flex flex-col gap-6 sm:gap-8 animate-in fade-in duration-1000">
-                  {/* Hero Score Display */}
-                  <ResumeScoreHero
-                    score={feedback.overallScore}
-                    previousScore={
-                      versions.length > 1
-                        ? versions[versions.length - 2]?.score
-                        : undefined
-                    }
-                  />
+                <ErrorBoundary>
+                  <div className="flex flex-col gap-6 sm:gap-8 animate-in fade-in duration-1000">
+                    {/* 1. Summary - Overall overview first */}
+                    <Summary feedback={feedback} />
 
-                  {/* Performance Stats */}
-                  <ResumeStats
-                    yourScore={feedback.overallScore}
-                    averageScore={65}
-                  />
-
-                  {/* Timeline (if multiple versions) */}
-                  {versions.length > 1 && (
-                    <ResumeTimeline
-                      versions={versions}
-                      currentVersionId={id || ""}
+                    {/* 2. ATS Score - Key metric */}
+                    <ATS
+                      score={feedback.ATS.score || 0}
+                      suggestions={feedback.ATS.tips || []}
                     />
-                  )}
 
-                  {/* Action CTA */}
-                  <ResumeActionCTA
-                    score={feedback.overallScore}
-                    onUploadNew={handleUploadNew}
-                    onDownload={handleDownload}
-                    onShare={handleShare}
-                  />
+                    {/* 3. Detailed Feedback - In-depth analysis */}
+                    <Details feedback={feedback} />
 
-                  {/* Start Improving CTA - New Feature */}
-                  <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
-                    <div className="max-w-2xl mx-auto text-center">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-8 h-8 text-white"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                          />
-                        </svg>
-                      </div>
-                      <h3 className="text-xl sm:text-2xl font-bold mb-3">
-                        Apply AI Recommendations Instantly
-                      </h3>
-                      <p className="text-white/90 mb-6 max-sm:text-sm">
-                        Open your resume in our builder with all the AI suggestions pre-filled. Edit, customize, and export your improved resume in minutes!
-                      </p>
-                      <button
-                        onClick={handleStartImproving}
-                        className="px-8 py-3 bg-white text-purple-600 rounded-full font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all shadow-lg w-full sm:w-auto max-sm:text-sm"
-                      >
-                        Start Improving
-                      </button>
-                    </div>
-                  </div>
+                    {/* 4. Timeline - Version history (if multiple versions) */}
+                    {versions.length > 1 && (
+                      <ResumeTimeline
+                        versions={versions}
+                        currentVersionId={id || ""}
+                      />
+                    )}
 
-                  {/* Summary Section */}
-                  <Summary feedback={feedback} />
-
-                  {/* ATS Score Section */}
-                  <ATS
-                    score={feedback.ATS.score || 0}
-                    suggestions={feedback.ATS.tips || []}
-                  />
-
-                  {/* Next Steps */}
-                  <ResumeNextSteps feedback={feedback} />
-
-                  {/* Detailed Feedback */}
-                  <Details feedback={feedback} />
-
-                  {/* Bottom CTA */}
-                  <div className="bg-white rounded-2xl p-4 sm:p-6 text-center border-2 border-dashed border-gray-300 hover:border-purple-400 transition-colors">
-                    <div className="max-w-2xl mx-auto">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-8 h-8 text-purple-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <h3 className="max-sm:text-lg max-md:text-xl text-2xl mb-2">
-                        Ready to Apply?
-                      </h3>
-                      <p className="text-gray-600 mb-4 max-sm:text-sm">
-                        Make sure to implement the suggestions
-                        above before sending your resume to
-                        recruiters. A well-optimized resume can
-                        increase your interview chances by up to
-                        3x!
-                      </p>
-                      <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                        <Link to="/upload">
-                          <button className="primary-button px-6 sm:px-8 py-2 sm:py-3 w-full sm:w-auto max-sm:text-sm">
-                            Upload Improved Version
-                          </button>
-                        </Link>
+                    {/* 5. Start Improving CTA - Action item */}
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 sm:p-8 text-white shadow-xl">
+                      <div className="max-w-2xl mx-auto text-center">
+                        <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-8 h-8 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                            />
+                          </svg>
+                        </div>
+                        <h3 className="text-xl sm:text-2xl font-bold mb-3">
+                          Apply AI Recommendations Instantly
+                        </h3>
+                        <p className="text-white/90 mb-6 max-sm:text-sm">
+                          Open your resume in our builder with all the AI suggestions pre-filled. Edit, customize, and export your improved resume in minutes!
+                        </p>
                         <button
-                          onClick={handleDownload}
-                          className="px-6 sm:px-8 py-2 sm:py-3 rounded-full border-2 border-purple-600 text-purple-600 hover:bg-purple-50 transition-all w-full sm:w-auto max-sm:text-sm"
+                          onClick={handleStartImproving}
+                          className="px-8 py-3 bg-white text-purple-600 rounded-full font-semibold hover:bg-gray-100 transform hover:scale-105 transition-all shadow-lg w-full sm:w-auto max-sm:text-sm"
                         >
-                          Download Current Resume
+                          Start Improving
                         </button>
                       </div>
                     </div>
                   </div>
-
-                  {/* Tips Section */}
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-4 sm:p-6 border border-blue-200">
-                    <h4 className="max-sm:text-base text-lg mb-3 text-gray-900">
-                      💡 Pro Tips
-                    </h4>
-                    <ul className="space-y-2 text-gray-700">
-                      <li className="flex items-start gap-2 max-sm:text-sm">
-                        <span className="text-purple-600 mt-1">
-                          •
-                        </span>
-                        <span>
-                          Tailor your resume for each job
-                          application by matching keywords from
-                          the job description
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2 max-sm:text-sm">
-                        <span className="text-purple-600 mt-1">
-                          •
-                        </span>
-                        <span>
-                          Use action verbs like "achieved,"
-                          "implemented," and "optimized" to
-                          start bullet points
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2 max-sm:text-sm">
-                        <span className="text-purple-600 mt-1">
-                          •
-                        </span>
-                        <span>
-                          Quantify your achievements with
-                          numbers, percentages, or specific
-                          outcomes
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2 max-sm:text-sm">
-                        <span className="text-purple-600 mt-1">
-                          •
-                        </span>
-                        <span>
-                          Keep your resume to 1-2 pages and use
-                          consistent formatting throughout
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+                </ErrorBoundary>
               ) : (
                 <div className="flex flex-col items-center justify-center py-12">
                   <img
@@ -387,7 +268,7 @@ const Resume = () => {
         <FloatingActionButton show={!!feedback} />
       </main>
       <Footer />
-    </>
+    </ErrorBoundary>
   );
 };
 

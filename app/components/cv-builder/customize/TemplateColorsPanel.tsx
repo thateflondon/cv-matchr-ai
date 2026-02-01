@@ -19,11 +19,7 @@ const baseColorPresets = [
 const categories = [
   { id: "all", label: "All" },
   { id: "ats", label: "ATS Friendly" },
-  { id: "classic", label: "Classic" },
-  { id: "modern", label: "Modern" },
-  { id: "creative", label: "Creative" },
   { id: "two-column", label: "Two Column" },
-  { id: "professional", label: "Professional" },
   { id: "specialist", label: "Specialist" },
 ];
 
@@ -61,13 +57,6 @@ export default function TemplateColorsPanel({
       template.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Debug logging
-  console.log("🔍 Debug Template Selection:");
-  console.log("Selected category:", selectedCategory);
-  console.log("Total templates:", getTemplatesByCategory(selectedCategory).length);
-  console.log("Filtered templates:", filteredTemplates.length);
-  console.log("Current template:", customization.template.id);
-
   const handleColorChange = (color: string) => {
     // Don't allow color change if template doesn't support it
     if (customization.template.supportsColorCustomization === false) {
@@ -81,20 +70,13 @@ export default function TemplateColorsPanel({
   };
 
   const handleTemplateChange = (template: CVTemplate) => {
-    console.log("🎯 Template change requested:");
-    console.log("  From:", customization.template.id);
-    console.log("  To:", template.id);
-    console.log("  Template default color:", template.defaultColor);
-    console.log("  onUpdate function:", typeof onUpdate);
-    
     const newCustomization = {
       ...customization,
       template,
       // Auto-apply template's default color if it has one
       primaryColor: template.defaultColor || customization.primaryColor,
     };
-    
-    console.log("  New customization:", newCustomization);
+
     onUpdate(newCustomization);
   };
 

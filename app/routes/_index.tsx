@@ -54,7 +54,7 @@ const Index = () => {
         id="app"
         className="heros-section relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
       >
-        <div className="app-container auth">
+        <div className="app-container auth pt-[120px]">
           <Navbar userName={userName} onAuthRequired={handleAuthRequired} />
           <HeroSection onAuthRequired={handleAuthRequired} />
           <Features />

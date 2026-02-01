@@ -1,4 +1,5 @@
 import type { CVData, CVCustomization } from "~/types/cv-builder";
+import { defaultCustomization, defaultMargins } from "~/types/cv-builder";
 
 const STORAGE_KEY_PREFIX = "cv_builder_";
 const DATA_KEY = "data";
@@ -56,8 +57,38 @@ export function saveCVCustomization(
   }
 }
 
+// System fonts that don't support all font weights (400, 500, 600, 700)
+const SYSTEM_FONTS_LIMITED_WEIGHTS = [
+  "Arial, sans-serif",
+  "Helvetica, sans-serif",
+  "Georgia, serif",
+  "Times New Roman, serif",
+  "Verdana, sans-serif",
+  "Courier New, monospace",
+];
+
+/**
+ * Migrate system fonts to Google Fonts for better weight support
+ */
+function migrateFontsForWeightSupport(fonts: { primary: string; secondary: string }): { primary: string; secondary: string } {
+  const migratedFonts = { ...fonts };
+
+  // Check if primary font is a system font with limited weight support
+  if (SYSTEM_FONTS_LIMITED_WEIGHTS.some(f => fonts.primary.includes(f.split(',')[0]))) {
+    migratedFonts.primary = "'Inter', sans-serif";
+  }
+
+  // Check if secondary font is a system font with limited weight support
+  if (SYSTEM_FONTS_LIMITED_WEIGHTS.some(f => fonts.secondary.includes(f.split(',')[0]))) {
+    migratedFonts.secondary = "'Inter', sans-serif";
+  }
+
+  return migratedFonts;
+}
+
 /**
  * Load CV customization from localStorage
+ * Merges with defaults to ensure backward compatibility when new properties are added
  */
 export function loadCVCustomization(
   resumeId: string | null
@@ -66,10 +97,27 @@ export function loadCVCustomization(
     const key = resumeId
       ? `${STORAGE_KEY_PREFIX}${resumeId}_${CUSTOMIZATION_KEY}`
       : `${STORAGE_KEY_PREFIX}new_${CUSTOMIZATION_KEY}`;
-    
+
     const stored = localStorage.getItem(key);
     if (stored) {
-      return JSON.parse(stored) as CVCustomization;
+      const parsed = JSON.parse(stored);
+
+      // Merge fonts with defaults and migrate if needed
+      const mergedFonts = { ...defaultCustomization.fonts, ...parsed.fonts };
+      const migratedFonts = migrateFontsForWeightSupport(mergedFonts);
+
+      // Merge with defaults to ensure all properties exist
+      return {
+        ...defaultCustomization,
+        ...parsed,
+        // Ensure nested objects are properly merged
+        fonts: migratedFonts,
+        spacing: { ...defaultCustomization.spacing, ...parsed.spacing },
+        margins: { ...defaultMargins, ...parsed.margins },
+        fontSize: { ...defaultCustomization.fontSize, ...parsed.fontSize },
+        fontWeight: { ...defaultCustomization.fontWeight, ...parsed.fontWeight },
+        template: parsed.template || defaultCustomization.template,
+      };
     }
   } catch (error) {
     console.error("Failed to load CV customization from localStorage:", error);

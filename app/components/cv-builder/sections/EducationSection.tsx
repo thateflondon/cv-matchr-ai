@@ -1,5 +1,5 @@
 import type { CVData, CVEducation } from "~/types/cv-builder";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, Loader2 } from "lucide-react";
 import { useState } from "react";
 import {
   DndContext,
@@ -22,6 +22,8 @@ import CollapsibleSection from "../common/CollapsibleSection";
 import FormInput from "~/components/common/FormInput";
 import RichTextEditor from "~/components/common/RichTextEditor";
 import SectionHeader from "../common/SectionHeader";
+import { usePuterStore } from "~/lib/puter";
+import { generateEducationDescription } from "~/utils/aiWriter";
 
 interface EducationSectionProps {
   data: CVData;
@@ -39,6 +41,7 @@ interface SortableEducationItemProps {
   onUpdate: (field: keyof CVEducation, value: string | boolean) => void;
   getTitle: (edu: CVEducation) => string;
   onAIClick: () => void;
+  isAILoading?: boolean;
 }
 
 function SortableEducationItem({
@@ -51,6 +54,7 @@ function SortableEducationItem({
   onUpdate,
   getTitle,
   onAIClick,
+  isAILoading = false,
 }: SortableEducationItemProps) {
   const {
     attributes,
@@ -142,6 +146,7 @@ function SortableEducationItem({
               minHeight="120px"
               showAIButton={true}
               onAIClick={onAIClick}
+              isAILoading={isAILoading}
             />
           </div>
         </div>
@@ -158,6 +163,10 @@ export default function EducationSection({
   const [expandedEducation, setExpandedEducation] = useState<Set<number>>(
     new Set([0])
   );
+  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+  const [isGeneratingAll, setIsGeneratingAll] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const { ai } = usePuterStore();
 
   const education = data.education || [];
 
@@ -254,9 +263,62 @@ export default function EducationSection({
     return "(Not specified)";
   };
 
-  const handleAIClick = () => {
-    // TODO: Implement AI writer functionality
-    console.log("AI writer clicked for education");
+  const handleAIClickForItem = async (index: number) => {
+    const edu = education[index];
+    if (!edu.degree && !edu.institution) {
+      setAiError("Please fill in at least the degree or institution first");
+      return;
+    }
+
+    setLoadingIndex(index);
+    setAiError(null);
+
+    try {
+      const result = await generateEducationDescription(ai.chat, edu, data);
+
+      if (result.success && result.data) {
+        handleUpdateEducation(index, "achievements", [result.data]);
+      } else {
+        setAiError(result.error || "Failed to generate description");
+      }
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setLoadingIndex(null);
+    }
+  };
+
+  const handleAIClick = async () => {
+    // Generate descriptions for all education entries that have degree or institution
+    const validEducation = education.filter(
+      (edu) => (edu.degree || edu.institution) && (!edu.achievements || edu.achievements.length === 0 || edu.achievements[0] === "")
+    );
+
+    if (validEducation.length === 0) {
+      setAiError("No education entries to generate. Add degree and institution, or clear existing descriptions.");
+      return;
+    }
+
+    setIsGeneratingAll(true);
+    setAiError(null);
+
+    try {
+      for (let i = 0; i < education.length; i++) {
+        const edu = education[i];
+        if ((edu.degree || edu.institution) && (!edu.achievements || edu.achievements.length === 0 || edu.achievements[0] === "")) {
+          setLoadingIndex(i);
+          const result = await generateEducationDescription(ai.chat, edu, data);
+          if (result.success && result.data) {
+            handleUpdateEducation(i, "achievements", [result.data]);
+          }
+        }
+      }
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsGeneratingAll(false);
+      setLoadingIndex(null);
+    }
   };
 
   return (
@@ -292,7 +354,8 @@ export default function EducationSection({
                     handleUpdateEducation(index, field, value)
                   }
                   getTitle={getEducationTitle}
-                  onAIClick={handleAIClick}
+                  onAIClick={() => handleAIClickForItem(index)}
+                  isAILoading={loadingIndex === index}
                 />
               );
             })}
@@ -307,22 +370,42 @@ export default function EducationSection({
         className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
         <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">+ Add one more education</span>
+        <span className="text-sm font-medium">Add one more education</span>
       </button>
+
+      {/* AI Error */}
+      {aiError && (
+        <div className="w-full px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{aiError}</p>
+          <button
+            onClick={() => setAiError(null)}
+            className="text-sm text-red-500 hover:underline mt-1"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Ask AI Writer Button */}
       <div className="flex justify-center pt-4">
         <button
           type="button"
           onClick={handleAIClick}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+          disabled={isGeneratingAll || loadingIndex !== null}
+          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors disabled:opacity-70"
           style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
           }}
         >
-          <Sparkles className="w-5 h-5" />
-          <span className="font-medium">Ask AI writer</span>
+          {isGeneratingAll ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Sparkles className="w-5 h-5" />
+          )}
+          <span className="font-medium">
+            {isGeneratingAll ? "Generating all..." : "Generate all descriptions"}
+          </span>
         </button>
       </div>
     </div>

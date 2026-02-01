@@ -9,6 +9,7 @@ import {
   Link2,
   Type,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 
 interface RichTextEditorProps {
@@ -18,6 +19,7 @@ interface RichTextEditorProps {
   minHeight?: string;
   showAIButton?: boolean;
   onAIClick?: () => void;
+  isAILoading?: boolean;
   showCharacterCount?: boolean;
   minCharacters?: number;
   maxCharacters?: number;
@@ -31,6 +33,7 @@ export default function RichTextEditor({
   minHeight = "120px",
   showAIButton = false,
   onAIClick,
+  isAILoading = false,
   showCharacterCount = false,
   minCharacters = 0,
   maxCharacters = 1000,
@@ -164,14 +167,21 @@ export default function RichTextEditor({
           <button
             type="button"
             onClick={onAIClick}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors"
+            disabled={isAILoading}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors disabled:opacity-70"
             style={{
               background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
               color: "white",
             }}
           >
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-medium">Get help with writing</span>
+            {isAILoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Sparkles className="w-4 h-4" />
+            )}
+            <span className="text-sm font-medium">
+              {isAILoading ? "Generating..." : "Get help with writing"}
+            </span>
           </button>
         )}
       </div>

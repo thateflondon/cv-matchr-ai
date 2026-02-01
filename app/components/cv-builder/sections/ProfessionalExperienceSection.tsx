@@ -1,5 +1,5 @@
 import type { CVData, CVProfessionalExperience } from "~/types/cv-builder";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, Loader2 } from "lucide-react";
 import { useState } from "react";
 import {
   DndContext,
@@ -22,6 +22,8 @@ import CollapsibleSection from "../common/CollapsibleSection";
 import FormInput from "~/components/common/FormInput";
 import RichTextEditor from "~/components/common/RichTextEditor";
 import SectionHeader from "../common/SectionHeader";
+import { usePuterStore } from "~/lib/puter";
+import { generateExperienceDescription } from "~/utils/aiWriter";
 
 interface ProfessionalExperienceSectionProps {
   data: CVData;
@@ -39,6 +41,7 @@ interface SortableExperienceItemProps {
   onUpdate: (field: keyof CVProfessionalExperience, value: string) => void;
   getTitle: (exp: CVProfessionalExperience) => string;
   onAIClick: () => void;
+  isAILoading?: boolean;
 }
 
 function SortableExperienceItem({
@@ -51,6 +54,7 @@ function SortableExperienceItem({
   onUpdate,
   getTitle,
   onAIClick,
+  isAILoading = false,
 }: SortableExperienceItemProps) {
   const {
     attributes,
@@ -141,6 +145,7 @@ function SortableExperienceItem({
               minHeight="150px"
               showAIButton={true}
               onAIClick={onAIClick}
+              isAILoading={isAILoading}
               showCharacterCount={true}
               minCharacters={200}
               recruiterTip="Recruiters read on average 6 seconds per resume: write 200+ characters to increase interview chances"
@@ -160,6 +165,10 @@ export default function ProfessionalExperienceSection({
   const [expandedExperiences, setExpandedExperiences] = useState<Set<number>>(
     new Set([0])
   );
+  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+  const [isGeneratingAll, setIsGeneratingAll] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const { ai } = usePuterStore();
 
   const experiences = data.professionalExperience || [];
 
@@ -271,9 +280,62 @@ export default function ProfessionalExperienceSection({
     return "(Not specified)";
   };
 
-  const handleAIClick = () => {
-    // TODO: Implement AI writer functionality
-    console.log("AI writer clicked for all experiences");
+  const handleAIClickForItem = async (index: number) => {
+    const exp = experiences[index];
+    if (!exp.jobTitle && !exp.company) {
+      setAiError("Please fill in at least the job title or company name first");
+      return;
+    }
+
+    setLoadingIndex(index);
+    setAiError(null);
+
+    try {
+      const result = await generateExperienceDescription(ai.chat, exp, data);
+
+      if (result.success && result.data) {
+        handleUpdateExperience(index, "description", result.data);
+      } else {
+        setAiError(result.error || "Failed to generate description");
+      }
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setLoadingIndex(null);
+    }
+  };
+
+  const handleAIClick = async () => {
+    // Generate descriptions for all experiences that have job title or company
+    const validExperiences = experiences.filter(
+      (exp, i) => (exp.jobTitle || exp.company) && !exp.description
+    );
+
+    if (validExperiences.length === 0) {
+      setAiError("No experiences to generate. Add job title and company, or clear existing descriptions.");
+      return;
+    }
+
+    setIsGeneratingAll(true);
+    setAiError(null);
+
+    try {
+      for (let i = 0; i < experiences.length; i++) {
+        const exp = experiences[i];
+        if ((exp.jobTitle || exp.company) && !exp.description) {
+          setLoadingIndex(i);
+          const result = await generateExperienceDescription(ai.chat, exp, data);
+          if (result.success && result.data) {
+            handleUpdateExperience(i, "description", result.data);
+          }
+        }
+      }
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsGeneratingAll(false);
+      setLoadingIndex(null);
+    }
   };
 
   return (
@@ -309,7 +371,8 @@ export default function ProfessionalExperienceSection({
                     handleUpdateExperience(index, field, value)
                   }
                   getTitle={getExperienceTitle}
-                  onAIClick={handleAIClick}
+                  onAIClick={() => handleAIClickForItem(index)}
+                  isAILoading={loadingIndex === index}
                 />
               );
             })}
@@ -324,22 +387,42 @@ export default function ProfessionalExperienceSection({
         className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
         <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">+ Add one more employment</span>
+        <span className="text-sm font-medium">Add one more employment</span>
       </button>
+
+      {/* AI Error */}
+      {aiError && (
+        <div className="w-full px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{aiError}</p>
+          <button
+            onClick={() => setAiError(null)}
+            className="text-sm text-red-500 hover:underline mt-1"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
 
       {/* Ask AI Writer Button */}
       <div className="flex justify-center pt-4">
         <button
           type="button"
           onClick={handleAIClick}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+          disabled={isGeneratingAll || loadingIndex !== null}
+          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors disabled:opacity-70"
           style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
           }}
         >
-          <Sparkles className="w-5 h-5" />
-          <span className="font-medium">Ask AI writer</span>
+          {isGeneratingAll ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Sparkles className="w-5 h-5" />
+          )}
+          <span className="font-medium">
+            {isGeneratingAll ? "Generating all..." : "Generate all descriptions"}
+          </span>
         </button>
       </div>
     </div>

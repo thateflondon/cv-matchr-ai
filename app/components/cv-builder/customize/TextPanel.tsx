@@ -6,16 +6,21 @@ interface TextPanelProps {
 }
 
 const fontOptions = [
-  "Arial, sans-serif",
-  "Helvetica, sans-serif",
-  "Times New Roman, serif",
-  "Georgia, serif",
-  "Calibri, sans-serif",
-  "Cambria, serif",
-  "Verdana, sans-serif",
-  "Garamond, serif",
-  "Palatino, serif",
-  "Trebuchet MS, sans-serif",
+  // Google Fonts with multiple weights (400, 500, 600, 700)
+  { value: "'Inter', sans-serif", label: "Inter", hasAllWeights: true },
+  { value: "'Open Sans', sans-serif", label: "Open Sans", hasAllWeights: true },
+  { value: "'Roboto', sans-serif", label: "Roboto", hasAllWeights: true },
+  { value: "'Poppins', sans-serif", label: "Poppins", hasAllWeights: true },
+  { value: "'Montserrat', sans-serif", label: "Montserrat", hasAllWeights: true },
+  { value: "'Raleway', sans-serif", label: "Raleway", hasAllWeights: true },
+  { value: "'Source Sans 3', sans-serif", label: "Source Sans", hasAllWeights: true },
+  { value: "'Lato', sans-serif", label: "Lato", hasAllWeights: false },
+  { value: "'Playfair Display', serif", label: "Playfair Display", hasAllWeights: true },
+  { value: "'Merriweather', serif", label: "Merriweather", hasAllWeights: false },
+  // System fonts (limited weight support - only Regular and Bold)
+  { value: "Arial, sans-serif", label: "Arial (Limited weights)", hasAllWeights: false },
+  { value: "Georgia, serif", label: "Georgia (Limited weights)", hasAllWeights: false },
+  { value: "Times New Roman, serif", label: "Times New Roman (Limited weights)", hasAllWeights: false },
 ];
 
 const fontWeightOptions = [
@@ -95,8 +100,8 @@ export default function TextPanel({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {fontOptions.map((font) => (
-              <option key={font} value={font}>
-                {font.split(",")[0]}
+              <option key={font.value} value={font.value}>
+                {font.label}
               </option>
             ))}
           </select>
@@ -116,8 +121,8 @@ export default function TextPanel({
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             {fontOptions.map((font) => (
-              <option key={font} value={font}>
-                {font.split(",")[0]}
+              <option key={font.value} value={font.value}>
+                {font.label}
               </option>
             ))}
           </select>

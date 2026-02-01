@@ -2,12 +2,13 @@ import type { Route } from "./+types/dashboard";
 import Navbar from "~/components/Navbar";
 import ResumeCard from "~/components/ResumeCard";
 import { usePuterStore } from "~/lib/puter";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import Footer from "~/components/Footer";
 import DashboardLayout from "~/components/dashboard/DashboardLayout";
 import MyResumesTab from "~/components/dashboard/MyResumesTab";
 import BuilderTab from "~/components/dashboard/BuilderTab";
+import Breadcrumb, { myResumesBreadcrumb } from "~/components/Breadcrumb";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -22,17 +23,35 @@ export function meta({}: Route.MetaArgs) {
 export default function Dashboard() {
   const { auth, kv, isLoading } = usePuterStore();
   const navigate = useNavigate();
+  const { tab } = useParams();
   const [searchParams] = useSearchParams();
   const [resumes, setResumes] = useState<Resume[]>([]);
   const [loadingResumes, setLoadingResumes] = useState(false);
-  const [activeTab, setActiveTab] = useState<"resumes" | "builder">("resumes");
   const [selectedResume, setSelectedResume] = useState<Resume | null>(null);
+
+  // Determine active tab from URL param
+  const activeTab: "resumes" | "builder" = tab === "builder" ? "builder" : "resumes";
+
+  // Redirect /dashboard to /dashboard/myresumes
+  useEffect(() => {
+    if (!tab) {
+      navigate("/dashboard/myresumes", { replace: true });
+    }
+  }, [tab, navigate]);
+
+  const handleTabChange = (tab: "resumes" | "builder") => {
+    if (tab === "builder") {
+      navigate("/dashboard/builder");
+    } else {
+      navigate("/dashboard/myresumes");
+    }
+  };
 
   const userName = auth.user?.username;
 
   useEffect(() => {
     if (!isLoading && !auth.isAuthenticated) {
-      navigate("/?next=/dashboard");
+      navigate("/?next=/dashboard/myresumes");
     }
   }, [isLoading, auth.isAuthenticated, navigate]);
 
@@ -62,10 +81,9 @@ export default function Dashboard() {
 
   // Handle URL parameters for opening builder with resume
   useEffect(() => {
-    const tab = searchParams.get("tab");
     const resumeId = searchParams.get("resume");
-    
-    if (tab === "builder") {
+
+    if (activeTab === "builder") {
       // Try to load resume from sessionStorage
       const storedResume = sessionStorage.getItem("improveResume");
       if (storedResume) {
@@ -74,7 +92,6 @@ export default function Dashboard() {
           console.log("🔍 Dashboard - Loading from sessionStorage:", resume);
           console.log("🔍 Dashboard - sessionStorage parsedData:", resume.parsedData);
           setSelectedResume(resume);
-          setActiveTab("builder");
           // Clear sessionStorage after loading
           sessionStorage.removeItem("improveResume");
         } catch (error) {
@@ -87,22 +104,21 @@ export default function Dashboard() {
           console.log("🔍 Dashboard - Loading from resumes array:", resume);
           console.log("🔍 Dashboard - resumes array parsedData:", resume.parsedData);
           setSelectedResume(resume);
-          setActiveTab("builder");
         }
       }
     }
-  }, [searchParams, resumes]);
+  }, [activeTab, searchParams, resumes]);
   
   const handleCreateNew = () => {
     setSelectedResume(null);
-    setActiveTab("builder");
+    navigate("/dashboard/builder");
   };
 
   const handleImprove = (resume: Resume) => {
     console.log("🔍 Dashboard - handleImprove called with resume:", resume);
     console.log("🔍 Dashboard - resume.parsedData:", resume.parsedData);
     setSelectedResume(resume);
-    setActiveTab("builder");
+    navigate("/dashboard/builder");
   };
 
   const handleSaveResume = async (updatedResume: Resume) => {
@@ -112,42 +128,44 @@ export default function Dashboard() {
       r.id === updatedResume.id ? updatedResume : r
     );
     setResumes(updatedResumes);
-    setActiveTab("resumes");
+    navigate("/dashboard/myresumes");
   };
 
   const handleBackToResumes = () => {
     setSelectedResume(null);
-    setActiveTab("resumes");
+    navigate("/dashboard/myresumes");
   };
   
   return (
-    <main id="app" className="heros-section relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
-    <div className="flex flex-col h-screen">
-      {/* Global Navbar */}
-      <Navbar userName={userName} />
-      
+    <main id="app" className={`heros-section relative bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 ${activeTab === "builder" ? "h-screen overflow-hidden" : "min-h-screen"}`}>
+      {/* Global Navbar - Hidden on builder */}
+      {activeTab !== "builder" && <Navbar userName={userName} />}
+
       {/* Dashboard Content */}
-      <div className="flex-1 overflow-hidden">
-        <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
-          {activeTab === "resumes" && (
-            <MyResumesTab
-              resumes={resumes}
-              loadingResumes={loadingResumes}
-              onCreateNew={handleCreateNew}
-              onImprove={handleImprove}
-            />
-          )}
-          {activeTab === "builder" && (
-            <BuilderTab
-              resume={selectedResume}
-              onSave={handleSaveResume}
-              onBack={handleBackToResumes}
-            />
-          )}
-        </DashboardLayout>
+      <div className={activeTab === "builder" ? "h-full" : "pt-[120px]"}>
+        {/* Breadcrumb - Hidden on builder */}
+        {activeTab !== "builder" && <Breadcrumb items={myResumesBreadcrumb} />}
+        <div className={activeTab === "builder" ? "h-full" : ""}>
+          <DashboardLayout activeTab={activeTab} onTabChange={handleTabChange}>
+            {activeTab === "resumes" && (
+              <MyResumesTab
+                resumes={resumes}
+                loadingResumes={loadingResumes}
+                onCreateNew={handleCreateNew}
+                onImprove={handleImprove}
+              />
+            )}
+            {activeTab === "builder" && (
+              <BuilderTab
+                resume={selectedResume}
+                onSave={handleSaveResume}
+                onBack={handleBackToResumes}
+              />
+            )}
+          </DashboardLayout>
+        </div>
       </div>
-    </div>
-    <Footer/>
+      {activeTab !== "builder" && <Footer />}
     </main>
   );
 }

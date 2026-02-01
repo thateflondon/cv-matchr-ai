@@ -7,6 +7,7 @@ import { convertPdfToImage, extractTextFromPdf } from "~/lib/pdf2img";
 import { generateUUID } from "~/lib/utils";
 import { prepareInstructions } from "~/constants";
 import Footer from "~/components/Footer";
+import Breadcrumb, { uploadBreadcrumb } from "~/components/Breadcrumb";
 import { parseResumeTextWithAI } from "~/utils/pdfDataExtractor";
 
 const Upload = () => {
@@ -135,8 +136,9 @@ const Upload = () => {
         id="app"
         className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50"
       >
-        <div className="app-container">
+        <div className="app-container pt-[120px]">
           <Navbar userName={userName} />
+          <Breadcrumb items={uploadBreadcrumb} />
           <section className="main-section">
             <div className="page-heading py-16">
               <h1>Smart feedback for your dream job</h1>

@@ -75,53 +75,19 @@ export interface CVData {
   skillsData?: Skill[];
 }
 
-export type TemplateCategory = 
-  | "all" 
-  | "ats" 
-  | "classic" 
-  | "modern" 
-  | "creative" 
-  | "two-column" 
-  | "professional"
+export type TemplateCategory =
+  | "all"
+  | "ats"
+  | "two-column"
   | "specialist";
 
-export type TemplateID = 
-  | "template-london"
-  | "template-santiago"
-  | "template-dublin"
+export type TemplateID =
   | "template-helsinki"
   | "template-seoul"
-  | "template-specialist_traditional1"
-  | "template-berlin"
-  | "template-athens"
-  | "template-new_york"
-  | "template-vienna"
-  | "template-prague"
-  | "template-brussels"
-  | "template-sydney"
-  | "template-shanghai"
-  | "template-stockholm"
   | "template-paris"
-  | "template-madrid"
-  | "template-rome"
-  | "template-milan"
-  | "template-toronto"
-  | "template-singapore"
-  | "template-amsterdam"
-  | "template-barcelona"
-  | "template-oslo"
-  | "template-chicago"
-  | "template-copenhagen"
-  | "template-boston"
-  | "template-geneva"
-  | "template-tokyo"
-  | "template-lisbon"
-  | "template-moscow"
-  | "template-rio"
-  | "template-vancouver"
-  | "template-cape_town"
-  | "template-rirekisho"
-  | "template-shokumukeirekisho"
+  | "template-two_column_classic"
+  | "template-two_column_design"
+  | "template-specialist_traditional1"
   | "template-academic"
   | "template-entry_level";
 
@@ -140,6 +106,15 @@ export interface CVTemplate {
   supportsLayoutCustomization?: boolean; // If false, layout customization will be disabled
 }
 
+export interface CVMargins {
+  headerFooter: number; // in inches
+  topBottom: number; // in inches
+  leftRight: number; // in inches
+  betweenSections: number; // in pt
+  betweenTitleContent: number; // in pt
+  betweenContentBlocks: number; // in pt
+}
+
 export interface CVCustomization {
   template: CVTemplate;
   primaryColor: string;
@@ -150,6 +125,7 @@ export interface CVCustomization {
   spacing: {
     lineHeight: number;
   };
+  margins: CVMargins;
   fontSize: {
     primaryHeading: number;
     secondaryHeading: number;
@@ -162,9 +138,13 @@ export interface CVCustomization {
     body: string;
     sectionTitles: string;
   };
-  dateFormat: "short" | "long";
+  dateFormat: "short" | "long" | "numeric" | "year";
   dateAlignment: "left" | "right";
   headerAlignment: "left" | "center" | "right";
+  skillsLayout: "comma" | "columns" | "categories";
+  skillsColumns: number;
+  educationLayout: "stacked" | "inline";
+  educationOrder: "institution" | "degree";
 }
 
 export const defaultTemplate: CVTemplate = {
@@ -175,16 +155,26 @@ export const defaultTemplate: CVTemplate = {
   columns: 1,
 };
 
+export const defaultMargins: CVMargins = {
+  headerFooter: 0.5,
+  topBottom: 0.75,
+  leftRight: 0.75,
+  betweenSections: 24,
+  betweenTitleContent: 8,
+  betweenContentBlocks: 12,
+};
+
 export const defaultCustomization: CVCustomization = {
   template: defaultTemplate,
   primaryColor: "#2563eb",
   fonts: {
-    primary: "Arial, sans-serif",
-    secondary: "Arial, sans-serif",
+    primary: "'Inter', sans-serif",
+    secondary: "'Inter', sans-serif",
   },
   spacing: {
     lineHeight: 140,
   },
+  margins: defaultMargins,
   fontSize: {
     primaryHeading: 24,
     secondaryHeading: 16,
@@ -200,6 +190,10 @@ export const defaultCustomization: CVCustomization = {
   dateFormat: "short",
   dateAlignment: "right",
   headerAlignment: "left",
+  skillsLayout: "columns",
+  skillsColumns: 4,
+  educationLayout: "stacked",
+  educationOrder: "institution",
 };
 
 export const defaultCVData: CVData = {

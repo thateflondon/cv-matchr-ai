@@ -5,6 +5,9 @@ import SeoulTemplate from "./SeoulTemplate";
 import AcademicTemplate from "./AcademicTemplate";
 import EntryLevelTemplate from "./EntryLevelTemplate";
 import SpecialistTemplate from "./SpecialistTemplate";
+import ParisTemplate from "./ParisTemplate";
+import TwoColumnClassicTemplate from "./TwoColumnClassicTemplate";
+import TwoColumnDesignTemplate from "./TwoColumnDesignTemplate";
 import BaseTemplate from "./BaseTemplate";
 
 export interface TemplateRendererProps {
@@ -20,24 +23,31 @@ const TemplateRenderer = forwardRef<HTMLDivElement, TemplateRendererProps>(
   ({ data, customization }, ref) => {
     const templateId = customization.template.id;
 
-    // Add console log to track template rendering
-    console.log("🎨 Rendering template:", templateId, customization.template.name);
-
     switch (templateId) {
       // ATS Templates - specific implementations
       case "template-helsinki":
         return <HelsinkiTemplate ref={ref} data={data} customization={customization} />;
-      
+
       case "template-seoul":
         return <SeoulTemplate ref={ref} data={data} customization={customization} />;
+
+      // Two-Column Templates
+      case "template-paris":
+        return <ParisTemplate ref={ref} data={data} customization={customization} />;
+
+      case "template-two_column_classic":
+        return <TwoColumnClassicTemplate ref={ref} data={data} customization={customization} />;
+
+      case "template-two_column_design":
+        return <TwoColumnDesignTemplate ref={ref} data={data} customization={customization} />;
 
       // Specialist Templates
       case "template-academic":
         return <AcademicTemplate ref={ref} data={data} customization={customization} />;
-      
+
       case "template-entry_level":
         return <EntryLevelTemplate ref={ref} data={data} customization={customization} />;
-      
+
       case "template-specialist_traditional1":
         return <SpecialistTemplate ref={ref} data={data} customization={customization} />;
 

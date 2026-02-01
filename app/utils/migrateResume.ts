@@ -13,15 +13,13 @@ export async function migrateResumeData(
   try {
     // If the resume already has parsedData, return it as-is
     if (resume.parsedData) {
-      console.log("Resume already has parsed data, skipping migration");
       return resume;
     }
 
     // If we have extractedText but no parsedData, just parse it
     if (resume.extractedText && resume.extractedText.length > 0) {
-      console.log("Re-parsing extracted text with AI...");
       const parsedData = await parseResumeTextWithAI(resume.extractedText, ai);
-      
+
       return {
         ...resume,
         parsedData,
@@ -29,7 +27,6 @@ export async function migrateResumeData(
     }
 
     // If we have neither, we need to re-download the PDF and extract text
-    console.log("Downloading PDF and extracting text...");
     
     // Download the PDF file from Puter
     const fileContent = await fs.read(resume.resumePath);

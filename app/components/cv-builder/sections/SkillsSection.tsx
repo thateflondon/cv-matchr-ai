@@ -1,5 +1,5 @@
 import type { CVData, Skill } from "~/types/cv-builder";
-import { Plus, Sparkles } from "lucide-react";
+import { Plus, Sparkles, Loader2, Check } from "lucide-react";
 import { useState } from "react";
 import {
   DndContext,
@@ -21,6 +21,8 @@ import { CSS } from "@dnd-kit/utilities";
 import CollapsibleSection from "../common/CollapsibleSection";
 import FormInput from "~/components/common/FormInput";
 import SectionHeader from "../common/SectionHeader";
+import { usePuterStore } from "~/lib/puter";
+import { generateSkillsSuggestions } from "~/utils/aiWriter";
 
 interface SkillsSectionProps {
   data: CVData;
@@ -118,6 +120,10 @@ export default function SkillsSection({
 }: SkillsSectionProps) {
   const [expandedSkills, setExpandedSkills] = useState<Set<string>>(new Set());
   const [showExperienceLevel, setShowExperienceLevel] = useState(true);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [suggestedSkills, setSuggestedSkills] = useState<Skill[]>([]);
+  const { ai } = usePuterStore();
 
   const skills = data.skillsData || [];
 
@@ -199,9 +205,60 @@ export default function SkillsSection({
     return "(Not specified)";
   };
 
-  const handleAIClick = () => {
-    // TODO: Implement AI writer functionality
-    console.log("AI writer clicked for skills");
+  const handleAIClick = async () => {
+    setIsGenerating(true);
+    setAiError(null);
+
+    try {
+      const result = await generateSkillsSuggestions(ai.chat, data);
+
+      if (result.success && result.data) {
+        setSuggestedSkills(result.data);
+      } else {
+        setAiError(result.error || "Failed to generate skills suggestions");
+      }
+    } catch (error) {
+      setAiError(error instanceof Error ? error.message : "An error occurred");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const addSuggestedSkill = (skill: Skill) => {
+    // Check if skill already exists
+    const exists = skills.some(
+      (s) => s.name.toLowerCase() === skill.name.toLowerCase()
+    );
+    if (exists) {
+      setAiError(`"${skill.name}" is already in your skills list`);
+      return;
+    }
+
+    onUpdate({
+      ...data,
+      skillsData: [...skills, skill],
+    });
+    setExpandedSkills(new Set([...expandedSkills, skill.id]));
+    // Remove from suggestions
+    setSuggestedSkills(suggestedSkills.filter((s) => s.id !== skill.id));
+  };
+
+  const addAllSuggestedSkills = () => {
+    const existingNames = new Set(skills.map((s) => s.name.toLowerCase()));
+    const newSkills = suggestedSkills.filter(
+      (s) => !existingNames.has(s.name.toLowerCase())
+    );
+
+    if (newSkills.length === 0) {
+      setAiError("All suggested skills are already in your list");
+      return;
+    }
+
+    onUpdate({
+      ...data,
+      skillsData: [...skills, ...newSkills],
+    });
+    setSuggestedSkills([]);
   };
 
   return (
@@ -265,22 +322,84 @@ export default function SkillsSection({
         className="flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
       >
         <Plus className="w-4 h-4" />
-        <span className="text-sm font-medium">+ Add one more skill</span>
+        <span className="text-sm font-medium">Add one more skill</span>
       </button>
+
+      {/* AI Error */}
+      {aiError && (
+        <div className="w-full px-3 py-2.5 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-600">{aiError}</p>
+          <button
+            onClick={() => setAiError(null)}
+            className="text-sm text-red-500 hover:underline mt-1"
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {/* AI Suggested Skills */}
+      {suggestedSkills.length > 0 && (
+        <div className="w-full px-4 py-3 bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0" />
+            <h4 className="text-sm font-semibold text-foreground">
+              AI-Suggested Skills
+            </h4>
+            <button
+              onClick={() => setSuggestedSkills([])}
+              className="ml-auto text-sm text-gray-400 hover:underline"
+            >
+              Dismiss
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-2 mb-3">
+            {suggestedSkills.map((skill) => (
+              <button
+                key={skill.id}
+                onClick={() => addSuggestedSkill(skill)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-purple-200 rounded-full text-sm text-foreground hover:bg-purple-50 hover:border-purple-300 transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5 text-purple-600" />
+                <span>{skill.name}</span>
+                {skill.level && (
+                  <span className="text-xs text-muted-foreground">
+                    ({skill.level})
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={addAllSuggestedSkills}
+            className="flex items-center gap-2 text-sm text-purple-600 font-medium hover:underline"
+          >
+            <Check className="w-4 h-4" />
+            Add all suggested skills
+          </button>
+        </div>
+      )}
 
       {/* Ask AI Writer Button */}
       <div className="flex justify-center pt-4">
         <button
           type="button"
           onClick={handleAIClick}
-          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors"
+          disabled={isGenerating}
+          className="flex items-center gap-2 px-6 py-3 rounded-lg transition-colors disabled:opacity-70"
           style={{
             background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
             color: "white",
           }}
         >
-          <Sparkles className="w-5 h-5" />
-          <span className="font-medium">Ask AI writer</span>
+          {isGenerating ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            <Sparkles className="w-5 h-5" />
+          )}
+          <span className="font-medium">
+            {isGenerating ? "Generating..." : "Suggest skills with AI"}
+          </span>
         </button>
       </div>
     </div>
